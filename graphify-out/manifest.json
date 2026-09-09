@@ -24,9 +24,9 @@
     "semantic_hash": ""
   },
   "consumption/db.py": {
-    "mtime": 1788980811.0749135,
-    "seen": 1788981081.11469,
-    "ast_hash": "f3f65280f8edeca68d92a123e3221f00",
+    "mtime": 1788981805.9204433,
+    "seen": 1788981941.4364815,
+    "ast_hash": "d24f6fa674ac5aa58b9114a0fc918913",
     "semantic_hash": ""
   },
   "consumption/jobs.py": {
@@ -48,9 +48,9 @@
     "semantic_hash": ""
   },
   ".cursor/memory/INDEX.md": {
-    "mtime": 1788980979.0940328,
-    "seen": 1788981081.1147344,
-    "ast_hash": "a7cd03ef1bb84703f08bab6a6c5dfb55",
+    "mtime": 1788981918.7566037,
+    "seen": 1788981941.436539,
+    "ast_hash": "43486025c2d11a06b257692f05401757",
     "semantic_hash": ""
   },
   "README.md": {
@@ -125,12 +125,6 @@
     "ast_hash": "00d9bd1bd7e083febf47a40f41ff4fc5",
     "semantic_hash": ""
   },
-  ".cursor/memory/agents/paused-first-real-data.md": {
-    "mtime": 1788979062.340568,
-    "seen": 1788979073.5757985,
-    "ast_hash": "6438e4ca7a04a91c7f9e28dc4b29f8b1",
-    "semantic_hash": ""
-  },
   "consumption/reading_log.py": {
     "mtime": 1788980806.6891556,
     "seen": 1788981081.1146948,
@@ -156,9 +150,9 @@
     "semantic_hash": ""
   },
   "tests/test_db_readings.py": {
-    "mtime": 1788980792.2823062,
-    "seen": 1788981081.1147244,
-    "ast_hash": "d1aff8a4785a168f1d1c747fc40d8184",
+    "mtime": 1788981816.8768055,
+    "seen": 1788981941.436527,
+    "ast_hash": "8859a359a9205d0c2c62414d9fd88f89",
     "semantic_hash": ""
   },
   "tests/test_jobs.py": {
@@ -173,10 +167,202 @@
     "ast_hash": "c41ee36568a504d05624580ad0e3763e",
     "semantic_hash": ""
   },
-  ".cursor/memory/agents/wave2-integrate.md": {
-    "mtime": 1788980916.5342906,
-    "seen": 1788981081.1147394,
-    "ast_hash": "f4d4d070203eecef9809f0ccdcce377c",
+  "scripts/backfill-loop.py": {
+    "mtime": 1788981852.4246523,
+    "seen": 1788981941.4365036,
+    "ast_hash": "1666ee6179e26efaa6ddbb7e4ed701d7",
     "semantic_hash": ""
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\.graphify_ast.json": {
+    "mtime": 1788983613.1326835,
+    "seen": 1788983614.5245817,
+    "ast_hash": "7fe094f5fdface808ff639175aa5280b",
+    "semantic_hash": "7fe094f5fdface808ff639175aa5280b"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\.graphify_extract.json": {
+    "mtime": 1788983613.2312129,
+    "seen": 1788983614.524592,
+    "ast_hash": "4417fdd91a3e62096fd8955943d397be",
+    "semantic_hash": "4417fdd91a3e62096fd8955943d397be"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\.graphify_update.py": {
+    "mtime": 1788983604.2475893,
+    "seen": 1788983614.5245962,
+    "ast_hash": "207edb7f79e5bed17d6a7269efc37c23",
+    "semantic_hash": "207edb7f79e5bed17d6a7269efc37c23"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\consumption\\__init__.py": {
+    "mtime": 1788962058.8647382,
+    "seen": 1788983614.5245996,
+    "ast_hash": "be7fd21782ce29f9ab54edb48e4dfc78",
+    "semantic_hash": "be7fd21782ce29f9ab54edb48e4dfc78"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\consumption\\__main__.py": {
+    "mtime": 1788962773.1317663,
+    "seen": 1788983614.5246022,
+    "ast_hash": "8efd004749e73fdaf47d25ad6d36652f",
+    "semantic_hash": "8efd004749e73fdaf47d25ad6d36652f"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\consumption\\api.py": {
+    "mtime": 1788980956.8571272,
+    "seen": 1788983614.524605,
+    "ast_hash": "08258cd2eaf96efc7daaf4afe3b5d5f1",
+    "semantic_hash": "08258cd2eaf96efc7daaf4afe3b5d5f1"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\consumption\\config.py": {
+    "mtime": 1788968186.6631157,
+    "seen": 1788983614.5246077,
+    "ast_hash": "902660e983d8f87dc17c7f9276e55c3c",
+    "semantic_hash": "902660e983d8f87dc17c7f9276e55c3c"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\consumption\\db.py": {
+    "mtime": 1788981805.9204433,
+    "seen": 1788983614.5246103,
+    "ast_hash": "d24f6fa674ac5aa58b9114a0fc918913",
+    "semantic_hash": "d24f6fa674ac5aa58b9114a0fc918913"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\consumption\\jobs.py": {
+    "mtime": 1788980937.5671961,
+    "seen": 1788983614.524613,
+    "ast_hash": "ab9c997554721c267def76d4138427da",
+    "semantic_hash": "ab9c997554721c267def76d4138427da"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\consumption\\reading_log.py": {
+    "mtime": 1788980806.6891556,
+    "seen": 1788983614.5246155,
+    "ast_hash": "6251f0af1290679b9fd770fa7041dae7",
+    "semantic_hash": "6251f0af1290679b9fd770fa7041dae7"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\consumption\\readings.py": {
+    "mtime": 1788969641.5170808,
+    "seen": 1788983614.524618,
+    "ast_hash": "c911a0d782f74a71391e2d3d1c395182",
+    "semantic_hash": "c911a0d782f74a71391e2d3d1c395182"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\consumption\\records.py": {
+    "mtime": 1788980644.436889,
+    "seen": 1788983614.524621,
+    "ast_hash": "c38ee45cabb221d3b6d8cda09af0dbe6",
+    "semantic_hash": "c38ee45cabb221d3b6d8cda09af0dbe6"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\consumption\\secrets.py": {
+    "mtime": 1788968147.1014235,
+    "seen": 1788983614.5246236,
+    "ast_hash": "aa5d8ffaea73a37983e499860982fa99",
+    "semantic_hash": "aa5d8ffaea73a37983e499860982fa99"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\consumption\\source.py": {
+    "mtime": 1788980835.851145,
+    "seen": 1788983614.524626,
+    "ast_hash": "82128f7a5086dd589712e5594d562018",
+    "semantic_hash": "82128f7a5086dd589712e5594d562018"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\scripts\\backfill-loop.py": {
+    "mtime": 1788981852.4246523,
+    "seen": 1788983614.5246308,
+    "ast_hash": "1666ee6179e26efaa6ddbb7e4ed701d7",
+    "semantic_hash": "1666ee6179e26efaa6ddbb7e4ed701d7"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\scripts\\connection_report.py": {
+    "mtime": 1788980980.647182,
+    "seen": 1788983614.5246334,
+    "ast_hash": "2e1f881e67014af478d148d73ca5c112",
+    "semantic_hash": "2e1f881e67014af478d148d73ca5c112"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\scripts\\env.ps1": {
+    "mtime": 1788968302.0405388,
+    "seen": 1788983614.5246358,
+    "ast_hash": "77e804ba206d4e7e3d9dfb922d817160",
+    "semantic_hash": "77e804ba206d4e7e3d9dfb922d817160"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\scripts\\launch.ps1": {
+    "mtime": 1788980966.5282114,
+    "seen": 1788983614.524638,
+    "ast_hash": "5c07ae33abe67e59ec49a1518817e26d",
+    "semantic_hash": "5c07ae33abe67e59ec49a1518817e26d"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\scripts\\launcher-common.ps1": {
+    "mtime": 1788980760.6286957,
+    "seen": 1788983614.5246406,
+    "ast_hash": "f877c8fd3e8305322ccd9f4e33e04abe",
+    "semantic_hash": "f877c8fd3e8305322ccd9f4e33e04abe"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\scripts\\set-credentials.ps1": {
+    "mtime": 1788980769.861412,
+    "seen": 1788983614.5246432,
+    "ast_hash": "adff97899de06c7fb51cabcf3cb15c29",
+    "semantic_hash": "adff97899de06c7fb51cabcf3cb15c29"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\scripts\\set_credentials.py": {
+    "mtime": 1788968336.298527,
+    "seen": 1788983614.5246456,
+    "ast_hash": "427605297cf8b339f618bb3d54ac6a37",
+    "semantic_hash": "427605297cf8b339f618bb3d54ac6a37"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\scripts\\test-connection.ps1": {
+    "mtime": 1788980772.523257,
+    "seen": 1788983614.524648,
+    "ast_hash": "ec2ff2cc431323f7077f18cf9be5c00d",
+    "semantic_hash": "ec2ff2cc431323f7077f18cf9be5c00d"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\tests\\test_api_contract.py": {
+    "mtime": 1788980956.8425233,
+    "seen": 1788983614.5246506,
+    "ast_hash": "636a3c321bb1d5dddff4b898febd333e",
+    "semantic_hash": "636a3c321bb1d5dddff4b898febd333e"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\tests\\test_db_readings.py": {
+    "mtime": 1788981816.8768055,
+    "seen": 1788983614.5246527,
+    "ast_hash": "8859a359a9205d0c2c62414d9fd88f89",
+    "semantic_hash": "8859a359a9205d0c2c62414d9fd88f89"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\tests\\test_jobs.py": {
+    "mtime": 1788981039.7711358,
+    "seen": 1788983614.524655,
+    "ast_hash": "ffb8f822f6202ce2f9fe5fc74775df55",
+    "semantic_hash": "ffb8f822f6202ce2f9fe5fc74775df55"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\tests\\test_reading_log.py": {
+    "mtime": 1788980830.4160912,
+    "seen": 1788983614.5246575,
+    "ast_hash": "c41ee36568a504d05624580ad0e3763e",
+    "semantic_hash": "c41ee36568a504d05624580ad0e3763e"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\tests\\test_source_parsing.py": {
+    "mtime": 1788980949.3701532,
+    "seen": 1788983614.52466,
+    "ast_hash": "4a4f29ca40515076a7aef009b2f81b09",
+    "semantic_hash": "4a4f29ca40515076a7aef009b2f81b09"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\tests\\test_source_session.py": {
+    "mtime": 1788980957.0342546,
+    "seen": 1788983614.5246625,
+    "ast_hash": "00d9bd1bd7e083febf47a40f41ff4fc5",
+    "semantic_hash": "00d9bd1bd7e083febf47a40f41ff4fc5"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\.cursor\\memory\\INDEX.md": {
+    "mtime": 1788983561.5500913,
+    "seen": 1788983614.5246649,
+    "ast_hash": "074b7e93b17cefd0a0ba541ad0ce26f3",
+    "semantic_hash": "074b7e93b17cefd0a0ba541ad0ce26f3"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\.cursor\\memory\\topics\\mycitygrid-portal.md": {
+    "mtime": 1788970388.7960975,
+    "seen": 1788983614.5246675,
+    "ast_hash": "28e6537f49bee53e652cd58285d18123",
+    "semantic_hash": "28e6537f49bee53e652cd58285d18123"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\README.md": {
+    "mtime": 1788980974.9976375,
+    "seen": 1788983614.5246694,
+    "ast_hash": "15fd4906e0d91ff56d9ca80e7708de12",
+    "semantic_hash": "15fd4906e0d91ff56d9ca80e7708de12"
+  },
+  "C:\\Users\\itamar_v\\OneDrive - Playtech\\\u05e4\u05e8\u05d8\u05d9\\AI Projects\\ConsumptionMonitor\\requirements.txt": {
+    "mtime": 1788980966.8655372,
+    "seen": 1788983614.5246718,
+    "ast_hash": "2af230207484554b25c58d3cc9694ea6",
+    "semantic_hash": "2af230207484554b25c58d3cc9694ea6"
   }
 }
