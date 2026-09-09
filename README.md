@@ -22,6 +22,22 @@ The window says in plain words whether it worked.
 
 `.env` is only for non-secret settings such as `PORT`; see `.env.example`.
 
+## Dashboard
+
+After `run.bat` starts the API, open <http://127.0.0.1:8123/ui> (the launcher opens it
+automatically). The page is Hebrew RTL, fully offline, and polls the local API every 60
+seconds.
+
+- **Granularities** — hour, day, month, and year bar charts. Hour view applies to a single
+  calendar day; pick one day in the range or drill into a day from a coarser view.
+- **Comparison** — overlay the previous period or the same period last year on the chart and
+  KPI cards.
+- **Drill-down** — click a year, month, or day bar to zoom in; use the breadcrumb to step
+  back up.
+- **Hourly estimate** — portal readings arrive roughly every two hours (electricity ~120 min,
+  water ~160 min), so the hour view spreads each register delta across the hours it covers.
+  It is labeled as estimated in the UI; day/month/year totals remain exact register deltas.
+
 ## Status
 
 The adapter uses the paginated meter reading log (`GET meterdata`), verified live against a
@@ -60,6 +76,7 @@ never ends the walk. `/jobs` reports `in_season` and the range each job would fe
 | `GET /alerts?utility=` | Leak, backflow, tamper and other flags from the latest reading per meter |
 | `GET /readings/raw?utility=&meter_id=&start=&end=` | Raw meter readings; defaults to 7 days, at most 366 days |
 | `GET /readings/intervals?utility=&direction=&start=&end=` | Exact deltas between consecutive readings |
+| `GET /readings/hourly?utility=&direction=&date=` | Proportional hour buckets for one day (estimated) |
 | `GET /readings/daily?utility=&direction=&start=&end=` | Daily totals from cumulative registers |
 | `GET /readings/monthly?utility=&direction=&start=&end=` | Monthly totals |
 | `GET /readings/yearly?utility=&direction=&start=&end=` | Yearly totals |

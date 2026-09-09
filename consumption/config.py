@@ -67,6 +67,9 @@ LOCAL_TZ = ZoneInfo(_env("LOCAL_TZ", "Asia/Jerusalem"))
 HOST = _env("HOST", "127.0.0.1")
 PORT = int(_env("PORT", "8123"))
 
+# Comma-separated Host header values accepted by TrustedHostMiddleware (port stripped).
+ALLOWED_HOSTS = [h.strip() for h in _env("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",") if h.strip()]
+
 # How often the scheduler loop wakes up to check whether any job is due.
 TICK_SECONDS = int(_env("TICK_SECONDS", "300"))
 

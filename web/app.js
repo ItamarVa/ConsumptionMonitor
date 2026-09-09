@@ -1,0 +1,808 @@
+/**
+ * Consumption dashboard controller: state machine, drill-down stack, URL hash
+ * sync, 60s polling (paused when hidden), KPI/table/CSV wiring. Binds to the
+ * frozen DOM ids from dashboard-contract; no exports. Depends on api.js, chart.js,
+ * vendor/chart.umd.min.js, and the HTML shell from index.html.
+ */
+
+import { ApiError, fetchHealth, fetchLocale, fetchSeries } from "./api.js";
+import { createChart, onBarClick, renderSeries } from "./chart.js";
+
+const POLL_MS = 60_000;
+const STALE_HOURS = 4;
+
+const $ = (id) => document.getElementById(id);
+
+const dashboardContent = document.querySelector(".dashboard__content");
+
+const els = {
+  utility: $("utility"),
+  granularity: $("granularity"),
+  rangeStart: $("range-start"),
+  rangeEnd: $("range-end"),
+  preset: $("preset"),
+  compare: $("compare"),
+  kpiTotal: $("kpi-total"),
+  kpiAverage: $("kpi-average"),
+  kpiPeak: $("kpi-peak"),
+  kpiLatest: $("kpi-latest"),
+  breadcrumb: $("breadcrumb"),
+  chart: $("chart"),
+  chartNote: $("chart-note"),
+  statusPill: $("status-pill"),
+  dataTable: $("data-table"),
+  tableToggle: $("table-toggle"),
+  downloadCsv: $("download-csv"),
+  stateLoading: $("state-loading"),
+  stateEmpty: $("state-empty"),
+  stateError: $("state-error"),
+  retry: $("retry"),
+};
+
+const state = {
+  utility: "electricity",
+  direction: "import",
+  granularity: "day",
+  start: "",
+  end: "",
+  compare: "none",
+  drillStack: [],
+};
+
+let t = {};
+let chart = null;
+let pollTimer = null;
+let primarySeries = [];
+let comparisonSeries = null;
+let seriesMeta = { unit: "", estimated: false };
+let lastSummaryFetch = null;
+
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function parseIso(s) {
+  const [y, m, d] = s.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function formatIso(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function addDays(iso, n) {
+  const d = parseIso(iso);
+  d.setDate(d.getDate() + n);
+  return formatIso(d);
+}
+
+function daysInclusive(start, end) {
+  const ms = parseIso(end) - parseIso(start);
+  return Math.floor(ms / 86_400_000) + 1;
+}
+
+function daysInMonth(year, month) {
+  return new Date(year, month, 0).getDate();
+}
+
+function shiftYear(iso, delta) {
+  const d = parseIso(iso);
+  d.setFullYear(d.getFullYear() + delta);
+  return formatIso(d);
+}
+
+function defaultRange() {
+  const end = todayIso();
+  const start = addDays(end, -6);
+  return { start, end };
+}
+
+function setText(el, text) {
+  if (el) {
+    el.textContent = text ?? "";
+  }
+}
+
+function showState(which) {
+  const states = { loading: els.stateLoading, empty: els.stateEmpty, error: els.stateError };
+  for (const [name, el] of Object.entries(states)) {
+    if (el) {
+      el.hidden = name !== which;
+    }
+  }
+  if (dashboardContent) {
+    dashboardContent.hidden = true;
+  }
+}
+
+function hideStates() {
+  for (const el of [els.stateLoading, els.stateEmpty, els.stateError]) {
+    if (el) {
+      el.hidden = true;
+    }
+  }
+  if (dashboardContent) {
+    dashboardContent.hidden = false;
+  }
+}
+
+function parseHash() {
+  const raw = location.hash.replace(/^#/, "");
+  if (!raw) {
+    return null;
+  }
+  const params = new URLSearchParams(raw);
+  return {
+    utility: params.get("u"),
+    direction: params.get("d"),
+    granularity: params.get("g"),
+    start: params.get("s"),
+    end: params.get("e"),
+    compare: params.get("c"),
+  };
+}
+
+function writeHash() {
+  const params = new URLSearchParams({
+    u: state.utility,
+    d: state.direction,
+    g: state.granularity,
+    s: state.start,
+    e: state.end,
+    c: state.compare,
+  });
+  const next = `#${params}`;
+  if (location.hash !== next) {
+    history.replaceState(null, "", next);
+  }
+}
+
+function applyHash(hash) {
+  if (!hash) {
+    return;
+  }
+  if (hash.utility) {
+    state.utility = hash.utility;
+  }
+  if (hash.direction) {
+    state.direction = hash.direction;
+  }
+  if (hash.granularity) {
+    state.granularity = hash.granularity;
+  }
+  if (hash.start) {
+    state.start = hash.start;
+  }
+  if (hash.end) {
+    state.end = hash.end;
+  }
+  if (hash.compare) {
+    state.compare = hash.compare === "prev" ? "previous" : hash.compare;
+  }
+  state.drillStack = [];
+}
+
+function utilityKey() {
+  if (state.utility === "water") {
+    return "water";
+  }
+  return `${state.utility}_${state.direction}`;
+}
+
+function buttonMatchesUtility(btn) {
+  const u = btn.dataset.utility;
+  const d = btn.dataset.direction;
+  if (u === "water") {
+    return state.utility === "water";
+  }
+  return state.utility === u && state.direction === d;
+}
+
+function syncUtilityButtons() {
+  if (!els.utility) {
+    return;
+  }
+  for (const btn of els.utility.querySelectorAll("button")) {
+    btn.setAttribute("aria-pressed", buttonMatchesUtility(btn) ? "true" : "false");
+  }
+}
+
+function syncGranularityButtons() {
+  if (!els.granularity) {
+    return;
+  }
+  const multiDay = state.start !== state.end;
+  for (const btn of els.granularity.querySelectorAll("button")) {
+    const g = btn.dataset.granularity ?? btn.value;
+    const isHour = g === "hour";
+    btn.disabled = isHour && multiDay;
+    if (isHour && multiDay) {
+      btn.title = t["granularity.hour"] ?? "";
+    } else {
+      btn.removeAttribute("title");
+    }
+    btn.setAttribute("aria-pressed", g === state.granularity ? "true" : "false");
+  }
+  if (multiDay && state.granularity === "hour") {
+    state.granularity = "day";
+  }
+}
+
+function syncControlsFromState() {
+  if (els.rangeStart) {
+    els.rangeStart.value = state.start;
+  }
+  if (els.rangeEnd) {
+    els.rangeEnd.value = state.end;
+  }
+  if (els.preset) {
+    els.preset.value = "";
+  }
+  if (els.compare) {
+    els.compare.value = state.compare;
+  }
+  syncUtilityButtons();
+  syncGranularityButtons();
+}
+
+function readUtilityFromEvent(btn) {
+  const u = btn.dataset.utility;
+  if (!u) {
+    return;
+  }
+  state.utility = u;
+  state.direction = u === "water" ? "water" : btn.dataset.direction ?? "import";
+}
+
+function comparisonRange() {
+  if (state.compare === "none") {
+    return null;
+  }
+  const span = daysInclusive(state.start, state.end);
+  if (state.compare === "previous" || state.compare === "prev") {
+    const end = addDays(state.start, -1);
+    const start = addDays(end, -(span - 1));
+    return { start, end };
+  }
+  if (state.compare === "last_year") {
+    return { start: shiftYear(state.start, -1), end: shiftYear(state.end, -1) };
+  }
+  return null;
+}
+
+function alignByPosition(primary, comparison) {
+  return primary.map((_, i) => comparison[i] ?? null);
+}
+
+function formatNumber(n) {
+  if (n == null || Number.isNaN(n)) {
+    return "—";
+  }
+  return new Intl.NumberFormat("he-IL", { maximumFractionDigits: 2 }).format(n);
+}
+
+function computeKpis(points) {
+  const values = points.filter((p) => p.value != null).map((p) => p.value);
+  if (!values.length) {
+    return { total: null, average: null, peak: null, peakLabel: "", latest: null };
+  }
+  const total = values.reduce((a, b) => a + b, 0);
+  const average = total / values.length;
+  let peak = values[0];
+  let peakIdx = 0;
+  for (let i = 0; i < points.length; i += 1) {
+    const v = points[i].value;
+    if (v != null && v >= peak) {
+      peak = v;
+      peakIdx = i;
+    }
+  }
+  let latest = null;
+  for (let i = points.length - 1; i >= 0; i -= 1) {
+    if (points[i].value != null) {
+      latest = points[i].value;
+      break;
+    }
+  }
+  return {
+    total,
+    average,
+    peak,
+    peakLabel: points[peakIdx]?.label ?? "",
+    latest,
+  };
+}
+
+function renderKpis(kpis, unit) {
+  setText(els.kpiTotal, formatNumber(kpis.total));
+  setText(els.kpiAverage, formatNumber(kpis.average));
+  setText(els.kpiPeak, kpis.peak != null ? `${formatNumber(kpis.peak)}` : "—");
+  setText(els.kpiLatest, formatNumber(kpis.latest));
+  const unitKey = unit === "m3" || unit === "m³" ? "unit.m3" : "unit.kwh";
+  const unitLabel = t[unitKey] ?? unit ?? "";
+  for (const el of document.querySelectorAll("[data-kpi-unit]")) {
+    setText(el, unitLabel);
+  }
+}
+
+function crumbLabel(granularity, start, end) {
+  if (granularity === "year") {
+    return start.slice(0, 4);
+  }
+  if (granularity === "month") {
+    const mo = Number(start.slice(5, 7));
+    return t[`month.${mo}`] ?? start.slice(0, 7);
+  }
+  if (granularity === "day") {
+    return String(Number(start.slice(8, 10)));
+  }
+  return start;
+}
+
+function renderBreadcrumb() {
+  if (!els.breadcrumb) {
+    return;
+  }
+  while (els.breadcrumb.firstChild) {
+    els.breadcrumb.removeChild(els.breadcrumb.firstChild);
+  }
+  const crumbs = [...state.drillStack, { granularity: state.granularity, start: state.start, end: state.end }];
+  if (crumbs.length <= 1 && state.drillStack.length === 0) {
+    els.breadcrumb.hidden = true;
+    return;
+  }
+  els.breadcrumb.hidden = false;
+  crumbs.forEach((crumb, idx) => {
+    if (idx > 0) {
+      const sep = document.createElement("span");
+      sep.className = "breadcrumb-sep";
+      sep.textContent = " / ";
+      sep.setAttribute("aria-hidden", "true");
+      els.breadcrumb.appendChild(sep);
+    }
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "breadcrumb-btn";
+    btn.textContent = crumbLabel(crumb.granularity, crumb.start, crumb.end);
+    btn.addEventListener("click", () => popDrill(idx));
+    els.breadcrumb.appendChild(btn);
+  });
+}
+
+function popDrill(index) {
+  if (index >= state.drillStack.length) {
+    return;
+  }
+  const target = state.drillStack[index];
+  state.drillStack = state.drillStack.slice(0, index);
+  state.granularity = target.granularity;
+  state.start = target.start;
+  state.end = target.end;
+  syncControlsFromState();
+  writeHash();
+  loadData();
+}
+
+function drillDown(next) {
+  state.drillStack.push({
+    granularity: state.granularity,
+    start: state.start,
+    end: state.end,
+  });
+  state.granularity = next.granularity;
+  state.start = next.start;
+  state.end = next.end;
+  syncControlsFromState();
+  writeHash();
+  loadData();
+}
+
+function handleBarClick({ point, granularity }) {
+  if (granularity === "year") {
+    const year = point.label;
+    drillDown({ granularity: "month", start: `${year}-01-01`, end: `${year}-12-31` });
+  } else if (granularity === "month") {
+    const [y, m] = point.label.split("-").map(Number);
+    const last = daysInMonth(y, m);
+    const mm = String(m).padStart(2, "0");
+    drillDown({
+      granularity: "day",
+      start: `${y}-${mm}-01`,
+      end: `${y}-${mm}-${String(last).padStart(2, "0")}`,
+    });
+  } else if (granularity === "day") {
+    drillDown({ granularity: "hour", start: point.iso, end: point.iso });
+  }
+}
+
+function renderTable(points, unit) {
+  if (!els.dataTable) {
+    return;
+  }
+  const tbody = els.dataTable.querySelector("tbody") ?? els.dataTable;
+  while (tbody.firstChild) {
+    tbody.removeChild(tbody.firstChild);
+  }
+  for (const p of points) {
+    const tr = document.createElement("tr");
+    const tdPeriod = document.createElement("td");
+    tdPeriod.textContent = p.label;
+    const tdValue = document.createElement("td");
+    tdValue.dir = "ltr";
+    tdValue.textContent =
+      p.value != null ? `${formatNumber(p.value)} ${unit}` : "—";
+    tr.appendChild(tdPeriod);
+    tr.appendChild(tdValue);
+    tbody.appendChild(tr);
+  }
+}
+
+function updateChartAria(points, unit) {
+  if (!els.chart) {
+    return;
+  }
+  const count = points.filter((p) => p.value != null).length;
+  const summary = count
+    ? `${count} periods, unit ${unit}`
+    : t["chart.no_data"] ?? "no data";
+  els.chart.setAttribute("aria-label", summary);
+}
+
+function renderChartNote() {
+  if (!els.chartNote) {
+    return;
+  }
+  const show = state.granularity === "hour" && seriesMeta.estimated;
+  els.chartNote.hidden = !show;
+  if (show) {
+    setText(els.chartNote, t["chart.estimated_note"] ?? "");
+  }
+}
+
+function isEmptySeries(points) {
+  return !points.length || points.every((p) => p.value == null);
+}
+
+async function loadData() {
+  showState("loading");
+  try {
+    const { points, meta } = await fetchSeries({
+      utility: state.utility,
+      direction: state.direction,
+      granularity: state.granularity,
+      start: state.start,
+      end: state.end,
+    });
+    primarySeries = points;
+    seriesMeta = meta;
+
+    let comparison = null;
+    const compRange = comparisonRange();
+    if (compRange) {
+      const comp = await fetchSeries({
+        utility: state.utility,
+        direction: state.direction,
+        granularity: state.granularity,
+        start: compRange.start,
+        end: compRange.end,
+      });
+      comparison = alignByPosition(points, comp.points);
+    }
+    comparisonSeries = comparison;
+
+    if (isEmptySeries(points)) {
+      showState("empty");
+      if (chart) {
+        renderSeries(chart, {
+          primary: [],
+          comparison: null,
+          granularity: state.granularity,
+          unit: meta.unit,
+          estimated: meta.estimated,
+          t,
+        });
+      }
+      renderKpis(computeKpis([]), meta.unit);
+      renderTable([], meta.unit);
+      renderBreadcrumb();
+      renderChartNote();
+      return;
+    }
+
+    hideStates();
+    if (chart) {
+      renderSeries(chart, {
+        primary: points,
+        comparison,
+        granularity: state.granularity,
+        unit: meta.unit,
+        estimated: meta.estimated,
+        t,
+      });
+    }
+    renderKpis(computeKpis(points), meta.unit);
+    renderTable(points, meta.unit);
+    updateChartAria(points, meta.unit);
+    renderBreadcrumb();
+    renderChartNote();
+  } catch (err) {
+    showState("error");
+    const msg = err instanceof ApiError ? err.message : t["chart.error"] ?? String(err);
+    const errText =
+      els.stateError?.querySelector(".state-panel__message") ?? els.stateError;
+    setText(errText, msg);
+  }
+}
+
+function applyPreset(value) {
+  const end = todayIso();
+  let start = end;
+  if (value === "7d") {
+    start = addDays(end, -6);
+  } else if (value === "30d") {
+    start = addDays(end, -29);
+  } else if (value === "this_month") {
+    start = `${end.slice(0, 8)}01`;
+  } else if (value === "this_year") {
+    start = `${end.slice(0, 4)}-01-01`;
+  } else if (value === "all") {
+    const cov = window.__coverageFirstDate?.[state.utility];
+    start = cov ?? `${end.slice(0, 4)}-01-01`;
+  }
+  state.start = start;
+  state.end = end;
+  state.drillStack = [];
+  if (els.rangeStart) {
+    els.rangeStart.value = start;
+  }
+  if (els.rangeEnd) {
+    els.rangeEnd.value = end;
+  }
+  syncGranularityButtons();
+  writeHash();
+  loadData();
+}
+
+const relativeFmt = new Intl.RelativeTimeFormat("he", { numeric: "auto", style: "short" });
+
+function relativeTime(isoUtc) {
+  const diffSec = Math.round((Date.now() - new Date(isoUtc).getTime()) / 1000);
+  const abs = Math.abs(diffSec);
+  if (abs < 60) {
+    return relativeFmt.format(-Math.round(diffSec / 60) || 0, "minute");
+  }
+  if (abs < 3600) {
+    return relativeFmt.format(-Math.round(diffSec / 60), "minute");
+  }
+  if (abs < 86_400) {
+    return relativeFmt.format(-Math.round(diffSec / 3600), "hour");
+  }
+  return relativeFmt.format(-Math.round(diffSec / 86_400), "day");
+}
+
+async function updateStatus() {
+  if (!els.statusPill) {
+    return;
+  }
+  let status = "offline";
+  let readingTime = null;
+  try {
+    const health = await fetchHealth();
+    window.__coverageFirstDate = Object.fromEntries(
+      Object.entries(health.coverage ?? {}).map(([u, c]) => [u, c.first_date]),
+    );
+    const summaryRes = await fetch("/summary");
+    if (summaryRes.ok) {
+      lastSummaryFetch = await summaryRes.json();
+      const dir = state.utility === "water" ? "water" : state.direction;
+      const block = lastSummaryFetch.utilities?.[state.utility]?.[dir];
+      readingTime = block?.latest_register?.reading_time_utc ?? null;
+    }
+    if (readingTime) {
+      const ageH = (Date.now() - new Date(readingTime).getTime()) / 3_600_000;
+      status = ageH < STALE_HOURS ? "live" : "stale";
+    } else {
+      status = "stale";
+    }
+  } catch {
+    status = "offline";
+  }
+
+  els.statusPill.classList.remove(
+    "status-pill--live",
+    "status-pill--stale",
+    "status-pill--offline",
+  );
+  els.statusPill.classList.add(`status-pill--${status}`);
+  const label =
+    status === "live"
+      ? t["status.live"]
+      : status === "stale"
+        ? t["status.stale"]
+        : t["status.offline"];
+  const rel = readingTime ? relativeTime(readingTime) : "";
+  const agoTemplate = t["status.updated_ago"] ?? "";
+  const ago = rel ? agoTemplate.replace("{0}", rel).replace("{time}", rel) : "";
+  const textEl = els.statusPill.querySelector(".status-pill__text");
+  setText(textEl, ago || label);
+}
+
+async function refresh() {
+  await Promise.all([loadData(), updateStatus()]);
+}
+
+function startPoll() {
+  stopPoll();
+  pollTimer = setInterval(() => {
+    if (document.visibilityState === "visible") {
+      refresh();
+    }
+  }, POLL_MS);
+}
+
+function stopPoll() {
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+}
+
+function exportCsv() {
+  const unit = seriesMeta.unit ?? "";
+  const headerPeriod = t["table.period"] ?? "period";
+  const headerValue = t["table.value"] ?? "value";
+  const lines = [`\uFEFF${headerPeriod},${headerValue} (${unit})`];
+  for (const p of primarySeries) {
+    const val = p.value != null ? String(p.value) : "";
+    lines.push(`"${p.label.replace(/"/g, '""')}",${val}`);
+  }
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `consumption-${state.utility}-${state.start}-${state.end}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function bindEvents() {
+  els.utility?.addEventListener("click", (ev) => {
+    const btn = ev.target.closest("button");
+    if (!btn) {
+      return;
+    }
+    readUtilityFromEvent(btn);
+    state.drillStack = [];
+    syncUtilityButtons();
+    writeHash();
+    loadData();
+  });
+
+  els.granularity?.addEventListener("click", (ev) => {
+    const btn = ev.target.closest("button");
+    if (!btn || btn.disabled) {
+      return;
+    }
+    const g = btn.dataset.granularity ?? btn.value;
+    if (g) {
+      state.granularity = g;
+      state.drillStack = [];
+      syncGranularityButtons();
+      writeHash();
+      loadData();
+    }
+  });
+
+  els.rangeStart?.addEventListener("change", () => {
+    state.start = els.rangeStart.value;
+    if (state.end && state.start > state.end) {
+      state.end = state.start;
+      if (els.rangeEnd) {
+        els.rangeEnd.value = state.end;
+      }
+    }
+    state.drillStack = [];
+    syncGranularityButtons();
+    writeHash();
+    loadData();
+  });
+
+  els.rangeEnd?.addEventListener("change", () => {
+    state.end = els.rangeEnd.value;
+    if (state.start && state.end < state.start) {
+      state.start = state.end;
+      if (els.rangeStart) {
+        els.rangeStart.value = state.start;
+      }
+    }
+    state.drillStack = [];
+    syncGranularityButtons();
+    writeHash();
+    loadData();
+  });
+
+  els.preset?.addEventListener("change", () => {
+    if (els.preset.value) {
+      applyPreset(els.preset.value);
+    }
+  });
+
+  els.compare?.addEventListener("change", () => {
+    state.compare = els.compare.value || "none";
+    writeHash();
+    loadData();
+  });
+
+  els.retry?.addEventListener("click", () => loadData());
+
+  els.downloadCsv?.addEventListener("click", exportCsv);
+
+  els.tableToggle?.addEventListener("click", () => {
+    const wrap = document.getElementById("table-wrap");
+    if (!wrap) {
+      return;
+    }
+    const open = wrap.hidden;
+    wrap.hidden = !open;
+    els.tableToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  window.addEventListener("hashchange", () => {
+    applyHash(parseHash());
+    syncControlsFromState();
+    loadData();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      refresh();
+    }
+  });
+}
+
+function applyLocale(strings) {
+  for (const el of document.querySelectorAll("[data-i18n]")) {
+    const key = el.dataset.i18n;
+    if (key && strings[key] != null) {
+      setText(el, strings[key]);
+    }
+  }
+  for (const el of document.querySelectorAll("[data-i18n-aria]")) {
+    const key = el.dataset.i18nAria;
+    if (key && strings[key] != null) {
+      el.setAttribute("aria-label", strings[key]);
+    }
+  }
+  document.title = strings["app.title"] ?? document.title;
+}
+
+async function init() {
+  t = await fetchLocale();
+  applyLocale(t);
+
+  const hash = parseHash();
+  const defaults = defaultRange();
+  state.start = defaults.start;
+  state.end = defaults.end;
+  applyHash(hash);
+
+  if (!state.start || !state.end) {
+    Object.assign(state, defaults);
+  }
+
+  syncControlsFromState();
+  bindEvents();
+
+  if (els.chart) {
+    chart = createChart(els.chart, t);
+    onBarClick(handleBarClick);
+  }
+
+  await refresh();
+  startPoll();
+}
+
+init();

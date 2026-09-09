@@ -48,9 +48,10 @@ History backfill: `python scripts/backfill-loop.py` or wait for the `backfill` j
 
 ## State
 
-Production-ready on `master`. Raw reading log adapter live; spot-checked against portal
-2026-09-09. Full history backfill to 2024-01 runs in background (~27k readings total);
-`run.bat` keeps recent data fresh. Remote: `https://github.com/ItamarVa/ConsumptionMonitor.git`.
+Production-ready on `master`. Hebrew RTL dashboard at `/ui` (opened by `run.bat`). Raw
+reading log adapter live; spot-checked against portal 2026-09-09. Full history backfill to
+2024-01 runs in background (~27k readings total); `run.bat` keeps recent data fresh. Remote:
+`https://github.com/ItamarVa/ConsumptionMonitor.git`.
 
 ## Lessons
 
@@ -61,3 +62,5 @@ Production-ready on `master`. Raw reading log adapter live; spot-checked against
 - Portal reissues duplicate `reading_time_utc` with new `meter_data_id`; upsert on
   `(meter_id, reading_time_utc)`.
 - `if errorlevel 1 pause` misses negative PowerShell exit codes (-196608).
+- Portal reading cadence ~2h (elec ~120 min, water ~160 min) forces hourly view to be a
+  proportional estimate; day/month/year stay exact register deltas.

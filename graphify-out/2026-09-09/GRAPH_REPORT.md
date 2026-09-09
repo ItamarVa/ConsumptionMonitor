@@ -1,11 +1,11 @@
 # Graph Report - ConsumptionMonitor  (2026-09-09)
 
 ## Corpus Check
-- 42 files · ~25,920 words
+- 42 files · ~25,904 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1216 nodes · 3216 edges · 66 communities (56 shown, 10 thin omitted)
+- 1215 nodes · 3215 edges · 60 communities (51 shown, 9 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 128 edges (avg confidence: 0.84)
 - Token cost: 0 input · 0 output
 
@@ -39,11 +39,11 @@
 - tn
 - ho
 - xt
-- da
+- ua
 - a
-- ro
+- .getContext
 - oo
-- .update
+- o
 - .update
 - ._computeLabelItems
 - sn
@@ -51,24 +51,18 @@
 - .getDatasetMeta
 - updateElements
 - .notifyPlugins
-- s
+- i
 - config.py
-- bo
-- parse
-- readings.py
+- s
 - l
-- r
-- getPixelForValue
+- readings.py
+- inRange
 - connection_report.py
-- u
-- ya
-- .getContext
-- .getSortedVisibleDatasetMetas
-- wi
+- .configure
+- yn
 - connect
 - refresh
 - hs
-- .isHorizontal
 - .buildOrUpdateControllers
 - Dashboard frozen contract
 - e
@@ -101,7 +95,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (66 total, 10 thin omitted)
+## Communities (60 total, 9 thin omitted)
 
 ### Community 0 - "SourceError"
 Cohesion: 0.16
@@ -165,115 +159,95 @@ Nodes (3): Initialize-Venv(), Show-Phase(), Wait-WithProgress()
 
 ### Community 16 - "app.js"
 Cohesion: 0.06
-Nodes (71): ApiError, fetchHealth(), fetchLocale(), fetchSeries(), GRANULARITY_PATHS, normalizeDaily(), normalizeHourly(), normalizeMonthly() (+63 more)
+Nodes (70): ApiError, fetchHealth(), fetchLocale(), fetchSeries(), GRANULARITY_PATHS, normalizeDaily(), normalizeHourly(), normalizeMonthly() (+62 more)
 
 ### Community 18 - "chart.umd.min.js"
-Cohesion: 0.05
-Nodes (14): at(), getMaxOverflow(), labelColor(), labelPointStyle(), Ls(), Nn(), pe(), removeBox() (+6 more)
+Cohesion: 0.04
+Nodes (20): beforeUpdate(), cn(), dn(), fe(), Fs(), getMaxOverflow(), hn(), initialize() (+12 more)
 
 ### Community 19 - "jt"
 Cohesion: 0.08
 Nodes (16): Bt(), color(), Ee(), Ft(), Gt(), It(), jt(), kt() (+8 more)
 
 ### Community 24 - "ho"
-Cohesion: 0.09
-Nodes (12): beforeLayout(), buildLookupTable(), _generate(), getDecimalForValue(), _getTimestampsForTable(), getValueForPixel(), Go(), ho() (+4 more)
+Cohesion: 0.06
+Nodes (16): b(), beforeLayout(), buildLookupTable(), _generate(), getDecimalForValue(), _getTimestampsForTable(), getValueForPixel(), Go() (+8 more)
 
 ### Community 25 - "xt"
-Cohesion: 0.10
-Nodes (6): an(), as(), on, rs(), ts(), xt
+Cohesion: 0.09
+Nodes (7): an(), as(), ln(), on, rs(), ts(), xt
 
-### Community 26 - "da"
-Cohesion: 0.11
-Nodes (21): beforeDatasetDraw(), beforeDatasetsDraw(), ca, da(), ea(), fa(), ga(), getBasePixel() (+13 more)
+### Community 26 - "ua"
+Cohesion: 0.15
+Nodes (15): beforeDatasetDraw(), beforeDatasetsDraw(), ca, ea(), fa(), ga(), ia(), ma() (+7 more)
 
 ### Community 27 - "a"
-Cohesion: 0.13
-Nodes (13): a(), determineDataLimits(), eo(), Fs(), g(), g(), m(), o() (+5 more)
+Cohesion: 0.14
+Nodes (15): a(), determineDataLimits(), draw(), fo(), getRange(), ji(), pe(), pi() (+7 more)
 
-### Community 28 - "ro"
-Cohesion: 0.13
-Nodes (8): ao(), co(), Do(), inXRange(), inYRange(), Oe(), ro(), Y()
+### Community 28 - ".getContext"
+Cohesion: 0.10
+Nodes (13): ao(), Bi(), Ci(), co(), cs, da(), Do(), Fi() (+5 more)
 
 ### Community 29 - "oo"
-Cohesion: 0.21
-Nodes (4): io(), no(), oo, zi()
+Cohesion: 0.24
+Nodes (3): io(), no(), oo
 
-### Community 30 - ".update"
-Cohesion: 0.18
-Nodes (10): afterEvent(), Ba(), f(), ki(), po(), Ta(), update(), wa (+2 more)
+### Community 30 - "o"
+Cohesion: 0.07
+Nodes (30): Ae(), afterDraw(), afterEvent(), afterUpdate(), Ba(), eo(), f(), g() (+22 more)
 
 ### Community 31 - ".update"
 Cohesion: 0.13
 Nodes (3): d(), Di(), Pn()
 
-### Community 34 - "n"
-Cohesion: 0.05
-Nodes (13): Be(), ce(), de, dt(), en, fn(), gn(), he() (+5 more)
+### Community 32 - "._computeLabelItems"
+Cohesion: 0.11
+Nodes (6): getPixelForTick(), Gs(), Ie(), Us(), Y(), Ys()
 
-### Community 35 - ".getDatasetMeta"
-Cohesion: 0.22
-Nodes (3): aa(), afterDatasetsUpdate(), onClick()
+### Community 34 - "n"
+Cohesion: 0.16
+Nodes (3): fn(), gn(), n()
 
 ### Community 36 - "updateElements"
-Cohesion: 0.10
-Nodes (12): Bn(), _calculateBarValuePixels(), getLabelAndValue(), getLabelForValue(), jn(), parseArrayData(), parseObjectData(), parsePrimitiveData() (+4 more)
+Cohesion: 0.13
+Nodes (18): aa(), afterDatasetsUpdate(), Bn(), _calculateBarIndexPixels(), _calculateBarValuePixels(), _getAxis(), _getAxisCount(), getBasePixel() (+10 more)
 
-### Community 38 - "s"
+### Community 38 - "i"
 Cohesion: 0.08
-Nodes (26): bs(), ct(), et(), ge(), getRange(), _i(), is(), j() (+18 more)
+Nodes (16): bs(), ce(), ct(), de, dt(), en, et(), ge() (+8 more)
 
 ### Community 39 - "config.py"
 Cohesion: 0.13
 Nodes (12): _load_env_file(), Path, Runtime configuration, read once at import from the environment and an optional…, Populate os.environ from a KEY=VALUE file. Real environment variables always…, ConsumptionMonitor - local API for electricity and water consumption from…, Entry point: `python -m consumption` serves the API and runs the refresh…, parse_meters(), Map utility -> meter ids from a `user/info` body. An empty list for a utility… (+4 more)
 
-### Community 40 - "bo"
-Cohesion: 0.18
-Nodes (3): bo, H(), xo()
+### Community 40 - "s"
+Cohesion: 0.09
+Nodes (13): Be(), bo, H(), j(), label(), lo(), ne(), s() (+5 more)
 
-### Community 41 - "parse"
-Cohesion: 0.11
-Nodes (9): b(), buildTicks(), cn(), hn(), ii(), init(), mo(), parse() (+1 more)
+### Community 41 - "l"
+Cohesion: 0.15
+Nodes (11): buildTicks(), l(), ii(), mo(), parse(), parseArrayData(), parseObjectData(), parsePrimitiveData() (+3 more)
 
 ### Community 42 - "readings.py"
 Cohesion: 0.21
 Nodes (15): _buckets(), _exists_locally(), _hour_of_day(), _hour_of_timestamp(), _label(), parse_hourly(), date, datetime (+7 more)
 
-### Community 43 - "l"
-Cohesion: 0.27
-Nodes (5): afterDraw(), l(), Oi(), Si(), x()
-
-### Community 44 - "r"
-Cohesion: 0.13
-Nodes (22): ai(), average(), beforeDraw(), dataset(), draw(), fo(), getCenterPoint(), hi() (+14 more)
-
-### Community 45 - "getPixelForValue"
-Cohesion: 0.19
-Nodes (13): _calculateBarIndexPixels(), _getAxis(), _getAxisCount(), getFirstScaleIdForIndexAxis(), getPixelForTick(), getPixelForValue(), _getRuler(), _getStackCount() (+5 more)
+### Community 44 - "inRange"
+Cohesion: 0.11
+Nodes (22): ai(), average(), dataset(), getCenterPoint(), ha(), hi(), index(), inRange() (+14 more)
 
 ### Community 46 - "connection_report.py"
 Cohesion: 0.24
 Nodes (12): parse_reading_page(), Return the `items` list from one paginated reading-log response., Blank the value of every credential-looking JSON key in `text`., redact(), _dump(), main(), _mask(), _meters_section() (+4 more)
 
-### Community 47 - "u"
-Cohesion: 0.18
-Nodes (7): addBox(), beforeUpdate(), configure(), initialize(), reset(), start(), u()
+### Community 47 - ".configure"
+Cohesion: 0.22
+Nodes (5): addBox(), configure(), Nn(), start(), wn()
 
-### Community 48 - "ya"
-Cohesion: 0.23
-Nodes (3): afterUpdate(), va(), ya
-
-### Community 49 - ".getContext"
-Cohesion: 0.27
-Nodes (4): Bi(), Ci(), cs, Fi()
-
-### Community 50 - ".getSortedVisibleDatasetMetas"
-Cohesion: 0.18
-Nodes (4): es(), generateLabels(), Ie(), Ni()
-
-### Community 51 - "wi"
-Cohesion: 0.32
-Nodes (5): lo(), pt(), ra(), wi(), Z()
+### Community 50 - "yn"
+Cohesion: 0.15
+Nodes (5): beforeDraw(), es(), generateLabels(), _i(), yn()
 
 ### Community 52 - "connect"
 Cohesion: 0.22
@@ -284,36 +258,36 @@ Cohesion: 0.25
 Nodes (9): Force one job to run now, for testing a freshly implemented source adapter., refresh(), _reject_cross_site_refresh(), security_headers(), middleware, post, Endpoint Reference Table, Module Layout (+1 more)
 
 ### Community 57 - ".buildOrUpdateControllers"
-Cohesion: 0.20
-Nodes (3): kn(), ln(), qn()
+Cohesion: 0.16
+Nodes (4): kn(), qn(), removeBox(), stop()
 
 ### Community 58 - "Dashboard frozen contract"
 Cohesion: 0.33
 Nodes (5): 1. Hourly endpoint JSON, 2. The pure function, 3. CSS custom properties, 4. Locale keys and JS module exports, Dashboard frozen contract
 
 ### Community 61 - "e"
-Cohesion: 0.22
-Nodes (13): dn(), e(), ei(), fe(), gi(), je(), mi(), ps() (+5 more)
+Cohesion: 0.09
+Nodes (13): at(), e(), ei(), gi(), je(), mi(), qe(), ti() (+5 more)
 
 ## Knowledge Gaps
-- **34 isolated node(s):** `IntervalReading`, `GRANULARITY_PATHS`, `dashboardContent`, `els`, `state` (+29 more)
+- **33 isolated node(s):** `IntervalReading`, `GRANULARITY_PATHS`, `els`, `state`, `t` (+28 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `tn` connect `tn` to `chart.umd.min.js`, `ho`, `a`, `ro`, `.update`, `._computeLabelItems`, `n`, `.getDatasetMeta`, `updateElements`, `.notifyPlugins`, `s`, `bo`, `parse`, `l`, `r`, `getPixelForValue`, `u`, `.getContext`, `.getSortedVisibleDatasetMetas`, `.isHorizontal`, `.buildOrUpdateControllers`?**
-  _High betweenness centrality (0.076) - this node is a cross-community bridge._
-- **Why does `n()` connect `n` to `chart.umd.min.js`, `tn`, `ho`, `xt`, `da`, `a`, `ro`, `oo`, `.update`, `.update`, `._computeLabelItems`, `sn`, `.getDatasetMeta`, `updateElements`, `s`, `l`, `r`, `getPixelForValue`, `u`, `.isHorizontal`, `e`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
-- **Why does `d()` connect `.update` to `sn`, `n`, `updateElements`, `.notifyPlugins`, `s`, `parse`, `r`, `ya`, `chart.umd.min.js`, `ho`, `xt`, `e`, `.update`?**
-  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **Why does `tn` connect `tn` to `._computeLabelItems`, `.getDatasetMeta`, `.notifyPlugins`, `i`, `s`, `l`, `inRange`, `.configure`, `chart.umd.min.js`, `yn`, `ho`, `.buildOrUpdateControllers`, `a`, `.getContext`, `o`, `.update`?**
+  _High betweenness centrality (0.075) - this node is a cross-community bridge._
+- **Why does `n()` connect `n` to `._computeLabelItems`, `.getDatasetMeta`, `i`, `s`, `l`, `.configure`, `chart.umd.min.js`, `oo`, `tn`, `ho`, `xt`, `ua`, `a`, `.getContext`, `e`, `o`, `.update`?**
+  _High betweenness centrality (0.025) - this node is a cross-community bridge._
+- **Why does `SourceError` connect `SourceError` to `test_source_session.py`, `config.py`, `records.py`, `readings.py`, `source.py`, `connection_report.py`?**
+  _High betweenness centrality (0.013) - this node is a cross-community bridge._
 - **Are the 13 inferred relationships involving `s()` (e.g. with `beforeUpdate()` and `bs()`) actually correct?**
   _`s()` has 13 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 14 inferred relationships involving `a()` (e.g. with `ai()` and `draw()`) actually correct?**
   _`a()` has 14 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 5 inferred relationships involving `SourceError` (e.g. with `_Portal` and `test_malformed_row_raises_with_excerpt()`) actually correct?**
   _`SourceError` has 5 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `IntervalReading`, `GRANULARITY_PATHS`, `dashboardContent` to the rest of the system?**
-  _34 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `IntervalReading`, `GRANULARITY_PATHS`, `els` to the rest of the system?**
+  _33 weakly-connected nodes found - possible documentation gaps or missing edges._

@@ -1,9 +1,10 @@
 """Read-only HTTP API over stored meter readings, shaped for Home Assistant REST sensors.
 
 Binds to 127.0.0.1 by default with no authentication — safe only on loopback.
-Every query parameter is validated here; this is the trust boundary.
-Storage queries are implemented in db.py per the records.py contract.
-Depended on by: __main__.py.
+TrustedHostMiddleware limits Host to ALLOWED_HOSTS (IPv4 loopback only; HOST binds
+IPv4). No CORS middleware — the dashboard is same-origin at /ui. Every query parameter
+is validated here; this is the trust boundary. Storage queries are in db.py per the
+records.py contract. Depended on by: __main__.py.
 """
 
 from __future__ import annotations
@@ -14,9 +15,12 @@ from contextlib import asynccontextmanager
 from datetime import date, timedelta
 from typing import Annotated, Literal
 
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
+from starlette.middleware.trustedhost import TrustedHostMiddleware
+from starlette.staticfiles import StaticFiles
 
 from . import config, db, jobs, source
+from .hourly import spread_to_hours
 from .records import UNITS, UTILITIES
 
 # Raw and interval series can explode in size; aggregated endpoints span full history.
@@ -32,6 +36,12 @@ _WATER_DIRECTIONS = ("water",)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    if config.HOST not in ("127.0.0.1", "localhost"):
+        print(
+            "WARNING: ConsumptionMonitor is bound to a non-loopback address "
+            f"({config.HOST}) with no authentication.",
+            flush=True,
+        )
     db.connect().close()  # create the file and schema before serving anything
     task = asyncio.create_task(jobs.loop())
     try:
@@ -45,6 +55,28 @@ app = FastAPI(
     summary="Local electricity and water consumption API backed by a mycitygrid scraper.",
     lifespan=lifespan,
 )
+
+_SECURITY_HEADERS = {
+    "Content-Security-Policy": (
+        "default-src 'self'; script-src 'self'; style-src 'self'; "
+        "img-src 'self' data:; connect-src 'self'; base-uri 'none'; "
+        "form-action 'none'; frame-ancestors 'none'"
+    ),
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "no-referrer",
+}
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+    for key, value in _SECURITY_HEADERS.items():
+        response.headers[key] = value
+    return response
+
+
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=config.ALLOWED_HOSTS)
 
 
 def get_conn():
@@ -123,6 +155,22 @@ def _primary_meter(conn: sqlite3.Connection, utility: str) -> str:
 
 def _unit(utility: str, direction: str) -> str:
     return UNITS.get((utility, direction), "")
+
+
+def _register_field(utility: str, direction: str) -> str:
+    if utility == "water":
+        return "total_water_data"
+    if direction == "import":
+        return "total_import_kwh"
+    if direction == "export":
+        return "total_export_kwh"
+    raise ValueError(f"unknown utility/direction: {utility}/{direction}")
+
+
+def _reject_cross_site_refresh(request: Request) -> None:
+    site = request.headers.get("sec-fetch-site")
+    if site is not None and site not in ("same-origin", "none"):
+        raise HTTPException(403, "cross-site refresh not allowed")
 
 
 def _period_total(
@@ -205,6 +253,28 @@ def read_raw(
         "start": start.isoformat(),
         "end": end.isoformat(),
         "readings": db.meter_readings(conn, meter_id, start, end),
+    }
+
+
+@app.get("/readings/hourly")
+def read_hourly(
+    conn: Conn,
+    utility: Utility,
+    direction: Direction,
+    date_: date = Query(alias="date"),
+) -> dict:
+    _validate_direction(utility, direction)
+    meter_id = _primary_meter(conn, utility)
+    rows = db.meter_readings(conn, meter_id, date_ - timedelta(days=1), date_)
+    hours = spread_to_hours(rows, _register_field(utility, direction), date_, config.LOCAL_TZ)
+    return {
+        "utility": utility,
+        "direction": direction,
+        "date": date_.isoformat(),
+        "unit": _unit(utility, direction),
+        "meter_id": meter_id,
+        "estimated": True,
+        "hours": hours,
     }
 
 
@@ -326,8 +396,9 @@ def summary(conn: Conn) -> dict:
 
 
 @app.post("/refresh/{job}")
-def refresh(conn: Conn, job: str) -> dict:
+def refresh(conn: Conn, job: str, request: Request) -> dict:
     """Force one job to run now, for testing a freshly implemented source adapter."""
+    _reject_cross_site_refresh(request)
     if job not in jobs.JOBS:
         raise HTTPException(404, f"unknown job: {job}")
     rows = jobs.run_job(conn, job)
@@ -338,6 +409,7 @@ def refresh(conn: Conn, job: str) -> dict:
 def index() -> dict:
     return {
         "docs": "/docs",
+        "ui": "/ui",
         "endpoints": [
             "/health",
             "/jobs",
@@ -345,8 +417,14 @@ def index() -> dict:
             "/alerts",
             "/readings/raw",
             "/readings/intervals",
+            "/readings/hourly",
             "/readings/daily",
             "/readings/monthly",
             "/readings/yearly",
         ],
     }
+
+
+_ui_dir = config.ROOT / "web"
+_ui_dir.mkdir(exist_ok=True)
+app.mount("/ui", StaticFiles(directory=_ui_dir, html=True), name="ui")

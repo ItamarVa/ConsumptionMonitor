@@ -10,6 +10,7 @@ import asyncio
 import sqlite3
 import sys
 import tempfile
+import types
 from contextlib import contextmanager
 from datetime import date
 from pathlib import Path
@@ -17,9 +18,25 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+# Wave 1 parallel stub: agent A owns consumption.hourly; use real module when present.
+if "consumption.hourly" not in sys.modules:
+    try:
+        import consumption.hourly  # noqa: F401
+    except ImportError:
+        _hourly_stub = types.ModuleType("consumption.hourly")
+
+        def _stub_spread_to_hours(readings, field, day, tz):
+            return [
+                {"hour": "00:00", "value": 0.412, "source_intervals": 1, "partial": False},
+                {"hour": "01:00", "value": None, "source_intervals": 0, "partial": True},
+            ]
+
+        _hourly_stub.spread_to_hours = _stub_spread_to_hours
+        sys.modules["consumption.hourly"] = _hourly_stub
+
 from fastapi.testclient import TestClient  # noqa: E402
 
-from consumption import api, db, jobs  # noqa: E402
+from consumption import api, config, db, jobs  # noqa: E402
 from consumption.records import SCHEMA  # noqa: E402
 
 TODAY = date(2026, 9, 9)
@@ -126,7 +143,7 @@ def _test_client():
             patch.object(jobs, "loop", _idle),
             patch.object(jobs, "local_today", lambda _now=None: TODAY),
         ):
-            with TestClient(api.app) as client:
+            with TestClient(api.app, base_url="http://127.0.0.1") as client:
                 yield client
 
 
@@ -197,10 +214,79 @@ def test_jobs_use_reading_log_schedule() -> None:
 
 def test_index_lists_new_endpoints() -> None:
     with _test_client() as client:
-        paths = client.get("/").json()["endpoints"]
+        body = client.get("/").json()
+    assert body["ui"] == "/ui"
+    paths = body["endpoints"]
     assert "/readings/raw" in paths
     assert "/readings/intervals" in paths
-    assert "/readings/hourly" not in paths
+    assert "/readings/hourly" in paths
+
+
+def test_hourly_shape_and_bad_direction() -> None:
+    with _test_client() as client:
+        r = client.get(
+            "/readings/hourly",
+            params={"utility": "electricity", "direction": "import", "date": "2026-09-09"},
+        )
+        assert r.status_code == 200, r.text
+        body = r.json()
+        assert body["utility"] == "electricity"
+        assert body["direction"] == "import"
+        assert body["date"] == "2026-09-09"
+        assert body["unit"] == "kWh"
+        assert body["meter_id"] == ELEC_METER
+        assert body["estimated"] is True
+        assert isinstance(body["hours"], list)
+        assert len(body["hours"]) >= 1
+        hour = body["hours"][0]
+        assert set(hour) == {"hour", "value", "source_intervals", "partial"}
+
+        bad = client.get(
+            "/readings/hourly",
+            params={"utility": "water", "direction": "import", "date": "2026-09-09"},
+        )
+    assert bad.status_code == 422, bad.text
+
+
+def test_untrusted_host_rejected() -> None:
+    with _test_client() as client:
+        r = client.get("/health", headers={"Host": "evil.com"})
+    assert r.status_code == 400, r.text
+
+
+def test_refresh_sec_fetch_site_guard() -> None:
+    with (
+        _test_client() as client,
+        patch.object(jobs, "run_job", return_value=0),
+    ):
+        blocked = client.post(
+            "/refresh/recent",
+            headers={"Sec-Fetch-Site": "cross-site"},
+        )
+        allowed = client.post("/refresh/recent")
+    assert blocked.status_code == 403, blocked.text
+    assert allowed.status_code == 200, allowed.text
+    assert allowed.json()["job"] == "recent"
+
+
+def test_ui_index_html() -> None:
+    ui_file = config.ROOT / "web" / "index.html"
+    if not ui_file.is_file():
+        print("  skip test_ui_index_html (web/index.html not yet created)")
+        return
+    with _test_client() as client:
+        r = client.get("/ui/index.html")
+    assert r.status_code == 200, r.text
+
+
+def test_security_headers_present() -> None:
+    with _test_client() as client:
+        r = client.get("/health")
+    assert r.status_code == 200, r.text
+    assert "default-src 'self'" in r.headers.get("content-security-policy", "")
+    assert r.headers.get("x-content-type-options") == "nosniff"
+    assert r.headers.get("x-frame-options") == "DENY"
+    assert r.headers.get("referrer-policy") == "no-referrer"
 
 
 def main() -> int:

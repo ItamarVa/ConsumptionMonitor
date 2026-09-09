@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="app.title"></title>
+  <link rel="stylesheet" href="/ui/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-brand">
+      <h1 class="site-title" data-i18n="app.title"></h1>
+      <p class="site-subtitle" data-i18n="app.subtitle"></p>
+    </div>
+    <div id="status-pill" class="status-pill status-pill--offline" role="status" aria-live="polite">
+      <span class="status-pill__dot" aria-hidden="true"></span>
+      <span class="status-pill__text" data-i18n="status.offline"></span>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <div id="state-loading" class="state-panel card" hidden>
+      <div class="skeleton-grid" aria-hidden="true">
+        <div class="skeleton-block skeleton-block--kpi"></div>
+        <div class="skeleton-block skeleton-block--kpi"></div>
+        <div class="skeleton-block skeleton-block--kpi"></div>
+        <div class="skeleton-block skeleton-block--kpi"></div>
+      </div>
+      <div class="skeleton-block skeleton-block--chart" aria-hidden="true"></div>
+      <p class="state-panel__message" data-i18n="status.updated_ago"></p>
+    </div>
+
+    <div id="state-empty" class="state-panel card" hidden>
+      <div class="state-panel__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+        </svg>
+      </div>
+      <p class="state-panel__message" data-i18n="chart.no_data"></p>
+    </div>
+
+    <div id="state-error" class="state-panel card" hidden>
+      <div class="state-panel__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+        </svg>
+      </div>
+      <p class="state-panel__message" data-i18n="chart.error"></p>
+      <button type="button" id="retry" class="btn-primary" data-i18n="chart.retry"></button>
+    </div>
+
+    <div class="dashboard__content">
+      <section class="controls-card card">
+        <div class="controls-row">
+          <div class="control-group">
+            <span class="control-label" id="utility-label" data-i18n="utility.electricity_import"></span>
+            <div id="utility" class="segment-group" role="group" aria-labelledby="utility-label">
+              <button type="button" class="segment-btn" data-utility="electricity" data-direction="import" aria-pressed="true" data-i18n="utility.electricity_import"></button>
+              <button type="button" class="segment-btn" data-utility="electricity" data-direction="export" aria-pressed="false" data-i18n="utility.electricity_export"></button>
+              <button type="button" class="segment-btn" data-utility="water" data-direction="none" aria-pressed="false" data-i18n="utility.water"></button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <span class="control-label" id="granularity-label" data-i18n="granularity.day"></span>
+            <div id="granularity" class="segment-group" role="group" aria-labelledby="granularity-label">
+              <button type="button" class="segment-btn" data-granularity="hour" aria-pressed="false" data-i18n="granularity.hour"></button>
+              <button type="button" class="segment-btn" data-granularity="day" aria-pressed="true" data-i18n="granularity.day"></button>
+              <button type="button" class="segment-btn" data-granularity="month" aria-pressed="false" data-i18n="granularity.month"></button>
+              <button type="button" class="segment-btn" data-granularity="year" aria-pressed="false" data-i18n="granularity.year"></button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="range-start" data-i18n="range.from"></label>
+            <input type="date" id="range-start" class="date-input" name="range-start">
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="range-end" data-i18n="range.to"></label>
+            <input type="date" id="range-end" class="date-input" name="range-end">
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="preset" data-i18n="preset.30d"></label>
+            <select id="preset" class="select-input" name="preset">
+              <option value="7d" data-i18n="preset.7d"></option>
+              <option value="30d" selected data-i18n="preset.30d"></option>
+              <option value="this_month" data-i18n="preset.this_month"></option>
+              <option value="this_year" data-i18n="preset.this_year"></option>
+              <option value="all" data-i18n="preset.all"></option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="compare" data-i18n="compare.none"></label>
+            <select id="compare" class="select-input" name="compare">
+              <option value="none" selected data-i18n="compare.none"></option>
+              <option value="previous" data-i18n="compare.previous"></option>
+              <option value="last_year" data-i18n="compare.last_year"></option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="kpi-grid">
+        <article class="kpi-card card">
+          <h2 class="kpi-label" data-i18n="kpi.total"></h2>
+          <div class="kpi-value-row">
+            <span id="kpi-total" class="kpi-value" aria-live="polite">—</span>
+            <span class="kpi-unit" data-kpi-unit></span>
+          </div>
+          <p class="kpi-delta" data-kpi-delta hidden>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0-7 7m7-7 7 7" />
+            </svg>
+            <span data-kpi-delta-value></span>
+          </p>
+        </article>
+
+        <article class="kpi-card card">
+          <h2 class="kpi-label" data-i18n="kpi.average"></h2>
+          <div class="kpi-value-row">
+            <span id="kpi-average" class="kpi-value" aria-live="polite">—</span>
+            <span class="kpi-unit" data-kpi-unit></span>
+          </div>
+          <p class="kpi-delta" data-kpi-delta hidden>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0-7 7m7-7 7 7" />
+            </svg>
+            <span data-kpi-delta-value></span>
+          </p>
+        </article>
+
+        <article class="kpi-card card">
+          <h2 class="kpi-label" data-i18n="kpi.peak"></h2>
+          <div class="kpi-value-row">
+            <span id="kpi-peak" class="kpi-value" aria-live="polite">—</span>
+            <span class="kpi-unit" data-kpi-unit></span>
+          </div>
+          <p class="kpi-delta" data-kpi-delta hidden>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0-7 7m7-7 7 7" />
+            </svg>
+            <span data-kpi-delta-value></span>
+          </p>
+        </article>
+
+        <article class="kpi-card card">
+          <h2 class="kpi-label" data-i18n="kpi.latest"></h2>
+          <div class="kpi-value-row">
+            <span id="kpi-latest" class="kpi-value" aria-live="polite">—</span>
+            <span class="kpi-unit" data-kpi-unit></span>
+          </div>
+          <p class="kpi-delta" data-kpi-delta hidden>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0-7 7m7-7 7 7" />
+            </svg>
+            <span data-kpi-delta-value></span>
+          </p>
+        </article>
+      </section>
+
+      <nav id="breadcrumb" class="breadcrumb" hidden></nav>
+
+      <section class="chart-card card">
+        <header class="chart-header">
+          <h2 class="chart-title" id="chart-title" data-i18n="app.title"></h2>
+          <button type="button" id="download-csv" class="icon-btn" data-i18n-aria="chart.download_csv">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+          </button>
+        </header>
+        <div class="chart-wrap">
+          <canvas id="chart" role="img" aria-label=""></canvas>
+        </div>
+        <p id="chart-note" class="chart-note" data-i18n="chart.estimated_note" hidden></p>
+      </section>
+
+      <section class="table-section card">
+        <div class="table-section__header">
+          <h2 class="table-section__title" data-i18n="table.period"></h2>
+          <button type="button" id="table-toggle" class="icon-btn" aria-expanded="false" data-i18n-aria="table.toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
+        </div>
+        <div class="table-wrap" id="table-wrap" hidden>
+          <table id="data-table" class="data-table">
+            <caption data-i18n="table.period"></caption>
+            <thead>
+              <tr>
+                <th scope="col" data-i18n="table.period"></th>
+                <th scope="col" data-i18n="table.value"></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="/ui/vendor/chart.umd.min.js"></script>
+  <script type="module" src="/ui/app.js"></script>
+</body>
+</html>
