@@ -1,0 +1,20 @@
+---
+description: Keep the graphify knowledge graph current in this project
+alwaysApply: true
+---
+
+# Knowledge graph (graphify)
+
+This project keeps a graph at `graphify-out/`. Full skill: `~/.cursor/skills/graphify/SKILL.md`.
+
+## Keeping it current
+
+- The post-commit hook (`graphify hook install`) rebuilds the graph after every commit. Code changes are re-extracted from the AST with **no model calls**, so ongoing updates are free. Verify with `graphify hook status` and reinstall if it is missing.
+- Docs, papers, and images are skipped by the hook and need `/graphify . --update`. Run it after changing them, and after a merge or pull.
+- At session start, run `/graphify . --update` if `graphify-out/graph.json` is older than the last commit. Report the result in one line. Skip it when the task obviously does not need the graph — a rename, a comment, a one-file edit.
+- Never rebuild from scratch when `--update` will do. Respect the flags from the last run (`--no-viz`, `--budget`, `--mode deep`).
+- Never edit anything under `graphify-out/` by hand.
+
+## Parallel agents
+
+Run `graphify . --watch` in a background terminal during multi-agent sessions. Its 3-second debounce collapses a wave of parallel writes into one rebuild instead of one per file.

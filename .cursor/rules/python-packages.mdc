@@ -1,0 +1,19 @@
+---
+description: Preferred third-party Python packages
+globs: **/*.py
+alwaysApply: false
+---
+
+# Preferred Python packages
+
+Reach for these when relevant — do not add dependencies for trivial cases, and respect the existing style of an established codebase.
+
+- **Visual output:** `rich` for formatted terminal output, tables, and progress; `tqdm` for loop progress bars.
+- **Logging:** `loguru` instead of the built-in `logging`.
+- **Performance:** `polars` over `pandas` for new data work; `numba` (`@jit`) for numerical hot loops; `joblib` for parallelism and disk caching.
+- **HTTP:** `httpx` for async or modern work; `requests` for simple sync scripts.
+- **Validation:** `pydantic` for data validation and structured models.
+- **Config:** `python-dotenv` for environment variables.
+- **CLI:** `typer` instead of `argparse`.
+- **Dates:** `arrow` or `pendulum` over `datetime` for complex date logic.
+- **Quality:** `ruff` (lint and format), `pytest` (testing), `mypy`/`pyright` (typing).

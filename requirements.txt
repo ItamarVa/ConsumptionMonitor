@@ -1,0 +1,10 @@
+# Pinned exactly, and every version is at least 14 days old at the time of pinning.
+fastapi==0.141.1
+uvicorn==0.52.4
+# Scraping the portal: HTTP session with browser impersonation and cookie persistence.
+# The [fetchers] extra is required even for the plain HTTP session - curl_cffi lives
+# there. Browser-based fetchers would additionally need a one-off `scrapling install`
+# to download a browser; consumption/source.py deliberately avoids needing that.
+scrapling[fetchers]==0.4.15
+# Windows ships no timezone database; zoneinfo needs this for Asia/Jerusalem.
+tzdata==2026.3
