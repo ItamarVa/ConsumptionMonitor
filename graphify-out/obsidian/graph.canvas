@@ -1,0 +1,2690 @@
+{
+  "nodes": [
+    {
+      "id": "g0",
+      "type": "group",
+      "label": "Mycitygrid Source Adapter",
+      "x": 0,
+      "y": 0,
+      "width": 1320,
+      "height": 720,
+      "color": "1"
+    },
+    {
+      "id": "n_consumption_source_rationale_50",
+      "type": "file",
+      "file": "A logged-in session. Cookies live for the duration of the `with` block only..md",
+      "x": 20,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_rationale_1",
+      "type": "file",
+      "file": "Adapter for www.mycitygrid.com - the only module that talks to the portal.\u2026.md",
+      "x": 220,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_rationale_67",
+      "type": "file",
+      "file": "Authenticate `session` against config.MYCITYGRID_BASE_URL. To implement open\u2026.md",
+      "x": 420,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_readme_status_not_implemented",
+      "type": "file",
+      "file": "Fetching Not Implemented Status.md",
+      "x": 620,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_impersonate",
+      "type": "file",
+      "file": "IMPERSONATE fingerprint.md",
+      "x": 820,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_cursor_memory_index_lazy_scrapling_import",
+      "type": "file",
+      "file": "Lazy Scrapling Import Lesson.md",
+      "x": 1020,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_base_url",
+      "type": "file",
+      "file": "MYCITYGRID_BASE_URL setting.md",
+      "x": 20,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_rationale_80",
+      "type": "file",
+      "file": "Pull hourly buckets for local dates start..end inclusive from a logged-in\u2026.md",
+      "x": 220,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_reading",
+      "type": "file",
+      "file": "Reading dataclass.md",
+      "x": 420,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_rationale_91",
+      "type": "file",
+      "file": "Return hourly consumption for local dates start..end inclusive. Re-fetching a\u2026.md",
+      "x": 620,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_runtimeerror",
+      "type": "file",
+      "file": "RuntimeError.md",
+      "x": 820,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_source_ready",
+      "type": "file",
+      "file": "SOURCE_READY flag.md",
+      "x": 1020,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_cursor_memory_index_scaffold_state",
+      "type": "file",
+      "file": "Scaffold Complete, Fetching Unimplemented.md",
+      "x": 20,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_sourceerror",
+      "type": "file",
+      "file": "SourceError.md",
+      "x": 220,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_error",
+      "type": "file",
+      "file": "SourceError error.md",
+      "x": 420,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_sourcenotready",
+      "type": "file",
+      "file": "SourceNotReady.md",
+      "x": 620,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_readme_stealthy_session_fallback",
+      "type": "file",
+      "file": "StealthySession Fallback Note.md",
+      "x": 820,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_rationale_41",
+      "type": "file",
+      "file": "The adapter is not implemented or not configured. Not a transient failure..md",
+      "x": 1020,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_rationale_45",
+      "type": "file",
+      "file": "The portal was reached but did not answer as expected. Retrying later may work..md",
+      "x": 20,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_units",
+      "type": "file",
+      "file": "UNITS map.md",
+      "x": 220,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_utilities",
+      "type": "file",
+      "file": "UTILITIES tuple.md",
+      "x": 420,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_cursor_memory_index_undocumented_portal",
+      "type": "file",
+      "file": "Undocumented mycitygrid Portal Lesson.md",
+      "x": 620,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_fetch_range",
+      "type": "file",
+      "file": "_fetch_range (unimplemented).md",
+      "x": 820,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_login",
+      "type": "file",
+      "file": "_login (unimplemented).md",
+      "x": 1020,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_py_date",
+      "type": "file",
+      "file": "date_3.md",
+      "x": 20,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_fetch_hourly",
+      "type": "file",
+      "file": "fetch_hourly.md",
+      "x": 220,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_readme_mycitygrid_portal",
+      "type": "file",
+      "file": "mycitygrid.com Portal.md",
+      "x": 420,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_portal_session",
+      "type": "file",
+      "file": "portal_session.md",
+      "x": 620,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_cursor_memory_index_scrapling_fetchers_extra",
+      "type": "file",
+      "file": "scraplingfetchers Extra Lesson.md",
+      "x": 820,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_requirements_scrapling",
+      "type": "file",
+      "file": "scraplingfetchers dependency.md",
+      "x": 1020,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source",
+      "type": "file",
+      "file": "source.py.md",
+      "x": 20,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g1",
+      "type": "group",
+      "label": "Self-Check Suite",
+      "x": 1400,
+      "y": 0,
+      "width": 1100,
+      "height": 620,
+      "color": "2"
+    },
+    {
+      "id": "n_tests_test_aggregation_rationale_29",
+      "type": "file",
+      "file": "2200 UTC in January is already the next day in AsiaJerusalem (UTC+2)..md",
+      "x": 1420,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_rationale_90",
+      "type": "file",
+      "file": "A missing adapter must land in job_state as an error, never kill the scheduler..md",
+      "x": 1620,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_local_tz",
+      "type": "file",
+      "file": "LOCAL_TZ setting.md",
+      "x": 1820,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_py_path",
+      "type": "file",
+      "file": "Path_1.md",
+      "x": 2020,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_rationale_41",
+      "type": "file",
+      "file": "Re-fetching a stored hour must correct it in place, not duplicate it..md",
+      "x": 2220,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_rationale_1",
+      "type": "file",
+      "file": "Self-check for the two things in this project that are easy to get silently\u2026.md",
+      "x": 1420,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_main",
+      "type": "file",
+      "file": "Self-check runner main.md",
+      "x": 1620,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_rationale_70",
+      "type": "file",
+      "file": "Wednesday 2026-09-09 the last full Sunday-Saturday week is 08-30..09-05..md",
+      "x": 1820,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_reading_helper",
+      "type": "file",
+      "file": "_reading test helper.md",
+      "x": 2020,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_reading",
+      "type": "file",
+      "file": "_reading().md",
+      "x": 2220,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_connect",
+      "type": "file",
+      "file": "connect (SQLite connection).md",
+      "x": 1420,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_py_datetime",
+      "type": "file",
+      "file": "datetime_2.md",
+      "x": 1620,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_get_conn",
+      "type": "file",
+      "file": "get_conn dependency.md",
+      "x": 1820,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation",
+      "type": "file",
+      "file": "test_aggregation.py.md",
+      "x": 2020,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_due",
+      "type": "file",
+      "file": "test_due.md",
+      "x": 2220,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_test_due",
+      "type": "file",
+      "file": "test_due().md",
+      "x": 1420,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_test_job_ranges",
+      "type": "file",
+      "file": "test_job_ranges().md",
+      "x": 1620,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_local_day_mapping",
+      "type": "file",
+      "file": "test_local_day_mapping.md",
+      "x": 1820,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_test_local_day_mapping",
+      "type": "file",
+      "file": "test_local_day_mapping().md",
+      "x": 2020,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_test_missing_source_is_recorded_not_raised",
+      "type": "file",
+      "file": "test_missing_source_is_recorded_not_raised().md",
+      "x": 2220,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_naive_timestamp_rejected",
+      "type": "file",
+      "file": "test_naive_timestamp_rejected.md",
+      "x": 1420,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_test_naive_timestamp_rejected",
+      "type": "file",
+      "file": "test_naive_timestamp_rejected().md",
+      "x": 1620,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "type": "file",
+      "file": "test_refetch_overwrites_and_daily_sums().md",
+      "x": 1820,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_requirements_tzdata",
+      "type": "file",
+      "file": "tzdata dependency.md",
+      "x": 2020,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_upsert_readings",
+      "type": "file",
+      "file": "upsert_readings.md",
+      "x": 2220,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g2",
+      "type": "group",
+      "label": "SQLite Storage And Aggregation",
+      "x": 2580,
+      "y": 0,
+      "width": 1100,
+      "height": 620,
+      "color": "3"
+    },
+    {
+      "id": "n_consumption_db_rationale_176",
+      "type": "file",
+      "file": "A job with no recorded run is always due, so a restart catches up on missed\u2026.md",
+      "x": 2600,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_py_connection",
+      "type": "file",
+      "file": "Connection.md",
+      "x": 2800,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_cursor_memory_index_hourly_granularity",
+      "type": "file",
+      "file": "Hourly-Only Granularity Convention.md",
+      "x": 3000,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_cursor_memory_index_idempotent_jobs",
+      "type": "file",
+      "file": "Idempotent Refresh Jobs Convention.md",
+      "x": 3200,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_readme_storage_model",
+      "type": "file",
+      "file": "One Row Per Utility, Meter, Hour.md",
+      "x": 3400,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_readme_refresh_schedule",
+      "type": "file",
+      "file": "Refresh Schedule Table.md",
+      "x": 2600,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_rationale_1",
+      "type": "file",
+      "file": "SQLite storage for hourly consumption plus the scheduler's job bookkeeping. The\u2026.md",
+      "x": 2800,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_utc_now",
+      "type": "file",
+      "file": "_utc_now().md",
+      "x": 3000,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_daily",
+      "type": "file",
+      "file": "daily aggregation query.md",
+      "x": 3200,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_py_date",
+      "type": "file",
+      "file": "date_1.md",
+      "x": 3400,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_py_datetime",
+      "type": "file",
+      "file": "datetime.md",
+      "x": 2600,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db",
+      "type": "file",
+      "file": "db.py.md",
+      "x": 2800,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_due",
+      "type": "file",
+      "file": "due (interval check).md",
+      "x": 3000,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_hourly",
+      "type": "file",
+      "file": "hourly query.md",
+      "x": 3200,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_job_state_table",
+      "type": "file",
+      "file": "job_state table.md",
+      "x": 3400,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_job_states",
+      "type": "file",
+      "file": "job_states.md",
+      "x": 2600,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_latest_hour",
+      "type": "file",
+      "file": "latest_hour query.md",
+      "x": 2800,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_reading_table",
+      "type": "file",
+      "file": "reading table.md",
+      "x": 3000,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_record_job",
+      "type": "file",
+      "file": "record_job.md",
+      "x": 3200,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_refetch_overwrites",
+      "type": "file",
+      "file": "test_refetch_overwrites_and_daily_sums.md",
+      "x": 3400,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_total",
+      "type": "file",
+      "file": "total aggregation query.md",
+      "x": 2600,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g3",
+      "type": "group",
+      "label": "HTTP API Endpoints",
+      "x": 0,
+      "y": 800,
+      "width": 1100,
+      "height": 520,
+      "color": "4"
+    },
+    {
+      "id": "n_conn",
+      "type": "file",
+      "file": "Conn.md",
+      "x": 20,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_rationale_55",
+      "type": "file",
+      "file": "Default to the last 7 local days and reject anything unbounded or backwards..md",
+      "x": 220,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_readme_endpoints",
+      "type": "file",
+      "file": "Endpoint Reference Table.md",
+      "x": 420,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_rationale_132",
+      "type": "file",
+      "file": "Force one job to run now, for testing a freshly implemented source adapter..md",
+      "x": 620,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_index",
+      "type": "file",
+      "file": "GET  (endpoint index).md",
+      "x": 820,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_health",
+      "type": "file",
+      "file": "GET health.md",
+      "x": 20,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_job_status",
+      "type": "file",
+      "file": "GET jobs.md",
+      "x": 220,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_read_daily",
+      "type": "file",
+      "file": "GET readingsdaily.md",
+      "x": 420,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_read_hourly",
+      "type": "file",
+      "file": "GET readingshourly.md",
+      "x": 620,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_summary",
+      "type": "file",
+      "file": "GET summary.md",
+      "x": 820,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_max_range_days",
+      "type": "file",
+      "file": "MAX_RANGE_DAYS limit.md",
+      "x": 20,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_refresh",
+      "type": "file",
+      "file": "POST refresh{job}.md",
+      "x": 220,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_rationale_1",
+      "type": "file",
+      "file": "Read-only HTTP API over the stored readings, shaped for Home Assistant REST\u2026.md",
+      "x": 420,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_utility",
+      "type": "file",
+      "file": "Utility.md",
+      "x": 620,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_utility_literal",
+      "type": "file",
+      "file": "Utility literal type.md",
+      "x": 820,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_range",
+      "type": "file",
+      "file": "_range (date range validation).md",
+      "x": 20,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api",
+      "type": "file",
+      "file": "api.py.md",
+      "x": 220,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_py_date",
+      "type": "file",
+      "file": "date.md",
+      "x": 420,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_get",
+      "type": "file",
+      "file": "get.md",
+      "x": 620,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_post",
+      "type": "file",
+      "file": "post.md",
+      "x": 820,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g4",
+      "type": "group",
+      "label": "Refresh Schedule",
+      "x": 1400,
+      "y": 800,
+      "width": 1100,
+      "height": 520,
+      "color": "5"
+    },
+    {
+      "id": "n_consumption_jobs_py_connection",
+      "type": "file",
+      "file": "Connection_1.md",
+      "x": 1420,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_rationale_56",
+      "type": "file",
+      "file": "Fetch and store one job's range for every utility. Returns rows written..md",
+      "x": 1620,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_jobs",
+      "type": "file",
+      "file": "JOBS schedule table.md",
+      "x": 1820,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_rationale_1",
+      "type": "file",
+      "file": "Refresh schedule which local date range each job re-fetches, and how often.\u2026.md",
+      "x": 2020,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_rationale_75",
+      "type": "file",
+      "file": "Run every job whose interval has elapsed. Safe to call as often as you like..md",
+      "x": 2220,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_source_not_ready",
+      "type": "file",
+      "file": "SourceNotReady error.md",
+      "x": 1420,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_days_since_sunday",
+      "type": "file",
+      "file": "_DAYS_SINCE_SUNDAY helper.md",
+      "x": 1620,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_last_full_week",
+      "type": "file",
+      "file": "_last_full_week range.md",
+      "x": 1820,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_today",
+      "type": "file",
+      "file": "_today range.md",
+      "x": 2020,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_year_to_date",
+      "type": "file",
+      "file": "_year_to_date range.md",
+      "x": 2220,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_yesterday",
+      "type": "file",
+      "file": "_yesterday range.md",
+      "x": 1420,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_py_date",
+      "type": "file",
+      "file": "date_2.md",
+      "x": 1620,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_py_datetime",
+      "type": "file",
+      "file": "datetime_1.md",
+      "x": 1820,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs",
+      "type": "file",
+      "file": "jobs.py.md",
+      "x": 2020,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_local_today",
+      "type": "file",
+      "file": "local_today.md",
+      "x": 2220,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_run_due",
+      "type": "file",
+      "file": "run_due.md",
+      "x": 1420,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_run_job",
+      "type": "file",
+      "file": "run_job.md",
+      "x": 1620,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_job_ranges",
+      "type": "file",
+      "file": "test_job_ranges.md",
+      "x": 1820,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_aggregation_missing_source_recorded",
+      "type": "file",
+      "file": "test_missing_source_is_recorded_not_raised.md",
+      "x": 2020,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_timedelta",
+      "type": "file",
+      "file": "timedelta.md",
+      "x": 2220,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g5",
+      "type": "group",
+      "label": "Launcher And Dependencies",
+      "x": 2580,
+      "y": 800,
+      "width": 1100,
+      "height": 520,
+      "color": "6"
+    },
+    {
+      "id": "n_consumption_main_console_utf8_reconfigure",
+      "type": "file",
+      "file": "Console UTF-8 Reconfiguration.md",
+      "x": 2600,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_cursor_memory_index_launcher_preference",
+      "type": "file",
+      "file": "Double-Clickable Launcher Preference.md",
+      "x": 2800,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_requirements_pinning_policy",
+      "type": "file",
+      "file": "Exact Pinning, 14-Day-Old Versions.md",
+      "x": 3000,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_app",
+      "type": "file",
+      "file": "FastAPI app.md",
+      "x": 3200,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_host_port",
+      "type": "file",
+      "file": "HOST and PORT settings.md",
+      "x": 3400,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_cursor_memory_index_utf8_console_lesson",
+      "type": "file",
+      "file": "Hebrew Path  cp1252 Console Lesson.md",
+      "x": 2600,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_launch_startup_flow",
+      "type": "file",
+      "file": "Launcher startup flow.md",
+      "x": 2800,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_readme_no_authentication",
+      "type": "file",
+      "file": "Localhost-Only, No Authentication.md",
+      "x": 3000,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_readme_run_it",
+      "type": "file",
+      "file": "Run via run.bat.md",
+      "x": 3200,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_launch_show_phase",
+      "type": "file",
+      "file": "Show-Phase progress.md",
+      "x": 3400,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_launch_wait_with_progress",
+      "type": "file",
+      "file": "Wait-WithProgress.md",
+      "x": 2600,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_launch_wait_withprogress",
+      "type": "file",
+      "file": "Wait-WithProgress().md",
+      "x": 2800,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_cursor_memory_index_trust_boundary",
+      "type": "file",
+      "file": "api.py as Only Trust Boundary.md",
+      "x": 3000,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_init_consumption_package",
+      "type": "file",
+      "file": "consumption Package.md",
+      "x": 3200,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_requirements_fastapi",
+      "type": "file",
+      "file": "fastapi dependency.md",
+      "x": 3400,
+      "y": 1040,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_launch",
+      "type": "file",
+      "file": "launch.ps1.md",
+      "x": 2600,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_main_main",
+      "type": "file",
+      "file": "main (startup entry).md",
+      "x": 2800,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_launch_requirements_stamp",
+      "type": "file",
+      "file": "requirements.stamp cache.md",
+      "x": 3000,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_requirements_uvicorn",
+      "type": "file",
+      "file": "uvicorn dependency.md",
+      "x": 3200,
+      "y": 1120,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g6",
+      "type": "group",
+      "label": "Configuration And Entry Point",
+      "x": 0,
+      "y": 1400,
+      "width": 880,
+      "height": 520,
+      "color": "1"
+    },
+    {
+      "id": "n_consumption_init_rationale_1",
+      "type": "file",
+      "file": "ConsumptionMonitor - local API for electricity and water consumption from\u2026.md",
+      "x": 20,
+      "y": 1480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_db_path",
+      "type": "file",
+      "file": "DB_PATH setting.md",
+      "x": 220,
+      "y": 1480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_main_rationale_1",
+      "type": "file",
+      "file": "Entry point `python -m consumption` serves the API and runs the refresh\u2026.md",
+      "x": 420,
+      "y": 1480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_readme_layout",
+      "type": "file",
+      "file": "Module Layout.md",
+      "x": 620,
+      "y": 1480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_py_path",
+      "type": "file",
+      "file": "Path.md",
+      "x": 20,
+      "y": 1560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_rationale_19",
+      "type": "file",
+      "file": "Populate os.environ from a KEY=VALUE file. Real environment variables always\u2026.md",
+      "x": 220,
+      "y": 1560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_rationale_1",
+      "type": "file",
+      "file": "Runtime configuration, read once at import from the environment and an optional\u2026.md",
+      "x": 420,
+      "y": 1560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_db_schema",
+      "type": "file",
+      "file": "SCHEMA script.md",
+      "x": 620,
+      "y": 1560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_init",
+      "type": "file",
+      "file": "__init__.py.md",
+      "x": 20,
+      "y": 1640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_main",
+      "type": "file",
+      "file": "__main__.py.md",
+      "x": 220,
+      "y": 1640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_env",
+      "type": "file",
+      "file": "_env().md",
+      "x": 420,
+      "y": 1640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_load_env_file",
+      "type": "file",
+      "file": "_load_env_file (.env loader).md",
+      "x": 620,
+      "y": 1640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config",
+      "type": "file",
+      "file": "config.py.md",
+      "x": 20,
+      "y": 1720,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_credentials_present",
+      "type": "file",
+      "file": "credentials_present.md",
+      "x": 220,
+      "y": 1720,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_mycitygrid_credentials",
+      "type": "file",
+      "file": "mycitygrid Credentials.md",
+      "x": 420,
+      "y": 1720,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g7",
+      "type": "group",
+      "label": "Scheduler Loop",
+      "x": 1400,
+      "y": 1400,
+      "width": 660,
+      "height": 400,
+      "color": "2"
+    },
+    {
+      "id": "n_fastapi",
+      "type": "file",
+      "file": "FastAPI.md",
+      "x": 1420,
+      "y": 1480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_config_tick_seconds",
+      "type": "file",
+      "file": "TICK_SECONDS setting.md",
+      "x": 1620,
+      "y": 1480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_rationale_89",
+      "type": "file",
+      "file": "Tick forever, delegating the blocking fetch and SQLite work to a worker thread..md",
+      "x": 1820,
+      "y": 1480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_api_lifespan",
+      "type": "file",
+      "file": "lifespan (startupshutdown).md",
+      "x": 1420,
+      "y": 1560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_consumption_jobs_loop",
+      "type": "file",
+      "file": "loop (scheduler tick).md",
+      "x": 1620,
+      "y": 1560,
+      "width": 180,
+      "height": 60
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_consumption_init_consumption_api",
+      "fromNode": "n_consumption_init",
+      "toNode": "n_consumption_api",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_init_consumption_db",
+      "fromNode": "n_consumption_init",
+      "toNode": "n_consumption_db",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_init_consumption_init_rationale_1",
+      "fromNode": "n_consumption_init",
+      "toNode": "n_consumption_init_rationale_1",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_init_consumption_jobs",
+      "fromNode": "n_consumption_init",
+      "toNode": "n_consumption_jobs",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_init_consumption_main",
+      "fromNode": "n_consumption_init",
+      "toNode": "n_consumption_main",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_init_consumption_source",
+      "fromNode": "n_consumption_init",
+      "toNode": "n_consumption_source",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_main_consumption_config",
+      "fromNode": "n_consumption_main",
+      "toNode": "n_consumption_config",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_main_consumption_main_main",
+      "fromNode": "n_consumption_main",
+      "toNode": "n_consumption_main_main",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_main_consumption_main_rationale_1",
+      "fromNode": "n_consumption_main",
+      "toNode": "n_consumption_main_rationale_1",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_main_main_consumption_api_app",
+      "fromNode": "n_consumption_main_main",
+      "toNode": "n_consumption_api_app",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_main_main_consumption_config_db_path",
+      "fromNode": "n_consumption_main_main",
+      "toNode": "n_consumption_config_db_path",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_main_main_consumption_config_host_port",
+      "fromNode": "n_consumption_main_main",
+      "toNode": "n_consumption_config_host_port",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_main_main_consumption_init_consumption_package",
+      "fromNode": "n_consumption_main_main",
+      "toNode": "n_consumption_init_consumption_package",
+      "label": "references [INFERRED]"
+    },
+    {
+      "id": "e_consumption_main_main_consumption_main_console_utf8_reconfigure",
+      "fromNode": "n_consumption_main_main",
+      "toNode": "n_consumption_main_console_utf8_reconfigure",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_main_main_requirements_uvicorn",
+      "fromNode": "n_consumption_main_main",
+      "toNode": "n_requirements_uvicorn",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_main_main_scripts_launch_startup_flow",
+      "fromNode": "n_consumption_main_main",
+      "toNode": "n_scripts_launch_startup_flow",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_api_get_conn",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_api_get_conn",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_api_health",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_api_health",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_api_index",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_api_index",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_api_job_status",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_api_job_status",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_api_lifespan",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_api_lifespan",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_api_range",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_api_range",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_api_read_daily",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_api_read_daily",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_api_read_hourly",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_api_read_hourly",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_api_refresh",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_api_refresh",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_api_summary",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_api_summary",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_config",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_config",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_db",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_db",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_jobs",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_jobs",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_source",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_source",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_fastapi",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_fastapi",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_consumption_api_rationale_1",
+      "fromNode": "n_consumption_api",
+      "toNode": "n_consumption_api_rationale_1",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_lifespan_consumption_api_app",
+      "fromNode": "n_consumption_api_lifespan",
+      "toNode": "n_consumption_api_app",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_lifespan_consumption_db_connect",
+      "fromNode": "n_consumption_api_lifespan",
+      "toNode": "n_consumption_db_connect",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_lifespan_consumption_jobs_loop",
+      "fromNode": "n_consumption_api_lifespan",
+      "toNode": "n_consumption_jobs_loop",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_lifespan_fastapi",
+      "fromNode": "n_consumption_api_lifespan",
+      "toNode": "n_fastapi",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_get_conn_consumption_db_connect",
+      "fromNode": "n_consumption_api_get_conn",
+      "toNode": "n_consumption_db_connect",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_range_consumption_api_max_range_days",
+      "fromNode": "n_consumption_api_range",
+      "toNode": "n_consumption_api_max_range_days",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_range_consumption_api_py_date",
+      "fromNode": "n_consumption_api_range",
+      "toNode": "n_consumption_api_py_date",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_range_consumption_jobs_local_today",
+      "fromNode": "n_consumption_api_range",
+      "toNode": "n_consumption_jobs_local_today",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_range_timedelta",
+      "fromNode": "n_consumption_api_range",
+      "toNode": "n_timedelta",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_consumption_api_range_consumption_api_rationale_55",
+      "fromNode": "n_consumption_api_range",
+      "toNode": "n_consumption_api_rationale_55",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_range_consumption_api_read_daily",
+      "fromNode": "n_consumption_api_range",
+      "toNode": "n_consumption_api_read_daily",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_range_consumption_api_read_hourly",
+      "fromNode": "n_consumption_api_range",
+      "toNode": "n_consumption_api_read_hourly",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_range_cursor_memory_index_trust_boundary",
+      "fromNode": "n_consumption_api_range",
+      "toNode": "n_cursor_memory_index_trust_boundary",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_py_date_consumption_api_read_daily",
+      "fromNode": "n_consumption_api_py_date",
+      "toNode": "n_consumption_api_read_daily",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_py_date_consumption_api_read_hourly",
+      "fromNode": "n_consumption_api_py_date",
+      "toNode": "n_consumption_api_read_hourly",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_py_date_consumption_api_summary",
+      "fromNode": "n_consumption_api_py_date",
+      "toNode": "n_consumption_api_summary",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_get_consumption_api_health",
+      "fromNode": "n_get",
+      "toNode": "n_consumption_api_health",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_get_consumption_api_index",
+      "fromNode": "n_get",
+      "toNode": "n_consumption_api_index",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_get_consumption_api_job_status",
+      "fromNode": "n_get",
+      "toNode": "n_consumption_api_job_status",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_get_consumption_api_read_daily",
+      "fromNode": "n_get",
+      "toNode": "n_consumption_api_read_daily",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_get_consumption_api_read_hourly",
+      "fromNode": "n_get",
+      "toNode": "n_consumption_api_read_hourly",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_get_consumption_api_summary",
+      "fromNode": "n_get",
+      "toNode": "n_consumption_api_summary",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_health_conn",
+      "fromNode": "n_consumption_api_health",
+      "toNode": "n_conn",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_health_consumption_config_credentials_present",
+      "fromNode": "n_consumption_api_health",
+      "toNode": "n_consumption_config_credentials_present",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_health_consumption_db_reading_table",
+      "fromNode": "n_consumption_api_health",
+      "toNode": "n_consumption_db_reading_table",
+      "label": "shares_data_with [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_health_consumption_jobs_local_today",
+      "fromNode": "n_consumption_api_health",
+      "toNode": "n_consumption_jobs_local_today",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_health_consumption_source_source_ready",
+      "fromNode": "n_consumption_api_health",
+      "toNode": "n_consumption_source_source_ready",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_health_consumption_api_index",
+      "fromNode": "n_consumption_api_health",
+      "toNode": "n_consumption_api_index",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_conn_consumption_api_job_status",
+      "fromNode": "n_conn",
+      "toNode": "n_consumption_api_job_status",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_conn_consumption_api_read_daily",
+      "fromNode": "n_conn",
+      "toNode": "n_consumption_api_read_daily",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_conn_consumption_api_read_hourly",
+      "fromNode": "n_conn",
+      "toNode": "n_consumption_api_read_hourly",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_conn_consumption_api_refresh",
+      "fromNode": "n_conn",
+      "toNode": "n_consumption_api_refresh",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_conn_consumption_api_summary",
+      "fromNode": "n_conn",
+      "toNode": "n_consumption_api_summary",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_job_status_consumption_db_job_states",
+      "fromNode": "n_consumption_api_job_status",
+      "toNode": "n_consumption_db_job_states",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_job_status_consumption_jobs_jobs",
+      "fromNode": "n_consumption_api_job_status",
+      "toNode": "n_consumption_jobs_jobs",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_job_status_consumption_jobs_local_today",
+      "fromNode": "n_consumption_api_job_status",
+      "toNode": "n_consumption_jobs_local_today",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_read_hourly_consumption_api_utility_literal",
+      "fromNode": "n_consumption_api_read_hourly",
+      "toNode": "n_consumption_api_utility_literal",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_read_hourly_consumption_db_hourly",
+      "fromNode": "n_consumption_api_read_hourly",
+      "toNode": "n_consumption_db_hourly",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_read_hourly_utility",
+      "fromNode": "n_consumption_api_read_hourly",
+      "toNode": "n_utility",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_utility_consumption_api_read_daily",
+      "fromNode": "n_utility",
+      "toNode": "n_consumption_api_read_daily",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_read_daily_consumption_api_utility_literal",
+      "fromNode": "n_consumption_api_read_daily",
+      "toNode": "n_consumption_api_utility_literal",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_read_daily_consumption_db_daily",
+      "fromNode": "n_consumption_api_read_daily",
+      "toNode": "n_consumption_db_daily",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_summary_consumption_api_index",
+      "fromNode": "n_consumption_api_summary",
+      "toNode": "n_consumption_api_index",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_summary_consumption_config_utilities",
+      "fromNode": "n_consumption_api_summary",
+      "toNode": "n_consumption_config_utilities",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_summary_consumption_db_latest_hour",
+      "fromNode": "n_consumption_api_summary",
+      "toNode": "n_consumption_db_latest_hour",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_summary_consumption_db_total",
+      "fromNode": "n_consumption_api_summary",
+      "toNode": "n_consumption_db_total",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_summary_consumption_jobs_last_full_week",
+      "fromNode": "n_consumption_api_summary",
+      "toNode": "n_consumption_jobs_last_full_week",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_summary_consumption_jobs_local_today",
+      "fromNode": "n_consumption_api_summary",
+      "toNode": "n_consumption_jobs_local_today",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_summary_timedelta",
+      "fromNode": "n_consumption_api_summary",
+      "toNode": "n_timedelta",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_consumption_api_summary_readme_endpoints",
+      "fromNode": "n_consumption_api_summary",
+      "toNode": "n_readme_endpoints",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_post_consumption_api_refresh",
+      "fromNode": "n_post",
+      "toNode": "n_consumption_api_refresh",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_refresh_consumption_api_rationale_132",
+      "fromNode": "n_consumption_api_refresh",
+      "toNode": "n_consumption_api_rationale_132",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_refresh_consumption_db_job_states",
+      "fromNode": "n_consumption_api_refresh",
+      "toNode": "n_consumption_db_job_states",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_refresh_consumption_jobs_jobs",
+      "fromNode": "n_consumption_api_refresh",
+      "toNode": "n_consumption_jobs_jobs",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_refresh_consumption_jobs_run_job",
+      "fromNode": "n_consumption_api_refresh",
+      "toNode": "n_consumption_jobs_run_job",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_api_refresh_readme_endpoints",
+      "fromNode": "n_consumption_api_refresh",
+      "toNode": "n_readme_endpoints",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_config_consumption_config_credentials_present",
+      "fromNode": "n_consumption_config",
+      "toNode": "n_consumption_config_credentials_present",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_config_consumption_config_env",
+      "fromNode": "n_consumption_config",
+      "toNode": "n_consumption_config_env",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_config_consumption_config_load_env_file",
+      "fromNode": "n_consumption_config",
+      "toNode": "n_consumption_config_load_env_file",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_config_consumption_config_rationale_1",
+      "fromNode": "n_consumption_config",
+      "toNode": "n_consumption_config_rationale_1",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_config_consumption_db",
+      "fromNode": "n_consumption_config",
+      "toNode": "n_consumption_db",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_config_consumption_jobs",
+      "fromNode": "n_consumption_config",
+      "toNode": "n_consumption_jobs",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_config_consumption_source",
+      "fromNode": "n_consumption_config",
+      "toNode": "n_consumption_source",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_config_load_env_file_consumption_config_db_path",
+      "fromNode": "n_consumption_config_load_env_file",
+      "toNode": "n_consumption_config_db_path",
+      "label": "shares_data_with [INFERRED]"
+    },
+    {
+      "id": "e_consumption_config_load_env_file_consumption_config_mycitygrid_credentials",
+      "fromNode": "n_consumption_config_load_env_file",
+      "toNode": "n_consumption_config_mycitygrid_credentials",
+      "label": "shares_data_with [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_config_load_env_file_consumption_config_py_path",
+      "fromNode": "n_consumption_config_load_env_file",
+      "toNode": "n_consumption_config_py_path",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_config_load_env_file_consumption_config_rationale_19",
+      "fromNode": "n_consumption_config_load_env_file",
+      "toNode": "n_consumption_config_rationale_19",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_config_credentials_present_consumption_config_mycitygrid_credentials",
+      "fromNode": "n_consumption_config_credentials_present",
+      "toNode": "n_consumption_config_mycitygrid_credentials",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_config_credentials_present_consumption_source_portal_session",
+      "fromNode": "n_consumption_config_credentials_present",
+      "toNode": "n_consumption_source_portal_session",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_db_connect",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_db_connect",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_db_daily",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_db_daily",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_db_due",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_db_due",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_db_hourly",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_db_hourly",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_db_job_states",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_db_job_states",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_db_latest_hour",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_db_latest_hour",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_db_py_datetime",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_db_py_datetime",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_db_record_job",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_db_record_job",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_db_total",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_db_total",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_db_upsert_readings",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_db_upsert_readings",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_db_utc_now",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_db_utc_now",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_source",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_source",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_source_reading",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_source_reading",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_db_rationale_1",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_db_rationale_1",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_consumption_jobs",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_consumption_jobs",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_tests_test_aggregation",
+      "fromNode": "n_consumption_db",
+      "toNode": "n_tests_test_aggregation",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_connect_consumption_config_db_path",
+      "fromNode": "n_consumption_db_connect",
+      "toNode": "n_consumption_config_db_path",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_connect_consumption_db_py_connection",
+      "fromNode": "n_consumption_db_connect",
+      "toNode": "n_consumption_db_py_connection",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_connect_consumption_db_py_path",
+      "fromNode": "n_consumption_db_connect",
+      "toNode": "n_consumption_db_py_path",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_connect_consumption_db_schema",
+      "fromNode": "n_consumption_db_connect",
+      "toNode": "n_consumption_db_schema",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_connect_consumption_jobs_run_due",
+      "fromNode": "n_consumption_db_connect",
+      "toNode": "n_consumption_jobs_run_due",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_connect_tests_test_aggregation_local_day_mapping",
+      "fromNode": "n_consumption_db_connect",
+      "toNode": "n_tests_test_aggregation_local_day_mapping",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_connect_tests_test_aggregation_test_local_day_mapping",
+      "fromNode": "n_consumption_db_connect",
+      "toNode": "n_tests_test_aggregation_test_local_day_mapping",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_connect_tests_test_aggregation_test_missing_source_is_recorded_not_raised",
+      "fromNode": "n_consumption_db_connect",
+      "toNode": "n_tests_test_aggregation_test_missing_source_is_recorded_not_raised",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_connect_tests_test_aggregation_test_naive_timestamp_rejected",
+      "fromNode": "n_consumption_db_connect",
+      "toNode": "n_tests_test_aggregation_test_naive_timestamp_rejected",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_connect_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "fromNode": "n_consumption_db_connect",
+      "toNode": "n_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_py_connection_consumption_db_daily",
+      "fromNode": "n_consumption_db_py_connection",
+      "toNode": "n_consumption_db_daily",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_py_connection_consumption_db_hourly",
+      "fromNode": "n_consumption_db_py_connection",
+      "toNode": "n_consumption_db_hourly",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_py_connection_consumption_db_job_states",
+      "fromNode": "n_consumption_db_py_connection",
+      "toNode": "n_consumption_db_job_states",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_py_connection_consumption_db_latest_hour",
+      "fromNode": "n_consumption_db_py_connection",
+      "toNode": "n_consumption_db_latest_hour",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_py_connection_consumption_db_record_job",
+      "fromNode": "n_consumption_db_py_connection",
+      "toNode": "n_consumption_db_record_job",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_py_connection_consumption_db_total",
+      "fromNode": "n_consumption_db_py_connection",
+      "toNode": "n_consumption_db_total",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_py_connection_consumption_db_upsert_readings",
+      "fromNode": "n_consumption_db_py_connection",
+      "toNode": "n_consumption_db_upsert_readings",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_utc_now_consumption_db_record_job",
+      "fromNode": "n_consumption_db_utc_now",
+      "toNode": "n_consumption_db_record_job",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_utc_now_consumption_db_upsert_readings",
+      "fromNode": "n_consumption_db_utc_now",
+      "toNode": "n_consumption_db_upsert_readings",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_upsert_readings_consumption_config_local_tz",
+      "fromNode": "n_consumption_db_upsert_readings",
+      "toNode": "n_consumption_config_local_tz",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_upsert_readings_consumption_db_reading_table",
+      "fromNode": "n_consumption_db_upsert_readings",
+      "toNode": "n_consumption_db_reading_table",
+      "label": "shares_data_with [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_upsert_readings_consumption_source_reading",
+      "fromNode": "n_consumption_db_upsert_readings",
+      "toNode": "n_consumption_source_reading",
+      "label": "shares_data_with [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_upsert_readings_readme_storage_model",
+      "fromNode": "n_consumption_db_upsert_readings",
+      "toNode": "n_readme_storage_model",
+      "label": "implements [INFERRED]"
+    },
+    {
+      "id": "e_consumption_db_upsert_readings_consumption_jobs_run_job",
+      "fromNode": "n_consumption_db_upsert_readings",
+      "toNode": "n_consumption_jobs_run_job",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_upsert_readings_tests_test_aggregation_local_day_mapping",
+      "fromNode": "n_consumption_db_upsert_readings",
+      "toNode": "n_tests_test_aggregation_local_day_mapping",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_upsert_readings_tests_test_aggregation_naive_timestamp_rejected",
+      "fromNode": "n_consumption_db_upsert_readings",
+      "toNode": "n_tests_test_aggregation_naive_timestamp_rejected",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_upsert_readings_tests_test_aggregation_refetch_overwrites",
+      "fromNode": "n_consumption_db_upsert_readings",
+      "toNode": "n_tests_test_aggregation_refetch_overwrites",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_upsert_readings_tests_test_aggregation_test_local_day_mapping",
+      "fromNode": "n_consumption_db_upsert_readings",
+      "toNode": "n_tests_test_aggregation_test_local_day_mapping",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_upsert_readings_tests_test_aggregation_test_naive_timestamp_rejected",
+      "fromNode": "n_consumption_db_upsert_readings",
+      "toNode": "n_tests_test_aggregation_test_naive_timestamp_rejected",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_upsert_readings_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "fromNode": "n_consumption_db_upsert_readings",
+      "toNode": "n_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_hourly_consumption_db_py_date",
+      "fromNode": "n_consumption_db_hourly",
+      "toNode": "n_consumption_db_py_date",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_hourly_consumption_db_reading_table",
+      "fromNode": "n_consumption_db_hourly",
+      "toNode": "n_consumption_db_reading_table",
+      "label": "shares_data_with [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_hourly_tests_test_aggregation_local_day_mapping",
+      "fromNode": "n_consumption_db_hourly",
+      "toNode": "n_tests_test_aggregation_local_day_mapping",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_hourly_tests_test_aggregation_test_local_day_mapping",
+      "fromNode": "n_consumption_db_hourly",
+      "toNode": "n_tests_test_aggregation_test_local_day_mapping",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_py_date_consumption_db_daily",
+      "fromNode": "n_consumption_db_py_date",
+      "toNode": "n_consumption_db_daily",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_py_date_consumption_db_total",
+      "fromNode": "n_consumption_db_py_date",
+      "toNode": "n_consumption_db_total",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_daily_consumption_db_reading_table",
+      "fromNode": "n_consumption_db_daily",
+      "toNode": "n_consumption_db_reading_table",
+      "label": "shares_data_with [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_daily_cursor_memory_index_hourly_granularity",
+      "fromNode": "n_consumption_db_daily",
+      "toNode": "n_cursor_memory_index_hourly_granularity",
+      "label": "implements [INFERRED]"
+    },
+    {
+      "id": "e_consumption_db_daily_tests_test_aggregation_refetch_overwrites",
+      "fromNode": "n_consumption_db_daily",
+      "toNode": "n_tests_test_aggregation_refetch_overwrites",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_daily_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "fromNode": "n_consumption_db_daily",
+      "toNode": "n_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_total_consumption_db_reading_table",
+      "fromNode": "n_consumption_db_total",
+      "toNode": "n_consumption_db_reading_table",
+      "label": "shares_data_with [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_total_tests_test_aggregation_refetch_overwrites",
+      "fromNode": "n_consumption_db_total",
+      "toNode": "n_tests_test_aggregation_refetch_overwrites",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_total_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "fromNode": "n_consumption_db_total",
+      "toNode": "n_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_latest_hour_consumption_db_reading_table",
+      "fromNode": "n_consumption_db_latest_hour",
+      "toNode": "n_consumption_db_reading_table",
+      "label": "shares_data_with [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_latest_hour_tests_test_aggregation_refetch_overwrites",
+      "fromNode": "n_consumption_db_latest_hour",
+      "toNode": "n_tests_test_aggregation_refetch_overwrites",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_latest_hour_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "fromNode": "n_consumption_db_latest_hour",
+      "toNode": "n_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_record_job_consumption_db_job_state_table",
+      "fromNode": "n_consumption_db_record_job",
+      "toNode": "n_consumption_db_job_state_table",
+      "label": "shares_data_with [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_record_job_consumption_jobs_run_job",
+      "fromNode": "n_consumption_db_record_job",
+      "toNode": "n_consumption_jobs_run_job",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_job_states_consumption_db_job_state_table",
+      "fromNode": "n_consumption_db_job_states",
+      "toNode": "n_consumption_db_job_state_table",
+      "label": "shares_data_with [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_job_states_consumption_jobs_run_due",
+      "fromNode": "n_consumption_db_job_states",
+      "toNode": "n_consumption_jobs_run_due",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_job_states_tests_test_aggregation_missing_source_recorded",
+      "fromNode": "n_consumption_db_job_states",
+      "toNode": "n_tests_test_aggregation_missing_source_recorded",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_job_states_tests_test_aggregation_test_missing_source_is_recorded_not_raised",
+      "fromNode": "n_consumption_db_job_states",
+      "toNode": "n_tests_test_aggregation_test_missing_source_is_recorded_not_raised",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_due_consumption_db_job_state_table",
+      "fromNode": "n_consumption_db_due",
+      "toNode": "n_consumption_db_job_state_table",
+      "label": "shares_data_with [INFERRED]"
+    },
+    {
+      "id": "e_consumption_db_due_consumption_db_py_datetime",
+      "fromNode": "n_consumption_db_due",
+      "toNode": "n_consumption_db_py_datetime",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_due_timedelta",
+      "fromNode": "n_consumption_db_due",
+      "toNode": "n_timedelta",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_due_consumption_db_rationale_176",
+      "fromNode": "n_consumption_db_due",
+      "toNode": "n_consumption_db_rationale_176",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_due_consumption_jobs_run_due",
+      "fromNode": "n_consumption_db_due",
+      "toNode": "n_consumption_jobs_run_due",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_due_tests_test_aggregation_due",
+      "fromNode": "n_consumption_db_due",
+      "toNode": "n_tests_test_aggregation_due",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_db_due_tests_test_aggregation_test_due",
+      "fromNode": "n_consumption_db_due",
+      "toNode": "n_tests_test_aggregation_test_due",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_timedelta_consumption_jobs_last_full_week",
+      "fromNode": "n_timedelta",
+      "toNode": "n_consumption_jobs_last_full_week",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_timedelta_consumption_jobs_yesterday",
+      "fromNode": "n_timedelta",
+      "toNode": "n_consumption_jobs_yesterday",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_timedelta_tests_test_aggregation_test_due",
+      "fromNode": "n_timedelta",
+      "toNode": "n_tests_test_aggregation_test_due",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_timedelta_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "fromNode": "n_timedelta",
+      "toNode": "n_tests_test_aggregation_test_refetch_overwrites_and_daily_sums",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_consumption_jobs_consumption_jobs_last_full_week",
+      "fromNode": "n_consumption_jobs",
+      "toNode": "n_consumption_jobs_last_full_week",
+      "label": "indirect_call [INFERRED]"
+    },
+    {
+      "id": "e_consumption_jobs_consumption_jobs_local_today",
+      "fromNode": "n_consumption_jobs",
+      "toNode": "n_consumption_jobs_local_today",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_consumption_jobs_loop",
+      "fromNode": "n_consumption_jobs",
+      "toNode": "n_consumption_jobs_loop",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_consumption_jobs_py_datetime",
+      "fromNode": "n_consumption_jobs",
+      "toNode": "n_consumption_jobs_py_datetime",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_consumption_jobs_run_due",
+      "fromNode": "n_consumption_jobs",
+      "toNode": "n_consumption_jobs_run_due",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_consumption_jobs_run_job",
+      "fromNode": "n_consumption_jobs",
+      "toNode": "n_consumption_jobs_run_job",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_consumption_jobs_today",
+      "fromNode": "n_consumption_jobs",
+      "toNode": "n_consumption_jobs_today",
+      "label": "indirect_call [INFERRED]"
+    },
+    {
+      "id": "e_consumption_jobs_consumption_jobs_year_to_date",
+      "fromNode": "n_consumption_jobs",
+      "toNode": "n_consumption_jobs_year_to_date",
+      "label": "indirect_call [INFERRED]"
+    },
+    {
+      "id": "e_consumption_jobs_consumption_jobs_yesterday",
+      "fromNode": "n_consumption_jobs",
+      "toNode": "n_consumption_jobs_yesterday",
+      "label": "indirect_call [INFERRED]"
+    },
+    {
+      "id": "e_consumption_jobs_consumption_source",
+      "fromNode": "n_consumption_jobs",
+      "toNode": "n_consumption_source",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_consumption_jobs_rationale_1",
+      "fromNode": "n_consumption_jobs",
+      "toNode": "n_consumption_jobs_rationale_1",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_tests_test_aggregation",
+      "fromNode": "n_consumption_jobs",
+      "toNode": "n_tests_test_aggregation",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_today_consumption_jobs_jobs",
+      "fromNode": "n_consumption_jobs_today",
+      "toNode": "n_consumption_jobs_jobs",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_today_consumption_jobs_py_date",
+      "fromNode": "n_consumption_jobs_today",
+      "toNode": "n_consumption_jobs_py_date",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_py_date_consumption_jobs_last_full_week",
+      "fromNode": "n_consumption_jobs_py_date",
+      "toNode": "n_consumption_jobs_last_full_week",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_py_date_consumption_jobs_local_today",
+      "fromNode": "n_consumption_jobs_py_date",
+      "toNode": "n_consumption_jobs_local_today",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_py_date_consumption_jobs_run_job",
+      "fromNode": "n_consumption_jobs_py_date",
+      "toNode": "n_consumption_jobs_run_job",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_py_date_consumption_jobs_year_to_date",
+      "fromNode": "n_consumption_jobs_py_date",
+      "toNode": "n_consumption_jobs_year_to_date",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_py_date_consumption_jobs_yesterday",
+      "fromNode": "n_consumption_jobs_py_date",
+      "toNode": "n_consumption_jobs_yesterday",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_consumption_jobs_yesterday_consumption_jobs_jobs",
+      "fromNode": "n_consumption_jobs_yesterday",
+      "toNode": "n_consumption_jobs_jobs",
+      "label": "references [EXTRACTED]"
+    }
+  ]
+}
