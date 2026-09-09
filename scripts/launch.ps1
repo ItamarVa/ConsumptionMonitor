@@ -1,5 +1,5 @@
-# Sets up the virtual environment if needed, runs the self-check, then starts the API.
-# The bootstrap itself lives in scripts/env.ps1, shared with set-credentials.ps1.
+# Sets up the virtual environment if needed, starts the API quickly, opens the dashboard,
+# then runs self-checks in the background. The bootstrap lives in scripts/env.ps1.
 
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'launcher-common.ps1')
@@ -21,18 +21,18 @@ $selfChecks = @(
 )
 
 try {
-    $python = Initialize-Venv $root 3 70
+    $python = Initialize-Venv $root 3 25
 
-    $phaseStart = 72
-    $phaseSpan = [math]::Max(1, [int](24 / $selfChecks.Count))
-    $i = 0
-    foreach ($check in $selfChecks) {
-        $pct = [math]::Min(96, $phaseStart + ($i * $phaseSpan))
-        Show-Phase $pct "Running $(Split-Path $check -Leaf)"
-        & $python (Join-Path $root $check)
-        if ($LASTEXITCODE -ne 0) { throw "Self-check failed: $check. The API was not started." }
-        $i++
+    $hostAddr = (& $python -c "from consumption import config; print(config.HOST)").Trim()
+    $port = [int](& $python -c "from consumption import config; print(config.PORT)")
+
+    Show-Phase 30 'Stopping previous sessions'
+    Stop-PreviousConsumptionSessions $root $port
+    if (Test-TcpPort $hostAddr $port) {
+        Exit-WithError "Port $port is still in use by another program. Close it and run again."
     }
+
+    Write-RecentStartupDiagnostics $root
 
     & $python -c "from consumption import config; raise SystemExit(0 if config.credentials_present() else 1)"
     if ($LASTEXITCODE -ne 0) {
@@ -41,28 +41,72 @@ try {
         Write-Host 'set-credentials.bat to enter them - until then the API serves an empty database.' -ForegroundColor Yellow
     }
 
-    Show-Phase 100 'Starting API'
+    Show-Phase 55 'Starting API'
     Write-Progress -Activity 'ConsumptionMonitor' -Completed
 
-    $hostAddr = (& $python -c "from consumption import config; print(config.HOST)").Trim()
-    $port = [int](& $python -c "from consumption import config; print(config.PORT)")
+    $apiLog = Join-Path $root 'data\api.log'
+    $apiErrLog = Join-Path $root 'data\api.stderr.log'
+    foreach ($logPath in @($apiLog, $apiErrLog)) {
+        $logDir = Split-Path $logPath -Parent
+        if (-not (Test-Path $logDir)) {
+            New-Item -ItemType Directory -Path $logDir -Force | Out-Null
+        }
+        if (Test-Path $logPath) {
+            Add-Content -Path $logPath -Value "`n--- launch $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ---" -Encoding UTF8
+        }
+    }
 
-    $api = Start-Process -FilePath $python -ArgumentList '-m', 'consumption' -PassThru -NoNewWindow -WorkingDirectory $root
-    Write-Log "Started API process PID $($api.Id) on ${hostAddr}:$port"
+    $api = Start-Process -FilePath $python `
+        -ArgumentList '-m', 'consumption' `
+        -PassThru -NoNewWindow `
+        -WorkingDirectory $root `
+        -RedirectStandardOutput $apiLog `
+        -RedirectStandardError $apiErrLog
+    Write-Log "Started API process PID $($api.Id) on ${hostAddr}:$port (logs: data\api.log)"
 
     if (-not (Wait-ApiReady $hostAddr $port $api 30)) {
         if (-not $api.HasExited) {
             Stop-Process -Id $api.Id -Force -ErrorAction SilentlyContinue
         }
-        Exit-WithError "The API did not start listening on http://${hostAddr}:$port within 30 seconds."
+        $tail = Get-ApiLogTail $root
+        Exit-WithError "The API did not start listening on http://${hostAddr}:$port within 30 seconds. $tail"
     }
 
     Write-Log "API is listening on http://${hostAddr}:$port"
+    Show-Phase 85 'Opening dashboard'
     Start-Process "http://127.0.0.1:${port}/ui"
+
+    $selfCheckLog = Join-Path $root 'data\selfcheck.log'
+    $checkList = ($selfChecks | ForEach-Object { "'$_'" }) -join ', '
+    $bgScript = @"
+Set-Location '$root'
+`$log = '$selfCheckLog'
+`$python = '$python'
+`$checks = @($checkList)
+`$failed = 0
+Add-Content -Path `$log -Value "`n--- self-check $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ---" -Encoding UTF8
+foreach (`$check in `$checks) {
+    & `$python (Join-Path '$root' `$check) 2>&1 | Out-File -Append -FilePath `$log -Encoding UTF8
+    if (`$LASTEXITCODE -ne 0) { `$failed++ }
+}
+if (`$failed -eq 0) {
+    Add-Content -Path `$log -Value 'All self-checks passed' -Encoding UTF8
+} else {
+    Add-Content -Path `$log -Value "WARNING: `$failed self-check file(s) failed" -Encoding UTF8
+}
+"@
+    Start-Job -ScriptBlock ([scriptblock]::Create($bgScript)) | Out-Null
+    Write-Log "Background self-checks started (log: data\selfcheck.log)"
+
+    Show-Phase 100 'Running'
     $api.WaitForExit()
-    if ($api.ExitCode -ne 0) {
-        Exit-WithError "The API stopped with exit code $($api.ExitCode)."
+    $exitCode = $api.ExitCode
+    if ($null -eq $exitCode -or $exitCode -eq 0) {
+        Write-Log "API process ended (exit $(Format-ExitCode $exitCode))"
+        exit 0
     }
+    $tail = Get-ApiLogTail $root
+    Exit-WithError "The API stopped unexpectedly (exit code: $(Format-ExitCode $exitCode)). $tail"
 }
 catch {
     Exit-WithError $_.Exception.Message

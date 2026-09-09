@@ -9856,7 +9856,7 @@
       "file_type": "code",
       "norm_label": "main()",
       "source_file": "tests/test_db_readings.py",
-      "source_location": "L159"
+      "source_location": "L161"
     },
     {
       "id": "tests_test_db_readings_test_coverage_counts",
@@ -17587,7 +17587,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_db_readings.py",
-      "source_location": "L143",
+      "source_location": "L144",
       "weight": 1.0
     },
     {
@@ -17599,7 +17599,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_db_readings.py",
-      "source_location": "L146",
+      "source_location": "L147",
       "weight": 1.0
     },
     {
@@ -17611,7 +17611,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_db_readings.py",
-      "source_location": "L146",
+      "source_location": "L147",
       "weight": 1.0
     },
     {
@@ -17623,7 +17623,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_db_readings.py",
-      "source_location": "L146",
+      "source_location": "L147",
       "weight": 1.0
     },
     {
@@ -40871,7 +40871,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_db_readings.py",
-      "source_location": "L159",
+      "source_location": "L161",
       "weight": 1.0
     },
     {

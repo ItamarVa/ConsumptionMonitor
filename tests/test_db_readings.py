@@ -137,6 +137,7 @@ def test_coverage_counts() -> None:
             "first_date": None,
             "last_date": None,
             "reading_count": 0,
+            "last_reading_utc": None,
         }
         assert set(empty) == {"electricity", "water"}
 
@@ -152,6 +153,7 @@ def test_coverage_counts() -> None:
             "first_date": "2024-03-10",
             "last_date": "2026-01-05",
             "reading_count": 2,
+            "last_reading_utc": "2026-01-05T06:00:00Z",
         }
         assert cov["water"]["reading_count"] == 0
 

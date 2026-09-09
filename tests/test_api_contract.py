@@ -48,12 +48,14 @@ _COVERAGE = {
         "first_date": "2024-01-01",
         "last_date": "2026-09-09",
         "reading_count": 2,
+        "last_reading_utc": "2026-09-09T17:05:18Z",
         "meter_ids": [ELEC_METER],
     },
     "water": {
         "first_date": "2024-06-01",
         "last_date": "2026-09-09",
         "reading_count": 1,
+        "last_reading_utc": "2026-09-09T17:05:18Z",
         "meter_ids": [WATER_METER],
     },
 }
@@ -112,6 +114,13 @@ def _test_client():
                 return _DAILY_WATER
             return []
 
+        def _period_total(_conn, utility: str, direction: str, start: date, end: date):
+            rows = _daily_totals(_conn, utility, direction, start, end)
+            if not rows:
+                return None
+            unit = rows[0].get("unit", "kWh")
+            return {"value": sum(r["value"] for r in rows), "unit": unit}
+
         def _alert_flags(_conn, meter_id: str):
             if meter_id == WATER_METER:
                 return {"back_flow": True, "has_leak": False}
@@ -136,6 +145,7 @@ def _test_client():
             patch.object(db, "meter_readings", stubs["meter_readings"]),
             patch.object(db, "intervals", stubs["intervals"]),
             patch.object(db, "daily_totals", stubs["daily_totals"]),
+            patch.object(db, "period_total", _period_total),
             patch.object(db, "monthly_totals", stubs["monthly_totals"]),
             patch.object(db, "yearly_totals", stubs["yearly_totals"]),
             patch.object(db, "latest_reading", stubs["latest_reading"]),
@@ -178,8 +188,10 @@ def test_health_coverage_shape() -> None:
     with _test_client() as client:
         body = client.get("/health").json()
     assert body["reading_count"] == 3
-    assert body["coverage"]["electricity"]["reading_count"] == 2
-    assert "hours" not in body["coverage"]["electricity"]
+    elec = body["coverage"]["electricity"]
+    assert elec["reading_count"] == 2
+    assert elec["last_reading_utc"] == "2026-09-09T17:05:18Z"
+    assert "hours" not in elec
 
 
 def test_summary_shape() -> None:

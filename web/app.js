@@ -6,7 +6,7 @@
  */
 
 import { ApiError, fetchHealth, fetchLocale, fetchSeries } from "./api.js";
-import { createChart, onBarClick, renderSeries } from "./chart.js";
+import { createChart, onBarClick, refreshChartTheme, renderSeries } from "./chart.js";
 
 const POLL_MS = 60_000;
 const STALE_HOURS = 4;
@@ -28,7 +28,12 @@ const els = {
   kpiLatest: $("kpi-latest"),
   breadcrumb: $("breadcrumb"),
   chart: $("chart"),
+  chartTitle: $("chart-title"),
+  chartSubtitle: $("chart-subtitle"),
+  chartLegend: $("chart-legend"),
   chartNote: $("chart-note"),
+  coverageNote: $("coverage-note"),
+  themeToggle: $("theme-toggle"),
   statusPill: $("status-pill"),
   dataTable: $("data-table"),
   tableToggle: $("table-toggle"),
@@ -55,7 +60,7 @@ let pollTimer = null;
 let primarySeries = [];
 let comparisonSeries = null;
 let seriesMeta = { unit: "", estimated: false };
-let lastSummaryFetch = null;
+const THEME_KEY = "cm-theme";
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -96,8 +101,83 @@ function shiftYear(iso, delta) {
 
 function defaultRange() {
   const end = todayIso();
-  const start = addDays(end, -6);
+  const start = addDays(end, -29);
   return { start, end };
+}
+
+function seriesLabel() {
+  if (state.utility === "water") {
+    return t["utility.water"] ?? "water";
+  }
+  const key = `utility.${state.utility}_${state.direction}`;
+  return t[key] ?? `${state.utility} ${state.direction}`;
+}
+
+function granularityLabel() {
+  return t[`granularity.${state.granularity}`] ?? state.granularity;
+}
+
+function detectPreset(start, end) {
+  const endToday = todayIso();
+  if (end !== endToday) {
+    return "custom";
+  }
+  if (start === addDays(end, -6)) {
+    return "7d";
+  }
+  if (start === addDays(end, -29)) {
+    return "30d";
+  }
+  if (start === `${end.slice(0, 8)}01`) {
+    return "this_month";
+  }
+  if (start === `${end.slice(0, 4)}-01-01`) {
+    return "this_year";
+  }
+  const cov = window.__coverageFirstDate?.[state.utility];
+  if (cov && start === cov) {
+    return "all";
+  }
+  return "custom";
+}
+
+function syncPresetFromState() {
+  if (!els.preset) {
+    return;
+  }
+  els.preset.value = detectPreset(state.start, state.end);
+}
+
+function initTheme() {
+  const stored = localStorage.getItem(THEME_KEY);
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const theme = stored === "light" || stored === "dark" ? stored : prefersDark ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", theme);
+  if (els.themeToggle) {
+    els.themeToggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+  }
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem(THEME_KEY, next);
+  if (els.themeToggle) {
+    els.themeToggle.setAttribute("aria-pressed", next === "dark" ? "true" : "false");
+  }
+  if (chart && primarySeries.length) {
+    renderSeries(chart, {
+      primary: primarySeries,
+      comparison: comparisonSeries,
+      granularity: state.granularity,
+      unit: seriesMeta.unit,
+      estimated: seriesMeta.estimated,
+      t,
+    });
+  } else {
+    refreshChartTheme(chart);
+  }
 }
 
 function setText(el, text) {
@@ -238,9 +318,7 @@ function syncControlsFromState() {
   if (els.rangeEnd) {
     els.rangeEnd.value = state.end;
   }
-  if (els.preset) {
-    els.preset.value = "";
-  }
+  syncPresetFromState();
   if (els.compare) {
     els.compare.value = state.compare;
   }
@@ -316,7 +394,35 @@ function computeKpis(points) {
   };
 }
 
-function renderKpis(kpis, unit) {
+function renderKpiDelta(el, current, previous) {
+  if (!el || current == null || previous == null) {
+    if (el) {
+      el.hidden = true;
+    }
+    return;
+  }
+  const diff = current - previous;
+  if (diff === 0) {
+    el.hidden = true;
+    return;
+  }
+  el.hidden = false;
+  const valueEl = el.querySelector("[data-kpi-delta-value]");
+  setText(valueEl, formatNumber(Math.abs(diff)));
+  el.classList.remove("kpi-delta--positive", "kpi-delta--negative");
+  el.classList.add(diff < 0 ? "kpi-delta--positive" : "kpi-delta--negative");
+  const svg = el.querySelector("svg path");
+  if (svg) {
+    svg.setAttribute(
+      "d",
+      diff < 0
+        ? "M12 19V5m0 0-7 7m7-7 7 7"
+        : "M12 5v14m0 0 7-7m-7 7-7-7",
+    );
+  }
+}
+
+function renderKpis(kpis, unit, compKpis = null) {
   setText(els.kpiTotal, formatNumber(kpis.total));
   setText(els.kpiAverage, formatNumber(kpis.average));
   setText(els.kpiPeak, kpis.peak != null ? `${formatNumber(kpis.peak)}` : "—");
@@ -326,6 +432,57 @@ function renderKpis(kpis, unit) {
   for (const el of document.querySelectorAll("[data-kpi-unit]")) {
     setText(el, unitLabel);
   }
+  const cards = document.querySelectorAll(".kpi-card");
+  const deltas = [kpis.total, kpis.average, kpis.peak, kpis.latest];
+  const compDeltas = compKpis
+    ? [compKpis.total, compKpis.average, compKpis.peak, compKpis.latest]
+    : [];
+  cards.forEach((card, idx) => {
+    const deltaEl = card.querySelector("[data-kpi-delta]");
+    renderKpiDelta(deltaEl, deltas[idx], compDeltas[idx] ?? null);
+  });
+}
+
+function renderChartTitles() {
+  const titleTpl = t["chart.title_template"] ?? "{series} — {granularity}";
+  setText(
+    els.chartTitle,
+    titleTpl
+      .replace("{series}", seriesLabel())
+      .replace("{granularity}", granularityLabel()),
+  );
+  const subTpl = t["chart.subtitle_range"] ?? "{start} – {end}";
+  setText(
+    els.chartSubtitle,
+    subTpl.replace("{start}", state.start).replace("{end}", state.end),
+  );
+}
+
+function renderLegend(show) {
+  if (!els.chartLegend) {
+    return;
+  }
+  els.chartLegend.hidden = !show;
+}
+
+function renderCoverageNote(health) {
+  if (!els.coverageNote) {
+    return;
+  }
+  const cov = health?.coverage?.[state.utility];
+  if (!cov?.first_date) {
+    els.coverageNote.hidden = true;
+    return;
+  }
+  const tpl = t["coverage.note"] ?? "";
+  setText(
+    els.coverageNote,
+    tpl
+      .replace("{first}", cov.first_date)
+      .replace("{last}", cov.last_date ?? cov.first_date)
+      .replace("{count}", String(cov.reading_count ?? 0)),
+  );
+  els.coverageNote.hidden = false;
 }
 
 function crumbLabel(granularity, start, end) {
@@ -493,6 +650,8 @@ async function loadData() {
     }
     comparisonSeries = comparison;
 
+    const compKpis = comparison ? computeKpis(comparison.filter(Boolean)) : null;
+
     if (isEmptySeries(points)) {
       showState("empty");
       if (chart) {
@@ -508,6 +667,8 @@ async function loadData() {
       renderKpis(computeKpis([]), meta.unit);
       renderTable([], meta.unit);
       renderBreadcrumb();
+      renderChartTitles();
+      renderLegend(false);
       renderChartNote();
       return;
     }
@@ -523,10 +684,12 @@ async function loadData() {
         t,
       });
     }
-    renderKpis(computeKpis(points), meta.unit);
+    renderKpis(computeKpis(points), meta.unit, compKpis);
     renderTable(points, meta.unit);
     updateChartAria(points, meta.unit);
     renderBreadcrumb();
+    renderChartTitles();
+    renderLegend(Boolean(comparison));
     renderChartNote();
   } catch (err) {
     showState("error");
@@ -561,6 +724,9 @@ function applyPreset(value) {
   if (els.rangeEnd) {
     els.rangeEnd.value = end;
   }
+  if (els.preset) {
+    els.preset.value = value;
+  }
   syncGranularityButtons();
   writeHash();
   loadData();
@@ -594,21 +760,19 @@ async function updateStatus() {
     window.__coverageFirstDate = Object.fromEntries(
       Object.entries(health.coverage ?? {}).map(([u, c]) => [u, c.first_date]),
     );
-    const summaryRes = await fetch("/summary");
-    if (summaryRes.ok) {
-      lastSummaryFetch = await summaryRes.json();
-      const dir = state.utility === "water" ? "water" : state.direction;
-      const block = lastSummaryFetch.utilities?.[state.utility]?.[dir];
-      readingTime = block?.latest_register?.reading_time_utc ?? null;
-    }
+    renderCoverageNote(health);
+    readingTime = health.coverage?.[state.utility]?.last_reading_utc ?? null;
     if (readingTime) {
       const ageH = (Date.now() - new Date(readingTime).getTime()) / 3_600_000;
       status = ageH < STALE_HOURS ? "live" : "stale";
-    } else {
+    } else if (health.status === "ok") {
       status = "stale";
     }
   } catch {
     status = "offline";
+    if (els.coverageNote) {
+      els.coverageNote.hidden = true;
+    }
   }
 
   els.statusPill.classList.remove(
@@ -677,8 +841,9 @@ function bindEvents() {
     readUtilityFromEvent(btn);
     state.drillStack = [];
     syncUtilityButtons();
+    syncPresetFromState();
     writeHash();
-    loadData();
+    refresh();
   });
 
   els.granularity?.addEventListener("click", (ev) => {
@@ -705,6 +870,7 @@ function bindEvents() {
       }
     }
     state.drillStack = [];
+    syncPresetFromState();
     syncGranularityButtons();
     writeHash();
     loadData();
@@ -719,6 +885,7 @@ function bindEvents() {
       }
     }
     state.drillStack = [];
+    syncPresetFromState();
     syncGranularityButtons();
     writeHash();
     loadData();
@@ -735,6 +902,8 @@ function bindEvents() {
     writeHash();
     loadData();
   });
+
+  els.themeToggle?.addEventListener("click", toggleTheme);
 
   els.retry?.addEventListener("click", () => loadData());
 
@@ -780,6 +949,7 @@ function applyLocale(strings) {
 }
 
 async function init() {
+  initTheme();
   t = await fetchLocale();
   applyLocale(t);
 

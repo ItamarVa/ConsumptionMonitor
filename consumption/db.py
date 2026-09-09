@@ -91,16 +91,28 @@ _ELECTRICITY_INTERVAL_FIELDS: dict[str, tuple[str, ...]] = {
 
 _TARIFF_BANDS = (None, 1, 2, 3)
 
+# Schema DDL runs once per database file path, not on every HTTP read connection.
+_initialized_paths: set[str] = set()
+
+
+def init_schema(conn: sqlite3.Connection, path: Path | None = None) -> None:
+    """Create tables if this file has not been initialized in this process."""
+    key = str(path or config.DB_PATH)
+    if key in _initialized_paths:
+        return
+    conn.execute("DROP TABLE IF EXISTS reading")
+    conn.executescript(SCHEMA)
+    _initialized_paths.add(key)
+
 
 def connect(path: Path | None = None) -> sqlite3.Connection:
     target = path or config.DB_PATH
     target.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(target, timeout=30)
+    conn = sqlite3.connect(target, timeout=30, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
-    conn.execute("DROP TABLE IF EXISTS reading")
-    conn.executescript(SCHEMA)
+    init_schema(conn, target)
     return conn
 
 
@@ -477,15 +489,33 @@ def alert_flags(conn: sqlite3.Connection, meter_id: str) -> dict:
     return {key: bool(row[key]) for key in row.keys()}
 
 
+def period_total(
+    conn: sqlite3.Connection, utility: str, direction: str, start: date, end: date
+) -> dict | None:
+    """Exact register delta for one utility/direction over local [start..end] inclusive."""
+    return _sum_period(
+        conn,
+        utility,
+        direction,
+        _local_midnight(start),
+        _local_midnight(end + timedelta(days=1)),
+    )
+
+
 def coverage(conn: sqlite3.Connection) -> dict[str, dict]:
     out = {
-        u: {"first_date": None, "last_date": None, "reading_count": 0}
+        u: {
+            "first_date": None,
+            "last_date": None,
+            "reading_count": 0,
+            "last_reading_utc": None,
+        }
         for u in config.UTILITIES
     }
     cur = conn.execute(
         """
         SELECT utility, MIN(local_date) AS first_date, MAX(local_date) AS last_date,
-               COUNT(*) AS reading_count
+               COUNT(*) AS reading_count, MAX(reading_time_utc) AS last_reading_utc
         FROM meter_reading GROUP BY utility
         """
     )
@@ -494,6 +524,7 @@ def coverage(conn: sqlite3.Connection) -> dict[str, dict]:
             "first_date": row["first_date"],
             "last_date": row["last_date"],
             "reading_count": row["reading_count"],
+            "last_reading_utc": row["last_reading_utc"],
         }
     return out
 

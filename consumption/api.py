@@ -42,7 +42,7 @@ async def lifespan(app: FastAPI):
             f"({config.HOST}) with no authentication.",
             flush=True,
         )
-    db.connect().close()  # create the file and schema before serving anything
+    db.connect().close()
     task = asyncio.create_task(jobs.loop())
     try:
         yield
@@ -176,14 +176,15 @@ def _reject_cross_site_refresh(request: Request) -> None:
 def _period_total(
     conn: sqlite3.Connection, utility: str, direction: str, start: date, end: date
 ) -> dict:
-    rows = db.daily_totals(conn, utility, direction, start, end)
     unit = _unit(utility, direction)
-    if not rows:
+    span = (end - start).days + 1
+    row = db.period_total(conn, utility, direction, start, end)
+    if not row:
         return {"value": None, "unit": unit, "days": 0}
     return {
-        "value": round(sum(r["value"] for r in rows), 4),
-        "unit": rows[0].get("unit") or unit,
-        "days": len(rows),
+        "value": round(row["value"], 4),
+        "unit": row.get("unit") or unit,
+        "days": span,
     }
 
 

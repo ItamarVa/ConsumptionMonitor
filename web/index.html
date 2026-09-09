@@ -12,11 +12,20 @@
       <h1 class="site-title" data-i18n="app.title"></h1>
       <p class="site-subtitle" data-i18n="app.subtitle"></p>
     </div>
-    <div id="status-pill" class="status-pill status-pill--offline" role="status" aria-live="polite">
-      <span class="status-pill__dot" aria-hidden="true"></span>
-      <span class="status-pill__text" data-i18n="status.offline"></span>
+    <div class="header-actions">
+      <button type="button" id="theme-toggle" class="icon-btn" data-i18n-aria="theme.toggle" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+        </svg>
+      </button>
+      <div id="status-pill" class="status-pill status-pill--offline" role="status" aria-live="polite">
+        <span class="status-pill__dot" aria-hidden="true"></span>
+        <span class="status-pill__text" data-i18n="status.offline"></span>
+      </div>
     </div>
   </header>
+
+  <p id="coverage-note" class="coverage-note" hidden></p>
 
   <main class="dashboard">
     <div id="state-loading" class="state-panel card" hidden>
@@ -53,7 +62,7 @@
       <section class="controls-card card">
         <div class="controls-row">
           <div class="control-group">
-            <span class="control-label" id="utility-label" data-i18n="utility.electricity_import"></span>
+            <span class="control-label" id="utility-label" data-i18n="control.utility"></span>
             <div id="utility" class="segment-group" role="group" aria-labelledby="utility-label">
               <button type="button" class="segment-btn" data-utility="electricity" data-direction="import" aria-pressed="true" data-i18n="utility.electricity_import"></button>
               <button type="button" class="segment-btn" data-utility="electricity" data-direction="export" aria-pressed="false" data-i18n="utility.electricity_export"></button>
@@ -62,7 +71,7 @@
           </div>
 
           <div class="control-group">
-            <span class="control-label" id="granularity-label" data-i18n="granularity.day"></span>
+            <span class="control-label" id="granularity-label" data-i18n="control.granularity"></span>
             <div id="granularity" class="segment-group" role="group" aria-labelledby="granularity-label">
               <button type="button" class="segment-btn" data-granularity="hour" aria-pressed="false" data-i18n="granularity.hour"></button>
               <button type="button" class="segment-btn" data-granularity="day" aria-pressed="true" data-i18n="granularity.day"></button>
@@ -82,18 +91,19 @@
           </div>
 
           <div class="control-group">
-            <label class="control-label" for="preset" data-i18n="preset.30d"></label>
+            <label class="control-label" for="preset" data-i18n="control.preset"></label>
             <select id="preset" class="select-input" name="preset">
               <option value="7d" data-i18n="preset.7d"></option>
               <option value="30d" selected data-i18n="preset.30d"></option>
               <option value="this_month" data-i18n="preset.this_month"></option>
               <option value="this_year" data-i18n="preset.this_year"></option>
               <option value="all" data-i18n="preset.all"></option>
+              <option value="custom" data-i18n="preset.custom"></option>
             </select>
           </div>
 
           <div class="control-group">
-            <label class="control-label" for="compare" data-i18n="compare.none"></label>
+            <label class="control-label" for="compare" data-i18n="control.compare"></label>
             <select id="compare" class="select-input" name="compare">
               <option value="none" selected data-i18n="compare.none"></option>
               <option value="previous" data-i18n="compare.previous"></option>
@@ -165,7 +175,10 @@
 
       <section class="chart-card card">
         <header class="chart-header">
-          <h2 class="chart-title" id="chart-title" data-i18n="app.title"></h2>
+          <div class="chart-header__text">
+            <h2 class="chart-title" id="chart-title"></h2>
+            <p class="chart-subtitle" id="chart-subtitle"></p>
+          </div>
           <button type="button" id="download-csv" class="icon-btn" data-i18n-aria="chart.download_csv">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -174,6 +187,16 @@
         </header>
         <div class="chart-wrap">
           <canvas id="chart" role="img" aria-label=""></canvas>
+        </div>
+        <div id="chart-legend" class="chart-legend" hidden>
+          <span class="chart-legend__item chart-legend__item--primary">
+            <span class="chart-legend__swatch" aria-hidden="true"></span>
+            <span data-i18n="legend.current"></span>
+          </span>
+          <span class="chart-legend__item chart-legend__item--comparison">
+            <span class="chart-legend__swatch" aria-hidden="true"></span>
+            <span data-i18n="legend.comparison"></span>
+          </span>
         </div>
         <p id="chart-note" class="chart-note" data-i18n="chart.estimated_note" hidden></p>
       </section>

@@ -72,4 +72,22 @@ Module exports, so C's markup ids and D's queries cannot drift:
 - `chart.js`: `createChart(canvasEl, t)`, `renderSeries(chart, {primary, comparison, granularity, unit, estimated, t})`, `onBarClick(handler)`.
 - `app.js`: no exports; owns state, wiring and the poll timer.
 
-DOM ids C provides and D binds to: `#utility`, `#granularity`, `#range-start`, `#range-end`, `#preset`, `#compare`, `#kpi-total`, `#kpi-average`, `#kpi-peak`, `#kpi-latest`, `#breadcrumb`, `#chart`, `#chart-note`, `#status-pill`, `#data-table`, `#table-toggle`, `#download-csv`, `#state-loading`, `#state-empty`, `#state-error`, `#retry`.
+DOM ids C provides and D binds to: `#utility`, `#granularity`, `#range-start`, `#range-end`, `#preset`, `#compare`, `#kpi-total`, `#kpi-average`, `#kpi-peak`, `#kpi-latest`, `#breadcrumb`, `#chart`, `#chart-note`, `#chart-title`, `#chart-subtitle`, `#chart-legend`, `#status-pill`, `#coverage-note`, `#theme-toggle`, `#data-table`, `#table-toggle`, `#download-csv`, `#state-loading`, `#state-empty`, `#state-error`, `#retry`.
+
+## 5. Contract addendum (redesign wave)
+
+### `/health` coverage fields
+
+Each utility entry includes `last_reading_utc` (ISO UTC string or null) in addition to `first_date`, `last_date`, `reading_count`.
+
+### New locale keys
+
+`control.utility`, `control.granularity`, `control.range`, `control.preset`, `control.compare`, `chart.title_template`, `chart.subtitle_range`, `coverage.note`, `legend.current`, `legend.comparison`, `theme.toggle`, `preset.custom`.
+
+### Theme contract
+
+`data-theme="light" | "dark"` on `<html>`. All color tokens redefined under `[data-theme="light"]` and `[data-theme="dark"]`. Initial theme from `prefers-color-scheme`; user choice persisted in `localStorage` key `cm-theme`.
+
+### Canvas box rule
+
+`.chart-wrap` has a definite height: `clamp(320px, 46vh, 520px)`. `#chart` has no width, height, or min-height rules — Chart.js owns the canvas box.

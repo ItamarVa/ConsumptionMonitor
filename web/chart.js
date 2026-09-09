@@ -112,12 +112,14 @@ export function createChart(canvasEl, t) {
       },
       scales: {
         x: {
-          grid: { display: false, drawBorder: false },
+          grid: { display: false },
+          border: { display: false },
           ticks: { color: textMuted, maxRotation: 0, autoSkip: true },
         },
         y: {
           beginAtZero: true,
-          grid: { color: border, drawBorder: false },
+          grid: { color: border },
+          border: { display: false },
           ticks: {
             color: textMuted,
             callback(value) {
@@ -195,4 +197,17 @@ export function renderSeries(chart, { primary, comparison, granularity, unit, es
 
 export function onBarClick(handler) {
   barClickHandler = handler;
+}
+
+/** Re-read CSS tokens after theme switch without rebuilding datasets. */
+export function refreshChartTheme(chart) {
+  if (!chart) {
+    return;
+  }
+  const border = colorVar("--border", 1);
+  const textMuted = cssVar("--text-muted") || "#475569";
+  chart.options.scales.x.ticks.color = textMuted;
+  chart.options.scales.y.ticks.color = textMuted;
+  chart.options.scales.y.grid.color = border;
+  chart.update("none");
 }
