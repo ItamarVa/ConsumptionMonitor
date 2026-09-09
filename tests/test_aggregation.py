@@ -40,20 +40,34 @@ def _conn():
 
 
 @contextmanager
-def _source_with_years(years: set[int]):
-    """Stand in for the unimplemented portal: one reading per utility for those years."""
+def _fake_source(fake):
+    """Replace the adapter for the duration of a check, so nothing here needs the portal."""
     original = source.fetch_hourly
+    source.fetch_hourly = fake
+    try:
+        yield
+    finally:
+        source.fetch_hourly = original
+
+
+def _source_with_years(years: set[int]):
+    """Stand in for the portal: one reading per utility for those years, nothing else."""
 
     def fake(utility: str, start: date, end: date) -> list[Reading]:
         if start.year not in years:
             return []
         return [Reading(utility, "m1", datetime(start.year, 6, 1, 6, tzinfo=UTC), 1.0, "kWh")]
 
-    source.fetch_hourly = fake
-    try:
-        yield
-    finally:
-        source.fetch_hourly = original
+    return _fake_source(fake)
+
+
+def _source_raising(exc: Exception):
+    """A portal that always fails. Keeps these checks off the network now that it is real."""
+
+    def fake(utility: str, start: date, end: date) -> list[Reading]:
+        raise exc
+
+    return _fake_source(fake)
 
 
 def test_local_day_mapping() -> None:
@@ -119,8 +133,9 @@ def test_due() -> None:
 
 
 def test_missing_source_is_recorded_not_raised() -> None:
-    """A missing adapter must land in job_state as an error, never kill the scheduler."""
-    with tempfile.TemporaryDirectory() as tmp:
+    """An unusable adapter must land in job_state as an error, never kill the scheduler."""
+    unusable = source.SourceNotReady("No mycitygrid credentials stored.")
+    with tempfile.TemporaryDirectory() as tmp, _source_raising(unusable):
         conn = db.connect(Path(tmp) / "t.sqlite")
         assert jobs.run_job(conn, "today", date(2026, 9, 9)) == 0
         state = db.job_states(conn)["today"]
@@ -146,8 +161,9 @@ def test_scheduler_skips_out_of_season_jobs() -> None:
         original = config.DB_PATH
         config.DB_PATH = Path(tmp) / "t.sqlite"  # run_due opens the configured DB itself
         try:
-            september = jobs.run_due(datetime(2026, 9, 9, 9, tzinfo=UTC))
-            january = jobs.run_due(datetime(2026, 1, 15, 9, tzinfo=UTC))
+            with _source_with_years(set()):  # every job runs, none of them fetches anything
+                september = jobs.run_due(datetime(2026, 9, 9, 9, tzinfo=UTC))
+                january = jobs.run_due(datetime(2026, 1, 15, 9, tzinfo=UTC))
         finally:
             config.DB_PATH = original
     assert "previous_year" not in september, september
@@ -177,10 +193,11 @@ def test_backfill_walks_back_then_stops_for_good() -> None:
 
 def test_backfill_survives_a_failed_fetch() -> None:
     """A failure returns no rows too - it must not be mistaken for the end of the history."""
-    with _conn() as conn:
+    failure = source.SourceError("the portal answered 503")
+    with _conn() as conn, _source_raising(failure):
         today = date(2026, 9, 9)
         db.upsert_readings(conn, [_reading(datetime(2026, 6, 1, 6, tzinfo=UTC), 1.0)])
-        assert jobs.run_job(conn, "backfill", today) == 0  # source.py is not implemented
+        assert jobs.run_job(conn, "backfill", today) == 0
         assert db.get_state(conn, jobs.BACKFILL_KEY) is None
         assert jobs.JOBS["backfill"].covers(today, conn) == (date(2025, 1, 1), date(2025, 12, 31))
 
