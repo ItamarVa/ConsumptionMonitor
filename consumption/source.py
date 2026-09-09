@@ -110,9 +110,12 @@ class _Portal:
         return self._meters.get(utility, [])
 
     def _authenticate(self, form: dict[str, str], *, password_grant: bool) -> None:
+        # `authenticated=False`: sending the expired bearer to the token endpoint could be
+        # answered with a 401 and read here as "wrong password", which it would not be.
         response = self._request(
             "POST",
             _url(LOGIN_PATH),
+            authenticated=False,
             data=form,
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
@@ -153,14 +156,14 @@ class _Portal:
                 self._refresh_token = ""  # stale: fall through to a fresh password login
         self.login()
 
-    def _request(self, method: str, url: str, **kwargs):
+    def _request(self, method: str, url: str, *, authenticated: bool = True, **kwargs):
         waited = REQUEST_DELAY_SECONDS - (time.monotonic() - self._last_request)
         if self._last_request and waited > 0:
             time.sleep(waited)
         self._last_request = time.monotonic()
 
         headers = dict(kwargs.pop("headers", None) or {})
-        if self._access_token:
+        if authenticated and self._access_token:
             headers["Authorization"] = f"Bearer {self._access_token}"
         send = self._session.post if method == "POST" else self._session.get
         try:

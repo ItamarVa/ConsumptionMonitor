@@ -13,8 +13,12 @@ try {
     & $python (Join-Path $root 'tests\test_aggregation.py')
     if ($LASTEXITCODE -ne 0) { throw 'Self-check failed. The API was not started.' }
 
-    Show-Phase 88 'Checking the portal parser'
+    Show-Phase 86 'Checking the portal parser'
     & $python (Join-Path $root 'tests\test_source_parsing.py')
+    if ($LASTEXITCODE -ne 0) { throw 'Self-check failed. The API was not started.' }
+
+    Show-Phase 92 'Checking the portal session'
+    & $python (Join-Path $root 'tests\test_source_session.py')
     if ($LASTEXITCODE -ne 0) { throw 'Self-check failed. The API was not started.' }
 
     # Asks the app itself rather than looking for a file, so an environment override counts.

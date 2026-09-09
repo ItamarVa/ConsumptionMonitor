@@ -15,14 +15,29 @@ username and password (the password is hidden while typing) and stores them encr
 with the Windows Data Protection API under `data/`, readable only by the Windows user who
 entered them. Without stored credentials the API runs and serves an empty database.
 
+Then double-click `test-connection.bat` once. It signs in, asks the portal for your meters
+and for one day of hourly consumption, and writes what came back to
+`data/connection-report.txt` (never committed, with the password and the tokens removed).
+The window says in plain words whether it worked.
+
 `.env` is now only for non-secret settings such as `PORT`; see `.env.example`.
 
 ## Status
 
-The scaffold is complete and running. Fetching is **not implemented**: the portal is
-undocumented, so `_login` and `_fetch_range` in `consumption/source.py` are empty and
-`SOURCE_READY` is `False`. Until they are filled in, `/jobs` reports every job as failing
-with `SourceNotReady`, which is the intended scaffold behaviour.
+Complete and running, and fetching is implemented - but **written against a
+reverse-engineered API and unverified**. `www.mycitygrid.com` publishes no documentation,
+so every URL, parameter and response shape in `consumption/source.py` and
+`consumption/readings.py` was derived by reading the site's public JavaScript bundle
+without ever logging in (the write-up is in `.cursor/memory/topics/mycitygrid-portal.md`).
+Nothing has been confirmed against a real account yet.
+
+The login and the meter list are on firm ground; the shape of the consumption response is
+the guess most likely to be wrong, so the parser refuses anything it does not recognise
+instead of storing a zero. That means the first real run either works or fails loudly with
+a message naming what it expected. **Run `test-connection.bat` first**: its report is what
+turns the remaining guesses into facts. Two known open questions it answers - whether the
+values are per-hour amounts (assumed) or cumulative meter totals, and whether water needs
+the multiplier the portal's own screen applies.
 
 ## Refresh schedule
 
@@ -70,13 +85,21 @@ the aggregated endpoints are meant to span the full history.
 ```
 consumption/config.py   settings, and the credentials the rest of the app sees
 consumption/secrets.py  the encrypted credential store (Windows DPAPI, no dependency)
-consumption/source.py   the mycitygrid adapter (Scrapling) - the part still to write
+consumption/source.py   the mycitygrid adapter: session, login, token refresh, day loop
+consumption/readings.py the Reading type, the error taxonomy and the response parsers
 consumption/db.py       SQLite schema, upserts and the aggregation queries
 consumption/jobs.py     the refresh schedule and the scheduler loop
 consumption/api.py      the HTTP layer and all input validation
-scripts/env.ps1         the .venv bootstrap shared by both launchers
-tests/test_aggregation.py  self-checks, no network needed
+scripts/env.ps1         the .venv bootstrap shared by all three launchers
+scripts/connection_report.py  the first-contact diagnostic behind test-connection.bat
+tests/test_aggregation.py     self-checks for storage and the schedule, no network
+tests/test_source_parsing.py  self-checks for the response parsers, no network
+tests/test_source_session.py  self-checks for login, token refresh and the day loop
 ```
+
+Parsing is a separate file from the HTTP side on purpose: it is pure, it is the part most
+likely to need correcting once real responses are seen, and it is therefore the part the
+self-checks exercise against synthetic payloads.
 
 Storage is one row per utility, meter and hour; daily, monthly, yearly and year-to-date
 figures are `SUM` queries over those rows rather than separate tables, grouped on a
@@ -91,6 +114,17 @@ substring of the denormalised `local_date`. Two utilities at hourly resolution i
 - `consumption/source.py` uses Scrapling's plain HTTP session. If the portal turns out to
   need a real browser, switch to `StealthySession` and run `scrapling install` once to
   download the browser.
+- Hourly data costs one request per local day, as the portal's own chart does, so a
+  backfill year is about 366 requests. They are spaced one second apart, and one call
+  refuses to make more than 800 requests - a caller asking for a decade gets a clear
+  error instead of an hour of traffic. Whether a wider date window works is unknown.
+- Israeli daylight saving is handled: the spring-forward day stores 23 hours and the
+  autumn day 25, with the repeated wall-clock hour kept as two distinct UTC hours. A
+  bucket for the hour that the spring jump removes is dropped rather than folded onto
+  its neighbour, because no consumption can belong to an hour that did not happen.
+- A wrong username or password is reported as `SourceNotReady`, which the scheduler
+  treats as "not worth retrying", and it names `set-credentials.bat` as the fix. A portal
+  that answers oddly is `SourceError`, which is retried on the next schedule.
 - The encrypted credentials are tied to one Windows user on one machine. Copying the
   project to another PC, or a Windows profile reset, means running `set-credentials.bat`
   again. Moving off Windows would mean swapping DPAPI for the `keyring` package.

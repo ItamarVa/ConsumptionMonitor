@@ -30,8 +30,8 @@ from the script tags in `/home` if a quote stops matching.
 - `this.clientId` is never assigned anywhere in the bundle (verified by exhausting all `clientId` matches), so the
   browser really sends the literal `clientId=undefined`.
 - **No CSRF/anti-forgery token anywhere**, and no cookie auth: the bearer token in `localStorage` is the only
-  credential, so the hint in `consumption/source.py:_login` about scraping a hidden `__RequestVerificationToken` does
-  not apply. **No OTP/SMS/2FA** either - the only `OTP` matches sit inside the string `FORGOTPASSWORD`, and the login UI
+  credential. (`consumption/source.py:_login` used to hint at scraping a hidden `__RequestVerificationToken`; that hint
+  was wrong and has been removed.) **No OTP/SMS/2FA** either - the only `OTP` matches sit inside the string `FORGOTPASSWORD`, and the login UI
   strings are just `EMAIL`, `PASSWORD`, `SIGNIN`, `FORGOTPASSWORD`, `INVALIDUSER:"The user name or password is
   incorrect."`.
 - **Consumption endpoints**, all relative to the base above:
@@ -93,7 +93,11 @@ Hypothesis, untested. All relative to `https://www.mycitygrid.com/api/api/`.
 
 ## Unknowns that only credentials can answer
 
-Sign in at `https://www.mycitygrid.com/login` with the network tab recording, then capture:
+`test-connection.bat` now answers most of this without a browser: it logs in once and writes `user/info`, its meters and
+their types, and one day of hourly buckets per meter to `data/connection-report.txt`, redacted, plus whether
+`consumption/readings.py` understood each response and whether the values look cumulative rather than per-hour. What it
+cannot answer is the wider-window question and how far back history goes; the report lists those as open. Otherwise,
+sign in at `https://www.mycitygrid.com/login` with the network tab recording, then capture:
 
 - [ ] The exact `account/login` body and response JSON - is `clientId` required, what is `expires_in`, and what error
       shape comes back on failure.

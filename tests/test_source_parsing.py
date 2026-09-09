@@ -1,23 +1,23 @@
-"""Self-check for the mycitygrid adapter's parsing, which is written against a guessed API.
+"""Self-check for the mycitygrid payload parsers, which are written against a guessed API.
 
 Every payload here is synthetic: the checks never touch the network and never read the
 stored credentials, which matters because the response shapes are unverified and the only
-protection against a confident misparse is that a wrong shape raises loudly.
-Covers the ngx-charts bucket shape, UTC conversion, both Israeli DST edges, meter
-discovery, the day loop's request budget, and the credential-free error messages.
+protection against a confident misparse is that a wrong shape raises loudly. Covers the
+ngx-charts bucket shape, UTC conversion, both Israeli DST edges, meter discovery and the
+credential-free error messages. `tests/test_source_session.py` covers the HTTP half.
 Plain asserts so `python tests/test_source_parsing.py` and `pytest` both work.
 """
 
 from __future__ import annotations
 
 import sys
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from consumption import config, readings, source  # noqa: E402
-from consumption.readings import SourceError, SourceNotReady  # noqa: E402
+from consumption import config, readings  # noqa: E402
+from consumption.readings import SourceError  # noqa: E402
 
 UTC = timezone.utc
 
@@ -38,6 +38,7 @@ def _hours_utc(result):
 
 
 def _raises(exc_type, call, message_contains=""):
+    """Kept local, not shared, so each self-check file runs on its own."""
     try:
         call()
     except exc_type as exc:
@@ -201,96 +202,6 @@ def test_meter_discovery() -> None:
         _raises(SourceError, lambda p=payload: readings.parse_meters(p), expected)
 
 
-class _FakePortal:
-    """A logged-in session stand-in: records every request instead of making one."""
-
-    def __init__(self, meters: dict[str, list[str]], payloads: dict | None = None) -> None:
-        self._meters = meters
-        self._payloads = payloads or {}
-        self.calls: list[dict] = []
-
-    def meters(self, utility: str) -> list[str]:
-        return self._meters.get(utility, [])
-
-    def get_json(self, path: str, params: dict | None = None) -> object:
-        self.calls.append(params or {})
-        return self._payloads.get((params or {})["fromDate"], _payload([0], 1.0))
-
-
-def test_day_loop_asks_one_local_day_at_a_time() -> None:
-    portal = _FakePortal({"electricity": ["11", "12"]})
-    result = source._fetch_range(portal, "electricity", date(2026, 1, 15), date(2026, 1, 17))
-    assert len(portal.calls) == 6, "three days times two meters"
-    assert portal.calls[0] == {
-        "meterId": "11",
-        "period": "hourly",
-        "fromDate": "01/15/2026",
-        "toDate": "01/15/2026",
-    }, portal.calls[0]
-    assert len(result) == 6 and len({(r.meter_id, r.hour_start) for r in result}) == 6
-
-
-def test_missing_meter_type_fetches_nothing() -> None:
-    portal = _FakePortal({"electricity": ["11"]})
-    assert source._fetch_range(portal, "water", date(2026, 1, 15), date(2026, 1, 15)) == []
-    assert portal.calls == [], "a utility with no meter must not cost a request"
-
-
-def test_request_ceiling_refuses_an_oversized_range() -> None:
-    portal = _FakePortal({"electricity": ["11", "12"]})
-    start = date(2020, 1, 1)
-    _raises(
-        SourceError,
-        lambda: source._fetch_range(portal, "electricity", start, start + timedelta(days=800)),
-        "over the 800 allowed in one call",
-    )
-    assert portal.calls == [], "the ceiling must be checked before any request is sent"
-
-
-def test_repeated_hour_across_days_is_refused() -> None:
-    """If bucket labels were not the requested day, two days would collide. Fail loudly."""
-    same_day_twice = {
-        "01/15/2026": _payload([0]),
-        "01/16/2026": {"values": [{"name": "2026-01-15T00:00:00", "value": 1.0}]},
-    }
-    portal = _FakePortal({"electricity": ["11"]}, same_day_twice)
-    _raises(
-        SourceError,
-        lambda: source._fetch_range(portal, "electricity", date(2026, 1, 15), date(2026, 1, 16)),
-        "not what came back",
-    )
-
-
-def test_fetch_hourly_validates_before_reaching_the_portal() -> None:
-    """None of these may open a session, so no credential is read and no request is sent."""
-    _raises(ValueError, lambda: source.fetch_hourly("gas", date(2026, 1, 1), date(2026, 1, 1)))
-    _raises(
-        ValueError,
-        lambda: source.fetch_hourly("water", date(2026, 1, 2), date(2026, 1, 1)),
-        "end date is before start date",
-    )
-
-    stored = (config.MYCITYGRID_USERNAME, config.MYCITYGRID_PASSWORD)
-    config.MYCITYGRID_USERNAME, config.MYCITYGRID_PASSWORD = "", ""
-    try:
-        _raises(
-            SourceNotReady,
-            lambda: source.fetch_hourly("water", date(2026, 1, 1), date(2026, 1, 1)),
-            "set-credentials.bat",
-        )
-    finally:
-        config.MYCITYGRID_USERNAME, config.MYCITYGRID_PASSWORD = stored
-
-
-def test_token_expiry_reads_both_forms() -> None:
-    now = datetime.now(UTC)
-    assert source._token_expiry({"expires_in": 3600}) - now > timedelta(minutes=55)
-    parsed = source._token_expiry({".expires": "Wed, 09 Sep 2026 21:00:00 GMT"})
-    assert parsed == datetime(2026, 9, 9, 21, tzinfo=UTC), parsed
-    # Neither field present: a short lifetime, so the next request renews rather than 401s.
-    assert source._token_expiry({}) - now < timedelta(minutes=16)
-
-
 def test_local_timezone_is_the_one_the_parser_assumes() -> None:
     assert str(config.LOCAL_TZ) == "Asia/Jerusalem", config.LOCAL_TZ
 
@@ -300,7 +211,7 @@ def main() -> int:
     for test in tests:
         test()
         print(f"  ok  {test.__name__}")
-    print(f"{len(tests)} source-parsing self-checks passed")
+    print(f"{len(tests)} payload-parsing self-checks passed")
     return 0
 
 
