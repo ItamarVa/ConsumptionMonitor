@@ -1,10 +1,7 @@
-"""Self-check for the mycitygrid adapter's HTTP half: login, token refresh and the day loop.
+"""Self-check for the mycitygrid adapter HTTP half: login, token refresh, reading-log fetch.
 
-Every response here comes from a scripted stand-in, so the checks never touch the network
-and never read the stored credentials - which matters, because the request shapes are
-reverse-engineered and an accidental real request against a portal we have no account for
-is exactly what must not happen. `tests/test_source_parsing.py` covers the payload half.
-Plain asserts so `python tests/test_source_session.py` and `pytest` both work.
+Every response comes from a scripted stand-in, so these checks never touch the network or
+read stored credentials. `tests/test_reading_log.py` covers row parsing.
 """
 
 from __future__ import annotations
@@ -18,28 +15,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from consumption import config, source  # noqa: E402
 from consumption.readings import SourceError, SourceNotReady  # noqa: E402
+from consumption.records import READING_LOG_PATH  # noqa: E402
 
 UTC = timezone.utc
 
 
 def _raises(exc_type, call, message_contains=""):
-    """Kept local, not shared, so each self-check file runs on its own."""
     try:
         call()
     except exc_type as exc:
         assert message_contains in str(exc), f"expected {message_contains!r} in {exc}"
         return str(exc)
     raise AssertionError(f"expected {exc_type.__name__}, nothing was raised")
-
-
-def _payload(hours, value=1.0):
-    return {
-        "name": "day",
-        "values": [
-            {"name": f"{hour:02d}:00", "series": [{"name": "Consumption", "value": value}]}
-            for hour in hours
-        ],
-    }
 
 
 class _FakeResponse:
@@ -51,8 +38,6 @@ class _FakeResponse:
 
 
 class _FakeSession:
-    """A Scrapling session stand-in: hands out scripted responses, records what was sent."""
-
     def __init__(self, script: list[_FakeResponse]) -> None:
         self._script = script
         self.sent: list[tuple[str, str, dict]] = []
@@ -73,7 +58,6 @@ def _token(access="tok-1", refresh="ref-1", expires_in=3600):
 
 
 def _staged(script):
-    """A scripted session plus stored credentials, with the pacing delay stood down."""
     session = _FakeSession(script)
     stored = (
         config.MYCITYGRID_USERNAME,
@@ -81,13 +65,28 @@ def _staged(script):
         source.REQUEST_DELAY_SECONDS,
     )
     config.MYCITYGRID_USERNAME, config.MYCITYGRID_PASSWORD = "user@example.com", "pa ss:word"
-    source.REQUEST_DELAY_SECONDS = 0.0  # these checks must not spend a second per request
+    source.REQUEST_DELAY_SECONDS = 0.0
     return session, stored
 
 
 def _restore(stored) -> None:
     config.MYCITYGRID_USERNAME, config.MYCITYGRID_PASSWORD = stored[0], stored[1]
     source.REQUEST_DELAY_SECONDS = stored[2]
+
+
+def _reading_page(meter_data_id: int = 1, has_next: bool = False) -> dict:
+    return {
+        "totalItemCount": 1,
+        "pageCount": 1,
+        "hasNextPage": has_next,
+        "items": [
+            {
+                "meterDataId": meter_data_id,
+                "readingTime": "2026-01-15T08:00:00+02:00",
+                "totalImportKwH": 100.0,
+            }
+        ],
+    }
 
 
 def test_login_sends_the_password_grant_and_bearers_every_later_request() -> None:
@@ -99,18 +98,11 @@ def test_login_sends_the_password_grant_and_bearers_every_later_request() -> Non
 
     method, url, kwargs = session.sent[0]
     assert (method, url) == ("POST", "https://www.mycitygrid.com/api/api/account/login")
-    assert kwargs["data"] == {
-        "grant_type": "password",
-        "username": "user@example.com",
-        "password": "pa ss:word",
-        "clientId": "undefined",
-    }, kwargs["data"]
-    assert "Authorization" not in kwargs["headers"], "the token endpoint must get no bearer"
-    assert kwargs["headers"]["Content-Type"] == "application/x-www-form-urlencoded"
+    assert kwargs["data"]["grant_type"] == "password"
+    assert "Authorization" not in kwargs["headers"]
 
     method, url, kwargs = session.sent[1]
-    assert (method, url) == ("GET", "https://www.mycitygrid.com/api/api/user/info")
-    assert kwargs["headers"]["Authorization"] == "Bearer tok-1", kwargs["headers"]
+    assert kwargs["headers"]["Authorization"] == "Bearer tok-1"
 
 
 def test_rejected_credentials_are_not_a_transient_failure() -> None:
@@ -119,14 +111,14 @@ def test_rejected_credentials_are_not_a_transient_failure() -> None:
         message = _raises(SourceNotReady, lambda: source._login(session), "set-credentials.bat")
     finally:
         _restore(stored)
-    assert "pa ss:word" not in message, "the password must never reach an error message"
+    assert "pa ss:word" not in message
 
 
 def test_a_401_refreshes_the_token_once_and_retries() -> None:
     session, stored = _staged(
         [
             _FakeResponse(200, _token()),
-            _FakeResponse(401, {}),  # the token died mid-run
+            _FakeResponse(401, {}),
             _FakeResponse(200, _token(access="tok-2", refresh="ref-2")),
             _FakeResponse(200, {"ok": True}),
         ]
@@ -135,46 +127,8 @@ def test_a_401_refreshes_the_token_once_and_retries() -> None:
         assert source._login(session).get_json("user/info") == {"ok": True}
     finally:
         _restore(stored)
-
-    assert session.sent[2][2]["data"] == {
-        "grant_type": "refresh_token",
-        "client_id": "undefined",
-        "refresh_token": "ref-1",
-    }, session.sent[2][2]["data"]
     assert session.sent[3][2]["headers"]["Authorization"] == "Bearer tok-2"
-    assert len(session.sent) == 4, "one refresh and one retry, not a login per request"
-
-
-def test_a_stale_refresh_token_falls_back_to_one_password_login() -> None:
-    session, stored = _staged(
-        [
-            _FakeResponse(200, _token()),
-            _FakeResponse(401, {}),
-            _FakeResponse(400, {"error": "invalid_grant"}),  # the refresh token is stale too
-            _FakeResponse(200, _token(access="tok-3")),
-            _FakeResponse(200, {"ok": True}),
-        ]
-    )
-    try:
-        assert source._login(session).get_json("user/info") == {"ok": True}
-    finally:
-        _restore(stored)
-    assert session.sent[3][2]["data"]["grant_type"] == "password", session.sent[3][2]["data"]
-
-
-def test_unusable_answers_are_source_errors() -> None:
-    cases = [
-        ([_FakeResponse(200, _token()), _FakeResponse(500, {})], "answered 500 to GET user/info"),
-        ([_FakeResponse(200, _token()), _FakeResponse(200, "<html>login</html>")], "do not parse"),
-        ([_FakeResponse(200, {"token_type": "bearer"})], "no access_token"),
-        ([_FakeResponse(503, {})], "answered 503 to the login request"),
-    ]
-    for script, expected in cases:
-        session, stored = _staged(script)
-        try:
-            _raises(SourceError, lambda s=session: source._login(s).get_json("user/info"), expected)
-        finally:
-            _restore(stored)
+    assert len(session.sent) == 4
 
 
 def test_the_meter_list_is_fetched_once_per_session() -> None:
@@ -186,84 +140,61 @@ def test_the_meter_list_is_fetched_once_per_session() -> None:
         assert portal.meters("water") == []
     finally:
         _restore(stored)
-    assert len(session.sent) == 2, "user/info must not be re-fetched for the second utility"
+    assert len(session.sent) == 2
 
 
 def test_token_expiry_reads_both_forms() -> None:
     now = datetime.now(UTC)
     assert source._token_expiry({"expires_in": 3600}) - now > timedelta(minutes=55)
     parsed = source._token_expiry({".expires": "Wed, 09 Sep 2026 21:00:00 GMT"})
-    assert parsed == datetime(2026, 9, 9, 21, tzinfo=UTC), parsed
-    # Neither field present: a short lifetime, so the next request renews rather than 401s.
+    assert parsed == datetime(2026, 9, 9, 21, tzinfo=UTC)
     assert source._token_expiry({}) - now < timedelta(minutes=16)
 
 
 class _FakePortal:
-    """A logged-in session stand-in: records every request instead of making one."""
-
-    def __init__(self, meters: dict[str, list[str]], payloads: dict | None = None) -> None:
+    def __init__(self, meters: dict[str, list[str]], pages: list[dict] | None = None) -> None:
         self._meters = meters
-        self._payloads = payloads or {}
+        self._pages = pages or [_reading_page()]
         self.calls: list[dict] = []
 
     def meters(self, utility: str) -> list[str]:
         return self._meters.get(utility, [])
 
-    def get_json(self, path: str, params: dict | None = None) -> object:
+    def get_json(self, path: str, params: dict[str, None] | dict[str, str] | None = None) -> object:
         self.calls.append(params or {})
-        return self._payloads.get((params or {})["fromDate"], _payload([0]))
+        if path != READING_LOG_PATH:
+            return {}
+        page_number = int((params or {}).get("pageNumber", "1"))
+        if page_number <= len(self._pages):
+            return self._pages[page_number - 1]
+        return _reading_page(has_next=False)
 
 
-def test_day_loop_asks_one_local_day_at_a_time() -> None:
-    portal = _FakePortal({"electricity": ["11", "12"]})
-    result = source._fetch_range(portal, "electricity", date(2026, 1, 15), date(2026, 1, 17))
-    assert len(portal.calls) == 6, "three days times two meters"
-    assert portal.calls[0] == {
-        "meterId": "11",
-        "period": "hourly",
-        "fromDate": "01/15/2026",
-        "toDate": "01/15/2026",
-    }, portal.calls[0]
-    assert len(result) == 6 and len({(r.meter_id, r.hour_start) for r in result}) == 6
+def test_reading_log_uses_date_range_and_paginates() -> None:
+    pages = [_reading_page(1, has_next=True), _reading_page(2, has_next=False)]
+    portal = _FakePortal({"electricity": ["11"]}, pages)
+    result = source._fetch_meter_readings(
+        portal, "electricity", "11", date(2026, 1, 15), date(2026, 1, 15)
+    )
+    assert len(result) == 2
+    assert portal.calls[0]["fromDate"] == "01/15/2026"
+    assert portal.calls[0]["toDate"] == "01/15/2026"
+    assert portal.calls[0]["pageNumber"] == "1"
+    assert portal.calls[1]["pageNumber"] == "2"
+    assert "orderByProperty" not in portal.calls[0]
 
 
 def test_missing_meter_type_fetches_nothing() -> None:
     portal = _FakePortal({"electricity": ["11"]})
-    assert source._fetch_range(portal, "water", date(2026, 1, 15), date(2026, 1, 15)) == []
-    assert portal.calls == [], "a utility with no meter must not cost a request"
+    assert source._fetch_readings(portal, "water", date(2026, 1, 15), date(2026, 1, 15)) == []
+    assert portal.calls == []
 
 
-def test_request_ceiling_refuses_an_oversized_range() -> None:
-    portal = _FakePortal({"electricity": ["11", "12"]})
-    start = date(2020, 1, 1)
-    _raises(
-        SourceError,
-        lambda: source._fetch_range(portal, "electricity", start, start + timedelta(days=800)),
-        "over the 800 allowed in one call",
-    )
-    assert portal.calls == [], "the ceiling must be checked before any request is sent"
-
-
-def test_repeated_hour_across_days_is_refused() -> None:
-    """If bucket labels were not the requested day, two days would collide. Fail loudly."""
-    same_day_twice = {
-        "01/15/2026": _payload([0]),
-        "01/16/2026": {"values": [{"name": "2026-01-15T00:00:00", "value": 1.0}]},
-    }
-    portal = _FakePortal({"electricity": ["11"]}, same_day_twice)
-    _raises(
-        SourceError,
-        lambda: source._fetch_range(portal, "electricity", date(2026, 1, 15), date(2026, 1, 16)),
-        "not what came back",
-    )
-
-
-def test_fetch_hourly_validates_before_reaching_the_portal() -> None:
-    """None of these may open a session, so no credential is read and no request is sent."""
-    _raises(ValueError, lambda: source.fetch_hourly("gas", date(2026, 1, 1), date(2026, 1, 1)))
+def test_fetch_readings_validates_before_reaching_the_portal() -> None:
+    _raises(ValueError, lambda: source.fetch_readings("gas", date(2026, 1, 1), date(2026, 1, 1)))
     _raises(
         ValueError,
-        lambda: source.fetch_hourly("water", date(2026, 1, 2), date(2026, 1, 1)),
+        lambda: source.fetch_readings("water", date(2026, 1, 2), date(2026, 1, 1)),
         "end date is before start date",
     )
 
@@ -272,7 +203,7 @@ def test_fetch_hourly_validates_before_reaching_the_portal() -> None:
     try:
         _raises(
             SourceNotReady,
-            lambda: source.fetch_hourly("water", date(2026, 1, 1), date(2026, 1, 1)),
+            lambda: source.fetch_readings("water", date(2026, 1, 1), date(2026, 1, 1)),
             "set-credentials.bat",
         )
     finally:

@@ -1,10 +1,9 @@
 """Refresh schedule: which local date range each job re-fetches, how often, and when it applies.
 
-Every job re-fetches a whole range and overwrites it, so all of them are idempotent and a
-late correction from the portal eventually lands. Intervals are measured from the last
-attempt stored in the DB rather than from process start, so closing the laptop overnight
-makes the missed job due immediately instead of skipping it. Two jobs are not always
-applicable: `previous_year` only in January, `backfill` only until the portal runs dry.
+Every job re-fetches a whole range and overwrites stored readings, so all of them are
+idempotent and late corrections from the portal eventually land. Intervals are measured from
+the last attempt stored in the DB rather than from process start. `previous_year` only runs
+in January; `backfill` walks backwards one month at a time until 2024-01 or an empty month.
 Depended on by: __main__.py (the loop) and api.py (job status).
 """
 
@@ -21,13 +20,11 @@ from . import config, db, source
 
 Range = tuple[date, date]
 
-# Sunday-Saturday, matching the Israeli calendar the portal reports against.
-_DAYS_SINCE_SUNDAY = lambda d: (d.weekday() + 1) % 7  # noqa: E731
-
-# How far back the backfill has left to walk: the next calendar year to request, or DONE
-# once a whole year came back empty. Stored in the DB so a restart resumes where it was.
-BACKFILL_KEY = "backfill_next_year"
+# How far backfill walks: the next calendar month to request (YYYY-MM), or DONE once history
+# ends. Stored in app_state so a restart resumes rather than starting over.
+BACKFILL_KEY = "backfill_next_month"
 BACKFILL_DONE = "done"
+BACKFILL_EARLIEST = date(2024, 1, 1)
 
 
 def _always(today: date) -> bool:
@@ -49,61 +46,76 @@ class Job:
     after: Callable[[sqlite3.Connection, Range, int], None] | None = None
 
 
-def _today(today: date, conn: sqlite3.Connection) -> Range:
-    return today, today
+def _recent(today: date, conn: sqlite3.Connection) -> Range:
+    return today - timedelta(days=1), today
 
 
-def _yesterday(today: date, conn: sqlite3.Connection) -> Range:
-    day = today - timedelta(days=1)
-    return day, day
-
-
-def _last_full_week(today: date, conn: sqlite3.Connection) -> Range:
-    this_week_start = today - timedelta(days=_DAYS_SINCE_SUNDAY(today))
-    return this_week_start - timedelta(days=7), this_week_start - timedelta(days=1)
-
-
-def _year_to_date(today: date, conn: sqlite3.Connection) -> Range:
-    return date(today.year, 1, 1), today
+def _recent_week(today: date, conn: sqlite3.Connection) -> Range:
+    return today - timedelta(days=6), today
 
 
 def _previous_year(today: date, conn: sqlite3.Connection) -> Range:
-    return date(today.year - 1, 1, 1), date(today.year - 1, 12, 31)
+    year = today.year - 1
+    return date(year, 1, 1), date(year, 12, 31)
 
 
 def _in_january(today: date) -> bool:
     return today.month == 1
 
 
+def _month_bounds(year: int, month: int) -> Range:
+    start = date(year, month, 1)
+    if month == 12:
+        end = date(year, 12, 31)
+    else:
+        end = date(year, month + 1, 1) - timedelta(days=1)
+    return start, end
+
+
+def _prev_month(year: int, month: int) -> tuple[int, int]:
+    if month == 1:
+        return year - 1, 12
+    return year, month - 1
+
+
 def _backfill(today: date, conn: sqlite3.Connection) -> Range | None:
-    """The next whole year to pull, walking backwards from the earliest year stored."""
+    """The next whole month to pull, walking backwards toward BACKFILL_EARLIEST."""
     progress = db.get_state(conn, BACKFILL_KEY)
     if progress == BACKFILL_DONE:
         return None
     if progress:
-        year = int(progress)
+        year_s, month_s = progress.split("-", 1)
+        year, month = int(year_s), int(month_s)
     else:
         stored = [c["first_date"] for c in db.coverage(conn).values() if c["first_date"]]
         if not stored:
-            return None  # nothing stored yet - year_to_date has to land first
-        year = int(min(stored)[:4]) - 1
-    return date(year, 1, 1), date(year, 12, 31)
+            return None  # nothing stored yet — recent must land first
+        earliest = date.fromisoformat(min(stored))
+        year, month = _prev_month(earliest.year, earliest.month)
+    if date(year, month, 1) < BACKFILL_EARLIEST.replace(day=1):
+        return None
+    return _month_bounds(year, month)
 
 
 def _advance_backfill(conn: sqlite3.Connection, covered: Range, rows_written: int) -> None:
-    """An empty year means the portal has no history left, so stop asking for good."""
-    year = covered[0].year
-    db.set_state(conn, BACKFILL_KEY, BACKFILL_DONE if rows_written == 0 else str(year - 1))
+    """An empty month means the portal has no history left; stop asking for good."""
+    if rows_written == 0:
+        db.set_state(conn, BACKFILL_KEY, BACKFILL_DONE)
+        return
+    year, month = covered[0].year, covered[0].month
+    prev_y, prev_m = _prev_month(year, month)
+    if date(prev_y, prev_m, 1) < BACKFILL_EARLIEST.replace(day=1):
+        db.set_state(conn, BACKFILL_KEY, BACKFILL_DONE)
+    else:
+        db.set_state(conn, BACKFILL_KEY, f"{prev_y:04d}-{prev_m:02d}")
 
 
 JOBS: dict[str, Job] = {
-    "today": Job(timedelta(hours=1), _today),
-    "yesterday": Job(timedelta(days=1), _yesterday),
-    "last_full_week": Job(timedelta(days=7), _last_full_week),
-    "year_to_date": Job(timedelta(days=30), _year_to_date),
+    "recent": Job(timedelta(hours=1), _recent),
+    "recent_week": Job(timedelta(days=1), _recent_week),
     # The portal keeps correcting last year until the end of January and not after it.
     "previous_year": Job(timedelta(days=1), _previous_year, in_season=_in_january),
-    # One year per run: nobody is waiting for it, and a decade still lands in a few days.
+    # One month per run: slow endpoint, but unattended history still lands in roughly a day.
     "backfill": Job(timedelta(hours=6), _backfill, after=_advance_backfill),
 }
 
@@ -124,7 +136,9 @@ def run_job(conn: sqlite3.Connection, job: str, today: date | None = None) -> in
     written = 0
     try:
         for utility in config.UTILITIES:
-            written += db.upsert_readings(conn, source.fetch_hourly(utility, start, end))
+            written += db.upsert_meter_readings(
+                conn, source.fetch_readings(utility, start, end)
+            )
     except Exception as exc:  # noqa: BLE001 - one bad job must not kill the loop
         detail = f"{type(exc).__name__}: {exc}"
         if not isinstance(exc, source.SourceNotReady):
