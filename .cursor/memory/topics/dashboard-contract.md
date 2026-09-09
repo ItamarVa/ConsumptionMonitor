@@ -91,3 +91,21 @@ Each utility entry includes `last_reading_utc` (ISO UTC string or null) in addit
 ### Canvas box rule
 
 `.chart-wrap` has a definite height: `clamp(320px, 46vh, 520px)`. `#chart` has no width, height, or min-height rules — Chart.js owns the canvas box.
+
+## 6. Contract addendum (data-completeness wave)
+
+### `partial` on aggregate rows
+
+Every row from `/readings/daily|monthly|yearly` carries `partial`. It is true when no reading has crossed the period's closing boundary yet, so the value is the total accrued up to the newest reading. Running periods used to be omitted from the response entirely. `/summary` period objects carry the same flag.
+
+### New locale keys
+
+`chart.partial_note`, `chart.aria_summary`.
+
+### State panel placement
+
+`#state-loading`, `#state-empty` and `#state-error` live inside `.chart-card` and toggle `.chart-wrap` hidden. They never hide `.dashboard__content`, so the controls stay usable when a range has no data. The loading skeleton appears on the first load only; polls refresh in place.
+
+### Breadcrumb
+
+Markup classes are `.breadcrumb__item`, `.breadcrumb__item--current`, `.breadcrumb__sep`. A crumb is labelled for the view it returns to (`2024–2026`, `2026`, `אוגוסט 2026`, `2026-08-21`), and the last crumb is a non-interactive span.

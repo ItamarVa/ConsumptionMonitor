@@ -342,6 +342,17 @@ def _first_reading_on_or_after(conn: sqlite3.Connection, meter_id: str, boundary
     ).fetchone()
 
 
+def _last_reading_before(conn: sqlite3.Connection, meter_id: str, boundary: datetime) -> sqlite3.Row | None:
+    return conn.execute(
+        """
+        SELECT * FROM meter_reading
+        WHERE meter_id = ? AND reading_time_utc < ?
+        ORDER BY reading_time_utc DESC LIMIT 1
+        """,
+        (meter_id, _to_utc_str(boundary)),
+    ).fetchone()
+
+
 def _period_delta(
     conn: sqlite3.Connection,
     meter_id: str,
@@ -349,20 +360,26 @@ def _period_delta(
     direction: str,
     period_start: datetime,
     period_end: datetime,
-) -> tuple[float | None, str | None]:
-    """Return (value, first_reading_time_utc) for one meter and one period boundary pair."""
+) -> tuple[float | None, str | None, bool]:
+    """Return (value, first_reading_time_utc, partial) for one meter and one boundary pair."""
     start_row = _first_reading_on_or_after(conn, meter_id, period_start)
+    if start_row is None:
+        return None, None, False
     end_row = _first_reading_on_or_after(conn, meter_id, period_end)
-    if start_row is None or end_row is None:
-        return None, None
-    if start_row["reading_time_utc"] >= end_row["reading_time_utc"]:
-        return None, None
+    partial = end_row is None
+    if partial:
+        # No reading has crossed the closing boundary yet, which is the normal state of
+        # today, the running month and the running year. Closing on the newest reading
+        # keeps them in the series as a partial total instead of dropping them entirely.
+        end_row = _last_reading_before(conn, meter_id, period_end)
+    if end_row is None or start_row["reading_time_utc"] >= end_row["reading_time_utc"]:
+        return None, None, False
     field = _register_field(utility, direction)
     start_val = _register_value(start_row, field)
     end_val = _register_value(end_row, field)
     if start_val is None or end_val is None:
-        return None, None
-    return round(end_val - start_val, 6), start_row["reading_time_utc"]
+        return None, None, False
+    return round(end_val - start_val, 6), start_row["reading_time_utc"], partial
 
 
 def _sum_period(
@@ -377,17 +394,22 @@ def _sum_period(
         return None
     total = 0.0
     first_times: list[str] = []
+    partial = False
     for meter_id in meters:
-        value, first_time = _period_delta(conn, meter_id, utility, direction, period_start, period_end)
+        value, first_time, meter_partial = _period_delta(
+            conn, meter_id, utility, direction, period_start, period_end
+        )
         if value is not None and first_time is not None:
             total += value
             first_times.append(first_time)
+            partial = partial or meter_partial
     if not first_times:
         return None
     return {
         "value": round(total, 6),
         "unit": UNITS[(utility, direction)],
         "first_reading_time": min(first_times),
+        "partial": partial,
     }
 
 

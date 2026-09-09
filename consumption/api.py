@@ -180,11 +180,12 @@ def _period_total(
     span = (end - start).days + 1
     row = db.period_total(conn, utility, direction, start, end)
     if not row:
-        return {"value": None, "unit": unit, "days": 0}
+        return {"value": None, "unit": unit, "days": 0, "partial": False}
     return {
         "value": round(row["value"], 4),
         "unit": row.get("unit") or unit,
         "days": span,
+        "partial": bool(row.get("partial")),
     }
 
 

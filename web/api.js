@@ -66,7 +66,7 @@ function normalizeDaily(body) {
     value: row.value ?? null,
     unit: row.unit ?? unit,
     estimated: false,
-    partial: false,
+    partial: Boolean(row.partial),
   }));
 }
 
@@ -78,7 +78,7 @@ function normalizeMonthly(body) {
     value: row.value ?? null,
     unit: row.unit ?? unit,
     estimated: false,
-    partial: false,
+    partial: Boolean(row.partial),
   }));
 }
 
@@ -90,7 +90,7 @@ function normalizeYearly(body) {
     value: row.value ?? null,
     unit: row.unit ?? unit,
     estimated: false,
-    partial: false,
+    partial: Boolean(row.partial),
   }));
 }
 

@@ -31,6 +31,8 @@
   "chart.title_template": "{series} — {granularity}",
   "chart.subtitle_range": "{start} עד {end}",
   "chart.estimated_note": "תצוגה שעתית מבוססת על הערכה מקריאות מונה — לא מדידה רציפה.",
+  "chart.partial_note": "התקופה האחרונה עדיין נמשכת — הסכום שלה חלקי, עד הקריאה האחרונה.",
+  "chart.aria_summary": "תרשים עמודות, {count} תקופות, יחידות {unit}",
   "chart.no_data": "אין נתונים לתקופה שנבחרה",
   "chart.error": "שגיאה בטעינת הנתונים",
   "chart.retry": "נסה שוב",

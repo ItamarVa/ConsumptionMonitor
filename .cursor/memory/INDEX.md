@@ -66,7 +66,20 @@ Remote: `https://github.com/ItamarVa/ConsumptionMonitor.git`.
 - `if errorlevel 1 pause` misses negative PowerShell exit codes (-196608).
 - `run.bat` always stops previous API PIDs before starting; API stdout/stderr go to `data/api.log` and `data/api.stderr.log`; launcher failures in `data/launcher.log`.
 - Dashboard chart was invisible: canvas `height:100%` in auto-height flex parent caused runaway growth; fix is definite `.chart-wrap` height.
+- Chart.js runs tick and tooltip callbacks inside `new Chart()`; a callback closing over the
+  `const chart` being assigned throws a TDZ ReferenceError that kills the whole page init.
+- Aggregates silently dropped every running period (today, this month, this year) because
+  `_period_delta` demanded a reading past the closing boundary; it now closes on the newest
+  reading and flags `partial`, which the UI dims and footnotes.
+- State panels must replace the canvas only. Hiding `.dashboard__content` also hid the
+  controls, and `display:flex` on it beat the `[hidden]` attribute anyway.
+- Hour granularity stays selectable: choosing it collapses the range to the last covered day
+  and leaving it restores the previous range.
+- Verify the dashboard with headless Chrome plus CDP over Node's built-in WebSocket — real
+  screenshots and console errors, no new dependency.
 - `/summary` was ~50s because `_period_total` looped daily queries; `db.period_total` uses two boundary reads (~700ms).
 - Status pill must read `last_reading_utc` from `/health`, not `/summary`.
+- Known data gap: no readings for 2026-09-01..02; jobs only cover the last 7 days and the
+  backfill is `done`, so a hole in the middle is never refilled on its own.
 - Portal reading cadence ~2h (elec ~120 min, water ~160 min) forces hourly view to be a
   proportional estimate; day/month/year stay exact register deltas.

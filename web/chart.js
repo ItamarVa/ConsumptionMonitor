@@ -30,11 +30,13 @@ function colorVar(name, alpha) {
 
 const numberFmt = new Intl.NumberFormat("he-IL", { maximumFractionDigits: 4 });
 
-function formatAxisValue(value, unit) {
+// Ticks stay bare numbers: the unit already appears on the KPI cards and in the tooltip,
+// and repeating it on every gridline crowds the axis.
+function formatAxisValue(value) {
   if (value == null || Number.isNaN(value)) {
     return "";
   }
-  return unit ? `${numberFmt.format(value)} ${unit}` : numberFmt.format(value);
+  return numberFmt.format(value);
 }
 
 function formatCategoryLabel(point, granularity, t) {
@@ -58,11 +60,15 @@ function formatCategoryLabel(point, granularity, t) {
 }
 
 function barColors(points, granularity, estimated, baseAlpha) {
-  const primary = colorVar("--primary", baseAlpha);
   const hover = cssVar("--primary-hover") || colorVar("--primary", 1);
   return points.map((p) => {
-    const alpha =
-      granularity === "hour" && estimated && (p.estimated || p.partial) ? 0.65 : baseAlpha;
+    let alpha = baseAlpha;
+    if (granularity === "hour" && estimated) {
+      alpha = 0.65;
+    } else if (p.partial) {
+      // A period still in progress is not comparable to the closed ones beside it.
+      alpha = 0.5;
+    }
     return {
       backgroundColor: colorVar("--primary", alpha),
       hoverBackgroundColor: hover,
@@ -78,7 +84,10 @@ export function createChart(canvasEl, t) {
   const border = colorVar("--border", 1);
   const textMuted = cssVar("--text-muted") || "#475569";
 
-  const chart = new Chart(canvasEl, {
+  // Chart.js runs the tick and tooltip callbacks during construction, before the
+  // assignment below completes, so every reference to `chart` here must tolerate undefined.
+  let chart;
+  chart = new Chart(canvasEl, {
     type: "bar",
     data: { labels: [], datasets: [] },
     options: {
@@ -94,16 +103,20 @@ export function createChart(canvasEl, t) {
           callbacks: {
             title(items) {
               const idx = items[0]?.dataIndex ?? 0;
-              const labels = chart.$seriesLabels ?? [];
+              const labels = chart?.$seriesLabels ?? [];
               return labels[idx] ?? "";
             },
             label(ctx) {
               const val = ctx.parsed.y;
-              const unit = chart.$unit ?? "";
+              const unit = chart?.$unit ?? "";
               const lines = [`${numberFmt.format(val)} ${unit}`];
-              const point = chart.$primaryPoints?.[ctx.dataIndex];
-              if (point && (point.estimated || point.partial)) {
-                lines.push(t["chart.estimated_note"] ?? "");
+              const point = chart?.$primaryPoints?.[ctx.dataIndex];
+              const note =
+                chart?.$granularity === "hour"
+                  ? point?.estimated && t["chart.estimated_note"]
+                  : point?.partial && t["chart.partial_note"];
+              if (note) {
+                lines.push(note);
               }
               return lines;
             },
@@ -123,7 +136,7 @@ export function createChart(canvasEl, t) {
           ticks: {
             color: textMuted,
             callback(value) {
-              return formatAxisValue(value, chart.$unit ?? "");
+              return formatAxisValue(value);
             },
           },
         },
@@ -134,9 +147,9 @@ export function createChart(canvasEl, t) {
         }
         const el = elements.find((e) => e.datasetIndex === 0) ?? elements[0];
         const idx = el.index;
-        const point = chart.$primaryPoints?.[idx];
+        const point = chart?.$primaryPoints?.[idx];
         if (point) {
-          barClickHandler({ index: idx, point, granularity: chart.$granularity });
+          barClickHandler({ index: idx, point, granularity: chart?.$granularity });
         }
       },
       datasets: {

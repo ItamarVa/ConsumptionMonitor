@@ -113,6 +113,29 @@ def test_daily_total_uses_first_reading_after_midnight() -> None:
                 "value": 10.0,
                 "unit": "kWh",
                 "first_reading_time": "2026-06-01T06:00:00Z",
+                "partial": False,
+            }
+        ]
+
+
+def test_running_period_is_partial_not_dropped() -> None:
+    """A day with no reading past its closing midnight still reports what has accrued."""
+    with _conn() as conn:
+        db.upsert_meter_readings(
+            conn,
+            [
+                _elec(1, datetime(2026, 6, 1, 6, tzinfo=UTC), date(2026, 6, 1), total_import=100.0),
+                _elec(2, datetime(2026, 6, 1, 15, tzinfo=UTC), date(2026, 6, 1), total_import=104.0),
+            ],
+        )
+        days = db.daily_totals(conn, "electricity", "import", date(2026, 6, 1), date(2026, 6, 1))
+        assert days == [
+            {
+                "date": "2026-06-01",
+                "value": 4.0,
+                "unit": "kWh",
+                "first_reading_time": "2026-06-01T06:00:00Z",
+                "partial": True,
             }
         ]
 

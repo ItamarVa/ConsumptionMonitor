@@ -13,7 +13,7 @@ const STALE_HOURS = 4;
 
 const $ = (id) => document.getElementById(id);
 
-const dashboardContent = document.querySelector(".dashboard__content");
+const chartWrap = document.querySelector(".chart-wrap");
 
 const els = {
   utility: $("utility"),
@@ -60,6 +60,9 @@ let pollTimer = null;
 let primarySeries = [];
 let comparisonSeries = null;
 let seriesMeta = { unit: "", estimated: false };
+let coverage = {};
+// Restored when the user leaves the hour view, which had to collapse the range to one day.
+let rangeBeforeHour = null;
 const THEME_KEY = "cm-theme";
 
 function todayIso() {
@@ -134,11 +137,17 @@ function detectPreset(start, end) {
   if (start === `${end.slice(0, 4)}-01-01`) {
     return "this_year";
   }
-  const cov = window.__coverageFirstDate?.[state.utility];
-  if (cov && start === cov) {
+  const first = coverage[state.utility]?.first_date;
+  if (first && start === first) {
     return "all";
   }
   return "custom";
+}
+
+/** Last day that actually holds readings, so the hour view never opens on an empty day. */
+function lastCoveredDay(fallback) {
+  const last = coverage[state.utility]?.last_date;
+  return last && last < fallback ? last : fallback;
 }
 
 function syncPresetFromState() {
@@ -186,6 +195,7 @@ function setText(el, text) {
   }
 }
 
+/** Loading, empty and error replace the canvas only; controls stay reachable. */
 function showState(which) {
   const states = { loading: els.stateLoading, empty: els.stateEmpty, error: els.stateError };
   for (const [name, el] of Object.entries(states)) {
@@ -193,8 +203,8 @@ function showState(which) {
       el.hidden = name !== which;
     }
   }
-  if (dashboardContent) {
-    dashboardContent.hidden = true;
+  if (chartWrap) {
+    chartWrap.hidden = true;
   }
 }
 
@@ -204,8 +214,8 @@ function hideStates() {
       el.hidden = true;
     }
   }
-  if (dashboardContent) {
-    dashboardContent.hidden = false;
+  if (chartWrap) {
+    chartWrap.hidden = false;
   }
 }
 
@@ -294,21 +304,30 @@ function syncGranularityButtons() {
   if (!els.granularity) {
     return;
   }
-  const multiDay = state.start !== state.end;
   for (const btn of els.granularity.querySelectorAll("button")) {
     const g = btn.dataset.granularity ?? btn.value;
-    const isHour = g === "hour";
-    btn.disabled = isHour && multiDay;
-    if (isHour && multiDay) {
-      btn.title = t["granularity.hour"] ?? "";
-    } else {
-      btn.removeAttribute("title");
-    }
     btn.setAttribute("aria-pressed", g === state.granularity ? "true" : "false");
   }
-  if (multiDay && state.granularity === "hour") {
-    state.granularity = "day";
+}
+
+/**
+ * The hour endpoint serves exactly one day, so entering the hour view collapses the
+ * range and leaving it restores whatever range the user had before.
+ */
+function setGranularity(g) {
+  if (g === "hour" && state.granularity !== "hour") {
+    if (state.start !== state.end) {
+      rangeBeforeHour = { start: state.start, end: state.end };
+    }
+    const day = lastCoveredDay(state.end);
+    state.start = day;
+    state.end = day;
+  } else if (g !== "hour" && state.granularity === "hour" && rangeBeforeHour) {
+    state.start = rangeBeforeHour.start;
+    state.end = rangeBeforeHour.end;
+    rangeBeforeHour = null;
   }
+  state.granularity = g;
 }
 
 function syncControlsFromState() {
@@ -416,8 +435,8 @@ function renderKpiDelta(el, current, previous) {
     svg.setAttribute(
       "d",
       diff < 0
-        ? "M12 19V5m0 0-7 7m7-7 7 7"
-        : "M12 5v14m0 0 7-7m-7 7-7-7",
+        ? "M12 5v14m0 0 7-7m-7 7-7-7"
+        : "M12 19V5m0 0-7 7m7-7 7 7",
     );
   }
 }
@@ -485,16 +504,19 @@ function renderCoverageNote(health) {
   els.coverageNote.hidden = false;
 }
 
+/** A crumb names the view it returns to, not the first period inside that view. */
 function crumbLabel(granularity, start, end) {
   if (granularity === "year") {
-    return start.slice(0, 4);
+    const from = start.slice(0, 4);
+    const to = end.slice(0, 4);
+    return from === to ? from : `${from}\u2013${to}`;
   }
   if (granularity === "month") {
-    const mo = Number(start.slice(5, 7));
-    return t[`month.${mo}`] ?? start.slice(0, 7);
+    return start.slice(0, 4);
   }
   if (granularity === "day") {
-    return String(Number(start.slice(8, 10)));
+    const mo = Number(start.slice(5, 7));
+    return `${t[`month.${mo}`] ?? start.slice(5, 7)} ${start.slice(0, 4)}`;
   }
   return start;
 }
@@ -515,15 +537,24 @@ function renderBreadcrumb() {
   crumbs.forEach((crumb, idx) => {
     if (idx > 0) {
       const sep = document.createElement("span");
-      sep.className = "breadcrumb-sep";
+      sep.className = "breadcrumb__sep";
       sep.textContent = " / ";
       sep.setAttribute("aria-hidden", "true");
       els.breadcrumb.appendChild(sep);
     }
+    const label = crumbLabel(crumb.granularity, crumb.start, crumb.end);
+    if (idx === crumbs.length - 1) {
+      const current = document.createElement("span");
+      current.className = "breadcrumb__item breadcrumb__item--current";
+      current.setAttribute("aria-current", "page");
+      current.textContent = label;
+      els.breadcrumb.appendChild(current);
+      return;
+    }
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "breadcrumb-btn";
-    btn.textContent = crumbLabel(crumb.granularity, crumb.start, crumb.end);
+    btn.className = "breadcrumb__item";
+    btn.textContent = label;
     btn.addEventListener("click", () => popDrill(idx));
     els.breadcrumb.appendChild(btn);
   });
@@ -602,8 +633,9 @@ function updateChartAria(points, unit) {
     return;
   }
   const count = points.filter((p) => p.value != null).length;
+  const tpl = t["chart.aria_summary"] ?? "{count} periods, unit {unit}";
   const summary = count
-    ? `${count} periods, unit ${unit}`
+    ? tpl.replace("{count}", String(count)).replace("{unit}", unit)
     : t["chart.no_data"] ?? "no data";
   els.chart.setAttribute("aria-label", summary);
 }
@@ -612,11 +644,17 @@ function renderChartNote() {
   if (!els.chartNote) {
     return;
   }
-  const show = state.granularity === "hour" && seriesMeta.estimated;
-  els.chartNote.hidden = !show;
-  if (show) {
+  if (state.granularity === "hour" && seriesMeta.estimated) {
     setText(els.chartNote, t["chart.estimated_note"] ?? "");
+    els.chartNote.hidden = false;
+    return;
   }
+  if (primarySeries.some((p) => p.partial)) {
+    setText(els.chartNote, t["chart.partial_note"] ?? "");
+    els.chartNote.hidden = false;
+    return;
+  }
+  els.chartNote.hidden = true;
 }
 
 function isEmptySeries(points) {
@@ -624,7 +662,10 @@ function isEmptySeries(points) {
 }
 
 async function loadData() {
-  showState("loading");
+  // A skeleton on every 60s poll would blink the chart away; only the first load needs it.
+  if (!primarySeries.length) {
+    showState("loading");
+  }
   try {
     const { points, meta } = await fetchSeries({
       utility: state.utility,
@@ -675,6 +716,7 @@ async function loadData() {
 
     hideStates();
     if (chart) {
+      chart.resize();
       renderSeries(chart, {
         primary: points,
         comparison,
@@ -701,6 +743,11 @@ async function loadData() {
 }
 
 function applyPreset(value) {
+  // "custom" only ever reports a hand-picked range; selecting it must not move the dates.
+  if (value === "custom") {
+    syncPresetFromState();
+    return;
+  }
   const end = todayIso();
   let start = end;
   if (value === "7d") {
@@ -712,22 +759,16 @@ function applyPreset(value) {
   } else if (value === "this_year") {
     start = `${end.slice(0, 4)}-01-01`;
   } else if (value === "all") {
-    const cov = window.__coverageFirstDate?.[state.utility];
-    start = cov ?? `${end.slice(0, 4)}-01-01`;
+    start = coverage[state.utility]?.first_date ?? `${end.slice(0, 4)}-01-01`;
   }
   state.start = start;
   state.end = end;
   state.drillStack = [];
-  if (els.rangeStart) {
-    els.rangeStart.value = start;
+  if (state.granularity === "hour" && start !== end) {
+    state.granularity = "day";
+    rangeBeforeHour = null;
   }
-  if (els.rangeEnd) {
-    els.rangeEnd.value = end;
-  }
-  if (els.preset) {
-    els.preset.value = value;
-  }
-  syncGranularityButtons();
+  syncControlsFromState();
   writeHash();
   loadData();
 }
@@ -757,9 +798,7 @@ async function updateStatus() {
   let readingTime = null;
   try {
     const health = await fetchHealth();
-    window.__coverageFirstDate = Object.fromEntries(
-      Object.entries(health.coverage ?? {}).map(([u, c]) => [u, c.first_date]),
-    );
+    coverage = health.coverage ?? {};
     renderCoverageNote(health);
     readingTime = health.coverage?.[state.utility]?.last_reading_utc ?? null;
     if (readingTime) {
@@ -853,9 +892,9 @@ function bindEvents() {
     }
     const g = btn.dataset.granularity ?? btn.value;
     if (g) {
-      state.granularity = g;
+      setGranularity(g);
       state.drillStack = [];
-      syncGranularityButtons();
+      syncControlsFromState();
       writeHash();
       loadData();
     }
@@ -863,30 +902,22 @@ function bindEvents() {
 
   els.rangeStart?.addEventListener("change", () => {
     state.start = els.rangeStart.value;
-    if (state.end && state.start > state.end) {
+    if (state.granularity === "hour" || (state.end && state.start > state.end)) {
       state.end = state.start;
-      if (els.rangeEnd) {
-        els.rangeEnd.value = state.end;
-      }
     }
     state.drillStack = [];
-    syncPresetFromState();
-    syncGranularityButtons();
+    syncControlsFromState();
     writeHash();
     loadData();
   });
 
   els.rangeEnd?.addEventListener("change", () => {
     state.end = els.rangeEnd.value;
-    if (state.start && state.end < state.start) {
+    if (state.granularity === "hour" || (state.start && state.end < state.start)) {
       state.start = state.end;
-      if (els.rangeStart) {
-        els.rangeStart.value = state.start;
-      }
     }
     state.drillStack = [];
-    syncPresetFromState();
-    syncGranularityButtons();
+    syncControlsFromState();
     writeHash();
     loadData();
   });
