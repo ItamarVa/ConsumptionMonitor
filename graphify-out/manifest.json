@@ -36,33 +36,33 @@
     "semantic_hash": ""
   },
   "consumption/source.py": {
-    "mtime": 1788968250.8570254,
-    "seen": 1788968761.491876,
-    "ast_hash": "f41b51984618d3571f7c0df5867eda65",
+    "mtime": 1788970422.4108987,
+    "seen": 1788970667.6105893,
+    "ast_hash": "3cc41ad2045b2bce543b6da5f60fd9b4",
     "semantic_hash": ""
   },
   "scripts/launch.ps1": {
-    "mtime": 1788968312.2184546,
-    "seen": 1788968761.4918795,
-    "ast_hash": "8f830234729268664d95936f1d12badf",
+    "mtime": 1788970607.9882998,
+    "seen": 1788970667.610596,
+    "ast_hash": "9e988141480906671c564415c785a6dd",
     "semantic_hash": ""
   },
   "tests/test_aggregation.py": {
-    "mtime": 1788968463.7938397,
-    "seen": 1788968761.4918847,
-    "ast_hash": "5341469b03d48931ca397d8f814c2f19",
+    "mtime": 1788969902.535318,
+    "seen": 1788969938.9647152,
+    "ast_hash": "57b0daf3a0b65dfc832561da0af4feeb",
     "semantic_hash": ""
   },
   ".cursor/memory/INDEX.md": {
-    "mtime": 1788968565.7078302,
-    "seen": 1788968761.4918866,
-    "ast_hash": "b071c0d3ad1443635daec8394f276e39",
+    "mtime": 1788970639.653438,
+    "seen": 1788970667.61061,
+    "ast_hash": "122a0ba06ae34285bb14126f6c551194",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1788968528.082988,
-    "seen": 1788968761.4918923,
-    "ast_hash": "0392ae7d9ff9bef8b707b23bcb37a33b",
+    "mtime": 1788970630.252103,
+    "seen": 1788970667.6106157,
+    "ast_hash": "12cdc23e2d033e35c132e3cb74243c4d",
     "semantic_hash": ""
   },
   "requirements.txt": {
@@ -95,16 +95,46 @@
     "ast_hash": "427605297cf8b339f618bb3d54ac6a37",
     "semantic_hash": ""
   },
-  ".cursor/memory/agents/multi-year-and-secrets.md": {
-    "mtime": 1788968748.445041,
-    "seen": 1788968761.4918883,
-    "ast_hash": "12ced7dc6ead60fd214549292da358a9",
+  ".cursor/memory/topics/mycitygrid-portal.md": {
+    "mtime": 1788970388.7960975,
+    "seen": 1788970667.6106136,
+    "ast_hash": "28e6537f49bee53e652cd58285d18123",
     "semantic_hash": ""
   },
-  ".cursor/memory/topics/mycitygrid-portal.md": {
-    "mtime": 1788965029.6997778,
-    "seen": 1788968761.4918902,
-    "ast_hash": "591d49be4f137fa747b30285f3a97d1e",
+  "consumption/readings.py": {
+    "mtime": 1788969641.5170808,
+    "seen": 1788969938.9647064,
+    "ast_hash": "c911a0d782f74a71391e2d3d1c395182",
+    "semantic_hash": ""
+  },
+  "tests/test_source_parsing.py": {
+    "mtime": 1788970598.927742,
+    "seen": 1788970667.6106055,
+    "ast_hash": "a54246bd1fc27fe6c63997130939014e",
+    "semantic_hash": ""
+  },
+  ".cursor/memory/agents/mycitygrid-adapter.md": {
+    "mtime": 1788969581.2225864,
+    "seen": 1788969938.9647186,
+    "ast_hash": "748af1153aed273b65953f82c4e29fd2",
+    "semantic_hash": ""
+  },
+  "scripts/connection_report.py": {
+    "mtime": 1788970021.1627162,
+    "seen": 1788970127.6430032,
+    "ast_hash": "32cd2a8916aedb14a953e972a1f39206",
+    "semantic_hash": ""
+  },
+  "scripts/test-connection.ps1": {
+    "mtime": 1788970036.64894,
+    "seen": 1788970127.6430106,
+    "ast_hash": "71e9eb0f474ddee8003771c74988a76a",
+    "semantic_hash": ""
+  },
+  "tests/test_source_session.py": {
+    "mtime": 1788970560.365503,
+    "seen": 1788970667.6106079,
+    "ast_hash": "510d9ec2d9d2cf3b70dbf84e828bd244",
     "semantic_hash": ""
   }
 }
