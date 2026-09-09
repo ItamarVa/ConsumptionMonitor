@@ -8,3 +8,5 @@ uvicorn==0.52.4
 scrapling[fetchers]==0.4.15
 # Windows ships no timezone database; zoneinfo needs this for Asia/Jerusalem.
 tzdata==2026.3
+# FastAPI TestClient (Starlette) needs an HTTP client for the self-checks.
+httpx==0.28.1
