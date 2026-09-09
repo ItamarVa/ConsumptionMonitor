@@ -13,21 +13,21 @@
   },
   "consumption/api.py": {
     "mtime": 1788987341.4658802,
-    "seen": 1788987347.5084407,
+    "seen": 1788990880.545357,
     "ast_hash": "14f1da511983fd031cb29ccca3cd8037",
-    "semantic_hash": ""
+    "semantic_hash": "14f1da511983fd031cb29ccca3cd8037"
   },
   "consumption/config.py": {
     "mtime": 1788984541.9811864,
-    "seen": 1788984613.357418,
+    "seen": 1788990880.54536,
     "ast_hash": "1a3df8a7f4aadf5b9800fdbef6772944",
-    "semantic_hash": ""
+    "semantic_hash": "1a3df8a7f4aadf5b9800fdbef6772944"
   },
   "consumption/db.py": {
     "mtime": 1788987334.5287497,
-    "seen": 1788987347.5084462,
+    "seen": 1788990880.5453622,
     "ast_hash": "3ebf6c547091d010854cef4ee47d8c40",
-    "semantic_hash": ""
+    "semantic_hash": "3ebf6c547091d010854cef4ee47d8c40"
   },
   "consumption/jobs.py": {
     "mtime": 1788980937.5671961,
@@ -43,9 +43,9 @@
   },
   "scripts/launch.ps1": {
     "mtime": 1788987427.4251254,
-    "seen": 1788987437.6206594,
+    "seen": 1788990880.5469363,
     "ast_hash": "4beb80acc355fd74f0b5fd77473d71e6",
-    "semantic_hash": ""
+    "semantic_hash": "4beb80acc355fd74f0b5fd77473d71e6"
   },
   ".cursor/memory/INDEX.md": {
     "mtime": 1788987538.917092,
@@ -139,21 +139,21 @@
   },
   "scripts/launcher-common.ps1": {
     "mtime": 1788986363.0318727,
-    "seen": 1788986374.0442483,
+    "seen": 1788990880.5469387,
     "ast_hash": "79f222264a9445bb5c2d968eeec75d99",
-    "semantic_hash": ""
+    "semantic_hash": "79f222264a9445bb5c2d968eeec75d99"
   },
   "tests/test_api_contract.py": {
     "mtime": 1788987348.1979108,
-    "seen": 1788987357.3869543,
+    "seen": 1788990880.547429,
     "ast_hash": "eafe496144165d44a64976a9c1b8ef61",
-    "semantic_hash": ""
+    "semantic_hash": "eafe496144165d44a64976a9c1b8ef61"
   },
   "tests/test_db_readings.py": {
     "mtime": 1788987452.6566248,
-    "seen": 1788987462.6803136,
+    "seen": 1788990880.5474315,
     "ast_hash": "33bcd49c53488afb29d5f0312d8a8495",
-    "semantic_hash": ""
+    "semantic_hash": "33bcd49c53488afb29d5f0312d8a8495"
   },
   "tests/test_jobs.py": {
     "mtime": 1788981039.7711358,
@@ -175,45 +175,45 @@
   },
   "consumption/hourly.py": {
     "mtime": 1788984659.2071116,
-    "seen": 1788984668.808204,
+    "seen": 1788990880.545364,
     "ast_hash": "f80c5086ba16c91413d4843426ab6a5b",
-    "semantic_hash": ""
+    "semantic_hash": "f80c5086ba16c91413d4843426ab6a5b"
   },
   "tests/test_hourly.py": {
     "mtime": 1788984733.516474,
-    "seen": 1788984743.0071592,
+    "seen": 1788990880.547433,
     "ast_hash": "ebeca499910c4cd75397fa97fc1ca0dc",
-    "semantic_hash": ""
+    "semantic_hash": "ebeca499910c4cd75397fa97fc1ca0dc"
   },
   "web/api.js": {
     "mtime": 1788984789.3221476,
-    "seen": 1788984789.7985475,
+    "seen": 1788990880.5481424,
     "ast_hash": "47124e2247594f1487a7a9ee39b15232",
-    "semantic_hash": ""
+    "semantic_hash": "47124e2247594f1487a7a9ee39b15232"
   },
   "web/app.js": {
     "mtime": 1788987432.6456957,
-    "seen": 1788987437.620709,
+    "seen": 1788990880.5481443,
     "ast_hash": "bfb18f5dc84e2c6a2e6d6827f46fb8b3",
-    "semantic_hash": ""
+    "semantic_hash": "bfb18f5dc84e2c6a2e6d6827f46fb8b3"
   },
   "web/chart.js": {
     "mtime": 1788987393.1564476,
-    "seen": 1788987405.5626857,
+    "seen": 1788990880.5481458,
     "ast_hash": "35144e282627793731de3a1302a8b90b",
-    "semantic_hash": ""
+    "semantic_hash": "35144e282627793731de3a1302a8b90b"
   },
   "web/locales/he.json": {
     "mtime": 1788987357.1854248,
-    "seen": 1788987357.3869727,
+    "seen": 1788990880.548147,
     "ast_hash": "74571209aa2d82d3d03af0c0dcfe51f0",
-    "semantic_hash": ""
+    "semantic_hash": "74571209aa2d82d3d03af0c0dcfe51f0"
   },
   "web/vendor/chart.umd.min.js": {
     "mtime": 1788984530.9524837,
-    "seen": 1788984613.3575153,
+    "seen": 1788990880.5481484,
     "ast_hash": "e6452e2b454b091f857a45cce7624eae",
-    "semantic_hash": ""
+    "semantic_hash": "e6452e2b454b091f857a45cce7624eae"
   },
   ".cursor/memory/topics/dashboard-contract.md": {
     "mtime": 1788987323.9371786,
