@@ -1,8 +1,8 @@
-"""Read-only HTTP API over the stored readings, shaped for Home Assistant REST sensors.
+"""Read-only HTTP API over stored meter readings, shaped for Home Assistant REST sensors.
 
-Binds to 127.0.0.1 by default and has no authentication, which is only safe because of
-that: the DB holds personal consumption data. Widen HOST only behind something that
-authenticates. Every query parameter is validated here - this is the trust boundary.
+Binds to 127.0.0.1 by default with no authentication — safe only on loopback.
+Every query parameter is validated here; this is the trust boundary.
+Storage queries are implemented in db.py per the records.py contract.
 Depended on by: __main__.py.
 """
 
@@ -14,16 +14,20 @@ from contextlib import asynccontextmanager
 from datetime import date, timedelta
 from typing import Annotated, Literal
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Query
 
 from . import config, db, jobs, source
+from .records import UNITS, UTILITIES
 
-# Only the raw hourly endpoint is capped: a decade of hourly rows in one JSON response is
-# useless to anyone. The aggregated endpoints are meant to span the whole stored history.
-HOURLY_MAX_DAYS = 366
+# Raw and interval series can explode in size; aggregated endpoints span full history.
+MAX_RANGE_DAYS = 366
 DEFAULT_DAYS = 7
 
 Utility = Literal["electricity", "water"]
+Direction = Literal["import", "export", "water"]
+
+_ELECTRICITY_DIRECTIONS = ("import", "export")
+_WATER_DIRECTIONS = ("water",)
 
 
 @asynccontextmanager
@@ -54,6 +58,18 @@ def get_conn():
 Conn = Annotated[sqlite3.Connection, Depends(get_conn)]
 
 
+def _directions_for(utility: str) -> tuple[str, ...]:
+    return _WATER_DIRECTIONS if utility == "water" else _ELECTRICITY_DIRECTIONS
+
+
+def _validate_direction(utility: str, direction: str) -> None:
+    if direction not in _directions_for(utility):
+        raise HTTPException(
+            422,
+            f"direction must be one of {', '.join(_directions_for(utility))} for {utility}",
+        )
+
+
 def _first_stored(conn: sqlite3.Connection, utility: str) -> date | None:
     first = db.coverage(conn).get(utility, {}).get("first_date")
     return date.fromisoformat(first) if first else None
@@ -68,10 +84,7 @@ def _range(
     max_days: int | None = None,
     default_days: int | None = None,
 ) -> tuple[date, date]:
-    """Fill in the defaults, then reject a backwards range or one over an endpoint's cap.
-
-    Without `default_days` a missing start means the whole stored history.
-    """
+    """Fill defaults, then reject a backwards range or one over an endpoint cap."""
     end = end or jobs.local_today()
     if start is None:
         start = (
@@ -86,21 +99,79 @@ def _range(
     return start, end
 
 
+def _meter_ids(conn: sqlite3.Connection, utility: str) -> list[str]:
+    cov = db.coverage(conn).get(utility, {})
+    raw = cov.get("meter_ids") or cov.get("meters")
+    if raw:
+        return [str(m) for m in (raw if isinstance(raw, list) else [raw])]
+    try:
+        cur = conn.execute(
+            "SELECT DISTINCT meter_id FROM meter_reading WHERE utility = ? ORDER BY meter_id",
+            (utility,),
+        )
+        return [row[0] for row in cur]
+    except sqlite3.OperationalError:
+        return []
+
+
+def _primary_meter(conn: sqlite3.Connection, utility: str) -> str:
+    ids = _meter_ids(conn, utility)
+    if not ids:
+        raise HTTPException(404, f"no readings stored for utility {utility}")
+    return ids[0]
+
+
+def _unit(utility: str, direction: str) -> str:
+    return UNITS.get((utility, direction), "")
+
+
+def _period_total(
+    conn: sqlite3.Connection, utility: str, direction: str, start: date, end: date
+) -> dict:
+    rows = db.daily_totals(conn, utility, direction, start, end)
+    unit = _unit(utility, direction)
+    if not rows:
+        return {"value": None, "unit": unit, "days": 0}
+    return {
+        "value": round(sum(r["value"] for r in rows), 4),
+        "unit": rows[0].get("unit") or unit,
+        "days": len(rows),
+    }
+
+
+def _latest_register(latest: dict | None, utility: str, direction: str) -> dict | None:
+    if not latest:
+        return None
+    if utility == "water":
+        value = latest.get("total_water_data")
+    elif direction == "export":
+        value = latest.get("total_export_kwh")
+    else:
+        value = latest.get("total_import_kwh")
+    return {
+        "reading_time_utc": latest.get("reading_time_utc"),
+        "value": value,
+        "unit": _unit(utility, direction),
+    }
+
+
 @app.get("/health")
 def health(conn: Conn) -> dict:
+    cov = db.coverage(conn)
     return {
         "status": "ok",
         "source_ready": source.SOURCE_READY,
         "credentials_present": config.credentials_present(),
         "credentials_error": config.CREDENTIALS_ERROR,
-        "stored_hours": conn.execute("SELECT COUNT(*) FROM reading").fetchone()[0],
-        "coverage": db.coverage(conn),
+        "reading_count": sum(int(c.get("reading_count") or 0) for c in cov.values()),
+        "coverage": cov,
         "local_date": jobs.local_today().isoformat(),
     }
 
 
 @app.get("/jobs")
 def job_status(conn: Conn) -> dict:
+    """Job names and ranges come from jobs.JOBS (recent, recent_week, previous_year, backfill)."""
     states = db.job_states(conn)
     today = jobs.local_today()
     out = {}
@@ -117,66 +188,140 @@ def job_status(conn: Conn) -> dict:
     return out
 
 
-@app.get("/readings/hourly")
-def read_hourly(
+@app.get("/readings/raw")
+def read_raw(
     conn: Conn,
     utility: Utility,
+    meter_id: str = Query(..., min_length=1),
     start: date | None = None,
     end: date | None = None,
 ) -> dict:
-    start, end = _range(conn, utility, start, end, max_days=HOURLY_MAX_DAYS, default_days=DEFAULT_DAYS)
-    return {"utility": utility, "start": start, "end": end, "readings": db.hourly(conn, utility, start, end)}
+    start, end = _range(
+        conn, utility, start, end, max_days=MAX_RANGE_DAYS, default_days=DEFAULT_DAYS
+    )
+    return {
+        "utility": utility,
+        "meter_id": meter_id,
+        "start": start.isoformat(),
+        "end": end.isoformat(),
+        "readings": db.meter_readings(conn, meter_id, start, end),
+    }
+
+
+@app.get("/readings/intervals")
+def read_intervals(
+    conn: Conn,
+    utility: Utility,
+    direction: Direction,
+    start: date | None = None,
+    end: date | None = None,
+) -> dict:
+    _validate_direction(utility, direction)
+    start, end = _range(
+        conn, utility, start, end, max_days=MAX_RANGE_DAYS, default_days=DEFAULT_DAYS
+    )
+    meter_id = _primary_meter(conn, utility)
+    rows = db.intervals(conn, meter_id, direction, start, end)
+    return {
+        "utility": utility,
+        "direction": direction,
+        "meter_id": meter_id,
+        "start": start.isoformat(),
+        "end": end.isoformat(),
+        "unit": _unit(utility, direction),
+        "intervals": rows,
+    }
 
 
 @app.get("/readings/daily")
 def read_daily(
     conn: Conn,
     utility: Utility,
+    direction: Direction,
     start: date | None = None,
     end: date | None = None,
 ) -> dict:
+    _validate_direction(utility, direction)
     start, end = _range(conn, utility, start, end, default_days=DEFAULT_DAYS)
-    return {"utility": utility, "start": start, "end": end, "days": db.daily(conn, utility, start, end)}
+    return {
+        "utility": utility,
+        "direction": direction,
+        "start": start.isoformat(),
+        "end": end.isoformat(),
+        "unit": _unit(utility, direction),
+        "days": db.daily_totals(conn, utility, direction, start, end),
+    }
 
 
 @app.get("/readings/monthly")
 def read_monthly(
     conn: Conn,
     utility: Utility,
+    direction: Direction,
     start: date | None = None,
     end: date | None = None,
 ) -> dict:
+    _validate_direction(utility, direction)
     start, end = _range(conn, utility, start, end)
-    return {"utility": utility, "start": start, "end": end, "months": db.monthly(conn, utility, start, end)}
+    return {
+        "utility": utility,
+        "direction": direction,
+        "start": start.isoformat(),
+        "end": end.isoformat(),
+        "unit": _unit(utility, direction),
+        "months": db.monthly_totals(conn, utility, direction, start, end),
+    }
 
 
 @app.get("/readings/yearly")
 def read_yearly(
     conn: Conn,
     utility: Utility,
+    direction: Direction,
     start: date | None = None,
     end: date | None = None,
 ) -> dict:
+    _validate_direction(utility, direction)
     start, end = _range(conn, utility, start, end)
-    return {"utility": utility, "start": start, "end": end, "years": db.yearly(conn, utility, start, end)}
+    return {
+        "utility": utility,
+        "direction": direction,
+        "start": start.isoformat(),
+        "end": end.isoformat(),
+        "unit": _unit(utility, direction),
+        "years": db.yearly_totals(conn, utility, direction, start, end),
+    }
+
+
+@app.get("/alerts")
+def read_alerts(conn: Conn, utility: Utility) -> dict:
+    meters = []
+    for meter_id in _meter_ids(conn, utility):
+        flags = db.alert_flags(conn, meter_id)
+        meters.append({"meter_id": meter_id, **flags})
+    return {"utility": utility, "meters": meters}
 
 
 @app.get("/summary")
 def summary(conn: Conn) -> dict:
     today = jobs.local_today()
     week_start = today - timedelta(days=(today.weekday() + 1) % 7)
+    month_start = date(today.year, today.month, 1)
+    year_start = date(today.year, 1, 1)
     out: dict[str, dict] = {}
-    for utility in config.UTILITIES:
-        out[utility] = {
-            "latest_hour": db.latest_hour(conn, utility),
-            "today": db.total(conn, utility, today, today),
-            "yesterday": db.total(conn, utility, today - timedelta(days=1), today - timedelta(days=1)),
-            "this_week": db.total(conn, utility, week_start, today),
-            "last_full_week": db.total(conn, utility, *jobs.JOBS["last_full_week"].covers(today, conn)),
-            "year_to_date": db.total(conn, utility, date(today.year, 1, 1), today),
-            # Whole stored history, one row per year, for a per-year Home Assistant sensor.
-            "by_year": db.yearly(conn, utility, _first_stored(conn, utility) or today, today),
-        }
+    for utility in UTILITIES:
+        meter_id = _meter_ids(conn, utility)
+        latest = db.latest_reading(conn, meter_id[0]) if meter_id else None
+        directions: dict[str, dict] = {}
+        for direction in _directions_for(utility):
+            directions[direction] = {
+                "latest_register": _latest_register(latest, utility, direction),
+                "today": _period_total(conn, utility, direction, today, today),
+                "this_week": _period_total(conn, utility, direction, week_start, today),
+                "this_month": _period_total(conn, utility, direction, month_start, today),
+                "year_to_date": _period_total(conn, utility, direction, year_start, today),
+            }
+        out[utility] = directions
     return {"local_date": today.isoformat(), "utilities": out}
 
 
@@ -197,7 +342,9 @@ def index() -> dict:
             "/health",
             "/jobs",
             "/summary",
-            "/readings/hourly",
+            "/alerts",
+            "/readings/raw",
+            "/readings/intervals",
             "/readings/daily",
             "/readings/monthly",
             "/readings/yearly",
