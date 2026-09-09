@@ -12,63 +12,99 @@
     "semantic_hash": "8efd004749e73fdaf47d25ad6d36652f"
   },
   "consumption/api.py": {
-    "mtime": 1788962057.0603673,
-    "seen": 1788963471.5628526,
-    "ast_hash": "92426fd8c0caeeed39c2b11318d89583",
-    "semantic_hash": "92426fd8c0caeeed39c2b11318d89583"
+    "mtime": 1788968245.0022242,
+    "seen": 1788968761.491863,
+    "ast_hash": "28fc240ab4f3de1c310e3526c45d40a3",
+    "semantic_hash": ""
   },
   "consumption/config.py": {
-    "mtime": 1788961950.5971575,
-    "seen": 1788963471.562854,
-    "ast_hash": "f840e0ee442dc8a54aa0665f8e8b7055",
-    "semantic_hash": "f840e0ee442dc8a54aa0665f8e8b7055"
+    "mtime": 1788968186.6631157,
+    "seen": 1788968761.4918664,
+    "ast_hash": "902660e983d8f87dc17c7f9276e55c3c",
+    "semantic_hash": ""
   },
   "consumption/db.py": {
-    "mtime": 1788961992.5700827,
-    "seen": 1788963471.5628557,
-    "ast_hash": "cd956723707671605690bf4917e0b2c8",
-    "semantic_hash": "cd956723707671605690bf4917e0b2c8"
+    "mtime": 1788968025.531406,
+    "seen": 1788968761.4918687,
+    "ast_hash": "e93f4e61d0e282640aff1c1a50ef29f9",
+    "semantic_hash": ""
   },
   "consumption/jobs.py": {
-    "mtime": 1788962018.4361005,
-    "seen": 1788963471.562857,
-    "ast_hash": "f878c7885597a5617b173e1fc6ba5e65",
-    "semantic_hash": "f878c7885597a5617b173e1fc6ba5e65"
+    "mtime": 1788968088.6079962,
+    "seen": 1788968761.4918709,
+    "ast_hash": "1d1ebe7c5ec37fd26ac781929da132e7",
+    "semantic_hash": ""
   },
   "consumption/source.py": {
-    "mtime": 1788962519.8575559,
-    "seen": 1788963471.5628583,
-    "ast_hash": "cb82d41a9448d330551b932bf00f9631",
-    "semantic_hash": "cb82d41a9448d330551b932bf00f9631"
+    "mtime": 1788968250.8570254,
+    "seen": 1788968761.491876,
+    "ast_hash": "f41b51984618d3571f7c0df5867eda65",
+    "semantic_hash": ""
   },
   "scripts/launch.ps1": {
-    "mtime": 1788962117.898346,
-    "seen": 1788963471.5628595,
-    "ast_hash": "6bf3d65ddf86f0b4427cdf8c3c83eb83",
-    "semantic_hash": "6bf3d65ddf86f0b4427cdf8c3c83eb83"
+    "mtime": 1788968312.2184546,
+    "seen": 1788968761.4918795,
+    "ast_hash": "8f830234729268664d95936f1d12badf",
+    "semantic_hash": ""
   },
   "tests/test_aggregation.py": {
-    "mtime": 1788962394.5801325,
-    "seen": 1788963471.5628607,
-    "ast_hash": "bd6885200da1c03e96ee0d58e230037d",
-    "semantic_hash": "bd6885200da1c03e96ee0d58e230037d"
+    "mtime": 1788968463.7938397,
+    "seen": 1788968761.4918847,
+    "ast_hash": "5341469b03d48931ca397d8f814c2f19",
+    "semantic_hash": ""
   },
   ".cursor/memory/INDEX.md": {
-    "mtime": 1788962698.347741,
-    "seen": 1788963471.5628622,
-    "ast_hash": "f153b5ede3c7dbd2dd20ccb76258ed5d",
-    "semantic_hash": "f153b5ede3c7dbd2dd20ccb76258ed5d"
+    "mtime": 1788968565.7078302,
+    "seen": 1788968761.4918866,
+    "ast_hash": "b071c0d3ad1443635daec8394f276e39",
+    "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1788962678.5961344,
-    "seen": 1788963471.562863,
-    "ast_hash": "02a7b746f248bd9b0eb595fe19a9ce78",
-    "semantic_hash": "02a7b746f248bd9b0eb595fe19a9ce78"
+    "mtime": 1788968528.082988,
+    "seen": 1788968761.4918923,
+    "ast_hash": "0392ae7d9ff9bef8b707b23bcb37a33b",
+    "semantic_hash": ""
   },
   "requirements.txt": {
     "mtime": 1788962507.328343,
     "seen": 1788963471.5628645,
     "ast_hash": "ad325e2cff17519a0e13c13e3e02845b",
     "semantic_hash": "ad325e2cff17519a0e13c13e3e02845b"
+  },
+  "consumption/secrets.py": {
+    "mtime": 1788968147.1014235,
+    "seen": 1788968761.4918737,
+    "ast_hash": "aa5d8ffaea73a37983e499860982fa99",
+    "semantic_hash": ""
+  },
+  "scripts/env.ps1": {
+    "mtime": 1788968302.0405388,
+    "seen": 1788968761.4918773,
+    "ast_hash": "77e804ba206d4e7e3d9dfb922d817160",
+    "semantic_hash": ""
+  },
+  "scripts/set-credentials.ps1": {
+    "mtime": 1788968320.4589186,
+    "seen": 1788968761.4918811,
+    "ast_hash": "7f74df519cfec2701a95d8b0536275bc",
+    "semantic_hash": ""
+  },
+  "scripts/set_credentials.py": {
+    "mtime": 1788968336.298527,
+    "seen": 1788968761.491883,
+    "ast_hash": "427605297cf8b339f618bb3d54ac6a37",
+    "semantic_hash": ""
+  },
+  ".cursor/memory/agents/multi-year-and-secrets.md": {
+    "mtime": 1788968748.445041,
+    "seen": 1788968761.4918883,
+    "ast_hash": "12ced7dc6ead60fd214549292da358a9",
+    "semantic_hash": ""
+  },
+  ".cursor/memory/topics/mycitygrid-portal.md": {
+    "mtime": 1788965029.6997778,
+    "seen": 1788968761.4918902,
+    "ast_hash": "591d49be4f137fa747b30285f3a97d1e",
+    "semantic_hash": ""
   }
 }
