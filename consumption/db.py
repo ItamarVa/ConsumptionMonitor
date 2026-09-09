@@ -2,8 +2,8 @@
 
 The hour is the only granularity ever stored; daily, weekly and year-to-date figures are
 SUM queries over the same rows, so a re-fetch can correct history without touching
-derived tables. `local_date` is denormalised from `hour_utc` at write time so day
-grouping needs no timezone math in SQL.
+derived tables. `local_date` is denormalised from `hour_utc` at write time so day, month
+and year grouping are substrings of it and need no timezone math in SQL.
 Invariant: one row per (utility, meter_id, hour_utc); writing the same hour again
 overwrites it. Depended on by: jobs.py (writes), api.py (reads).
 """
@@ -38,6 +38,11 @@ CREATE TABLE IF NOT EXISTS job_state (
     last_ok_utc  TEXT,
     rows_written INTEGER NOT NULL DEFAULT 0,
     last_error   TEXT
+) WITHOUT ROWID;
+
+CREATE TABLE IF NOT EXISTS app_state (
+    key   TEXT PRIMARY KEY,
+    value TEXT NOT NULL
 ) WITHOUT ROWID;
 """
 
@@ -120,6 +125,55 @@ def daily(conn: sqlite3.Connection, utility: str, start: date, end: date) -> lis
     return [dict(row) for row in cur]
 
 
+def monthly(conn: sqlite3.Connection, utility: str, start: date, end: date) -> list[dict]:
+    cur = conn.execute(
+        """
+        SELECT substr(local_date, 1, 7) AS month, ROUND(SUM(value), 4) AS value,
+               MIN(unit) AS unit, COUNT(*) AS hours
+        FROM reading
+        WHERE utility = ? AND local_date BETWEEN ? AND ?
+        GROUP BY month
+        ORDER BY month
+        """,
+        (utility, start.isoformat(), end.isoformat()),
+    )
+    return [dict(row) for row in cur]
+
+
+def yearly(conn: sqlite3.Connection, utility: str, start: date, end: date) -> list[dict]:
+    cur = conn.execute(
+        """
+        SELECT substr(local_date, 1, 4) AS year, ROUND(SUM(value), 4) AS value,
+               MIN(unit) AS unit, COUNT(*) AS hours
+        FROM reading
+        WHERE utility = ? AND local_date BETWEEN ? AND ?
+        GROUP BY year
+        ORDER BY year
+        """,
+        (utility, start.isoformat(), end.isoformat()),
+    )
+    return [dict(row) for row in cur]
+
+
+def coverage(conn: sqlite3.Connection) -> dict[str, dict]:
+    """How much history is stored per utility. The backfill job walks back from first_date."""
+    out = {u: {"first_date": None, "last_date": None, "hours": 0} for u in config.UTILITIES}
+    cur = conn.execute(
+        """
+        SELECT utility, MIN(local_date) AS first_date, MAX(local_date) AS last_date,
+               COUNT(*) AS hours
+        FROM reading GROUP BY utility
+        """
+    )
+    for row in cur:
+        out[row["utility"]] = {
+            "first_date": row["first_date"],
+            "last_date": row["last_date"],
+            "hours": row["hours"],
+        }
+    return out
+
+
 def total(conn: sqlite3.Connection, utility: str, start: date, end: date) -> dict:
     row = conn.execute(
         """
@@ -170,6 +224,21 @@ def record_job(
 def job_states(conn: sqlite3.Connection) -> dict[str, dict]:
     cur = conn.execute("SELECT * FROM job_state")
     return {row["job"]: dict(row) for row in cur}
+
+
+def get_state(conn: sqlite3.Connection, key: str) -> str | None:
+    """Read a scheduler bookkeeping value that must survive a restart."""
+    row = conn.execute("SELECT value FROM app_state WHERE key = ?", (key,)).fetchone()
+    return row["value"] if row else None
+
+
+def set_state(conn: sqlite3.Connection, key: str, value: str) -> None:
+    with conn:
+        conn.execute(
+            "INSERT INTO app_state (key, value) VALUES (?, ?) "
+            "ON CONFLICT (key) DO UPDATE SET value = excluded.value",
+            (key, value),
+        )
 
 
 def due(state: dict | None, interval: timedelta, now: datetime) -> bool:
