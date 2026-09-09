@@ -183,13 +183,15 @@ def upsert_meter_readings(conn: sqlite3.Connection, readings: Iterable[MeterRead
     if not rows:
         return 0
     placeholders = ", ".join("?" for _ in _METER_READING_COLS)
-    updates = ", ".join(f"{c} = excluded.{c}" for c in _METER_READING_COLS if c != "meter_data_id")
+    # Portal may reissue a new meter_data_id at an unchanged reading_time_utc; the unique
+    # index on (meter_id, reading_time_utc) is the stable upsert key for live backfill data.
+    updates = ", ".join(f"{c} = excluded.{c}" for c in _METER_READING_COLS)
     with conn:
         conn.executemany(
             f"""
             INSERT INTO meter_reading ({", ".join(_METER_READING_COLS)})
             VALUES ({placeholders})
-            ON CONFLICT (meter_data_id) DO UPDATE SET {updates}
+            ON CONFLICT (meter_id, reading_time_utc) DO UPDATE SET {updates}
             """,
             rows,
         )

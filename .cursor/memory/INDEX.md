@@ -65,3 +65,4 @@ chart endpoint dropped. Live verification and full backfill are Wave 3.
 - Tests stub `source.fetch_readings`, never hit the portal.
 - Port 8123 may already be held; test on another `PORT` rather than killing their process.
 - Reading log: `pageNumber` is 1-based; `orderByProperty` causes HTTP 500.
+- Portal may emit duplicate `reading_time_utc` with new `meter_data_id`; upsert keys on `(meter_id, reading_time_utc)`.

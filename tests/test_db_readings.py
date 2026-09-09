@@ -117,6 +117,19 @@ def test_daily_total_uses_first_reading_after_midnight() -> None:
         ]
 
 
+def test_upsert_replaces_reissued_id_at_same_timestamp() -> None:
+    """Portal sometimes emits a new meter_data_id for an unchanged reading_time_utc."""
+    ts = datetime(2026, 6, 1, 6, tzinfo=UTC)
+    with _conn() as conn:
+        first = _elec(1, ts, date(2026, 6, 1), total_import=100.0)
+        second = _elec(99, ts, date(2026, 6, 1), total_import=150.0)
+        assert db.upsert_meter_readings(conn, [first, second]) == 2
+        rows = db.meter_readings(conn, "30400", date(2026, 6, 1), date(2026, 6, 1))
+        assert len(rows) == 1
+        assert rows[0]["meter_data_id"] == 99
+        assert rows[0]["total_import_kwh"] == 150.0
+
+
 def test_coverage_counts() -> None:
     with _conn() as conn:
         empty = db.coverage(conn)
