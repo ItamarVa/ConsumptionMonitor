@@ -4,9 +4,13 @@
 # the job's output is printed once it finishes. scripts/connection_report.py does the work.
 
 $ErrorActionPreference = 'Stop'
-$root = Split-Path -Parent $PSScriptRoot
+. (Join-Path $PSScriptRoot 'launcher-common.ps1')
+
+$root = $script:LauncherRoot
 Set-Location $root
 . (Join-Path $PSScriptRoot 'env.ps1')
+
+Write-Log 'test-connection.ps1 started'
 
 try {
     $python = Initialize-Venv $root 3 40
@@ -26,6 +30,7 @@ try {
         Start-Sleep -Milliseconds 400
     }
     $output = Receive-Job $job -ErrorAction Continue
+    if ($job.State -eq 'Failed') { throw 'The connection check job failed.' }
     Remove-Job $job -Force
     Show-Phase 100 'Done'
     Write-Progress -Activity 'ConsumptionMonitor' -Completed
@@ -36,16 +41,8 @@ try {
     Write-Host 'Open the report file above and send it on if the parser did not understand'
     Write-Host 'the responses - it contains everything needed to fix that, with the password'
     Write-Host 'and the tokens removed.'
-    Read-Host 'Press Enter to close'
+    Write-Log 'Connection check finished'
 }
 catch {
-    Write-Progress -Activity 'ConsumptionMonitor' -Completed
-    Write-Host ''
-    Write-Host 'The connection check could not run:' -ForegroundColor Red
-    Write-Host "  $($_.Exception.Message)" -ForegroundColor Red
-    Write-Host ''
-    Write-Host 'What to do: if it mentions credentials, double-click set-credentials.bat and'
-    Write-Host 'enter them again. Otherwise check that this PC is online, then try again.'
-    Read-Host 'Press Enter to close'
-    exit 1
+    Exit-WithError $_.Exception.Message
 }

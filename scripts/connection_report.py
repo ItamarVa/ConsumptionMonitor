@@ -1,11 +1,9 @@
 """First-contact diagnostic: signs in once and writes down what the portal actually returns.
 
-Every response shape in consumption/readings.py is a guess derived from the site's
-JavaScript, and this is what replaces the guesses with facts: it dumps `user/info` and one
-day of hourly consumption per meter into a git-ignored report, redacted, and says whether
-the parser understood them. Reads the credentials through consumption.config only, never
-prints the password or a token, and writes nothing to the database.
-Run it through test-connection.bat. Depended on by: scripts/test-connection.ps1.
+Probes user/info and the paginated meter reading log (GET meterdata), not the chart feed.
+Dumps redacted payloads into a git-ignored report and says whether the parser understood them.
+Reads credentials through consumption.config only; never prints the password or a token.
+Run through test-connection.bat. Depended on by: scripts/test-connection.ps1.
 """
 
 from __future__ import annotations
@@ -18,15 +16,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from consumption import config, jobs, readings, source  # noqa: E402
+from consumption.reading_log import parse_reading_page, parse_reading_row  # noqa: E402
+from consumption.records import READING_LOG_PATH  # noqa: E402
 
 REPORT_PATH = config.ROOT / "data" / "connection-report.txt"
-
-# Enough of a payload to correct the parser from, without a megabyte of JSON in a text file.
 PAYLOAD_LIMIT = 8000
 
 
 def _mask(username: str) -> str:
-    """Enough of the email to recognise the account, not enough to reuse it."""
     name, _, domain = username.partition("@")
     return f"{name[:1]}***@{domain}" if domain else "***"
 
@@ -42,13 +39,6 @@ def _dump(value: object, limit: int = PAYLOAD_LIMIT) -> str:
     return text
 
 
-def _looks_cumulative(values: list[float]) -> bool:
-    """A day that only ever rises is the signature of a meter total, not hourly use."""
-    if len(values) < 4 or len(set(values)) < 2:
-        return False
-    return all(later >= earlier for earlier, later in zip(values, values[1:]))
-
-
 def _meters_section(portal, lines: list[str]) -> dict[str, list[str]]:
     payload = portal.get_json(source.USER_INFO_PATH)
     lines += ["## user/info (verbatim, credential keys redacted)", "", _dump(payload), ""]
@@ -61,64 +51,60 @@ def _meters_section(portal, lines: list[str]) -> dict[str, list[str]]:
         "PARSER: understood user/info.",
         f"  electricity meters (type 1): {meters['electricity'] or 'none'}",
         f"  water meters (type 2):       {meters['water'] or 'none'}",
-        "  Any meter of another type is listed above but deliberately not collected.",
         "",
     ]
     return meters
 
 
-def _day_section(portal, utility: str, meter_id: str, lines: list[str]) -> bool:
-    """One day of hourly buckets for one meter. Returns True if the parser understood it."""
+def _reading_log_section(portal, utility: str, meter_id: str, lines: list[str]) -> bool:
+    """One page of the reading log for a recent local day. Returns True if parsed."""
     today = jobs.local_today()
-    understood = False
     for day in (today - timedelta(days=1), today):
         stamp = day.strftime("%m/%d/%Y")
         params = {
             "meterId": meter_id,
-            "period": "hourly",
             "fromDate": stamp,
             "toDate": stamp,
+            "pageNumber": "1",
+            "pageSize": "50",
         }
-        payload = portal.get_json(source.CONSUMPTION_PATH, params)
+        payload = portal.get_json(READING_LOG_PATH, params)
         lines += [
             f"### {utility} meter {meter_id}, local day {day}",
             "",
-            f"GET {source.CONSUMPTION_PATH}?" + "&".join(f"{k}={v}" for k, v in params.items()),
+            f"GET {READING_LOG_PATH}?" + "&".join(f"{k}={v}" for k, v in params.items()),
             "",
             _dump(payload),
             "",
         ]
         try:
-            parsed = readings.parse_hourly(payload, utility, meter_id, day)
+            rows = parse_reading_page(payload)
+            parsed = [parse_reading_row(item, utility, meter_id) for item in rows]
         except readings.SourceError as exc:
             lines += [f"PARSER: did NOT understand this response - {exc}", ""]
             return False
-        understood = True
-        values = [r.value for r in parsed]
+        if not parsed:
+            lines += ["  The day came back empty, trying the next one.", ""]
+            continue
+        import_total = sum(r.total_import_kwh or 0 for r in parsed if utility == "electricity")
+        water_total = sum(r.total_water_data or 0 for r in parsed if utility == "water")
         lines += [
-            f"PARSER: understood the response - {len(parsed)} hourly readings, "
-            f"total {round(sum(values), 4)} {readings.UNITS[utility]}.",
+            f"PARSER: understood the response - {len(parsed)} raw readings.",
+            f"  first reading {parsed[0].reading_time.isoformat()}",
+            f"  last reading  {parsed[-1].reading_time.isoformat()}",
         ]
-        if parsed:
-            lines += [
-                f"  first hour {parsed[0].hour_start:%Y-%m-%dT%H:%M}Z, "
-                f"last hour {parsed[-1].hour_start:%Y-%m-%dT%H:%M}Z",
-            ]
-            if _looks_cumulative(values):
-                lines += [
-                    "  WARNING: the values only ever rise across the day, which is what a",
-                    "  cumulative meter total looks like. The parser stores them as per-hour",
-                    "  consumption. If this warning appears, consumption/readings.py must",
-                    "  subtract each bucket from the previous one instead.",
-                ]
-            lines.append("")
-            return True
-        lines += ["  The day came back empty, trying the next one.", ""]
-    return understood
+        if utility == "electricity" and parsed[0].total_import_kwh is not None:
+            lines += [f"  sample cumulative import register: {parsed[0].total_import_kwh}"]
+        if utility == "water" and parsed[0].total_water_data is not None:
+            lines += [f"  sample cumulative water register: {parsed[0].total_water_data}"]
+        if any(r.back_flow for r in parsed):
+            lines += ["  NOTE: backFlow is true on at least one reading."]
+        lines.append("")
+        return True
+    return False
 
 
 def _probe(lines: list[str]) -> tuple[bool, list[str]]:
-    """Log in once and fill the report. Returns (everything understood, summary lines)."""
     summary: list[str] = []
     with source.portal_session() as portal:
         lines += ["## Login", "", "Login: OK (the token is not written to this report).", ""]
@@ -131,30 +117,16 @@ def _probe(lines: list[str]) -> tuple[bool, list[str]]:
         counts = ", ".join(f"{u} {len(ids)}" for u, ids in meters.items())
         summary.append(f"Meters found: {counts}")
 
-        lines += ["## meterdata/consumption, period=hourly", ""]
+        lines += ["## meter reading log (GET meterdata)", ""]
         understood = True
         for utility, meter_ids in meters.items():
             for meter_id in meter_ids:
-                if not _day_section(portal, utility, meter_id, lines):
+                if not _reading_log_section(portal, utility, meter_id, lines):
                     understood = False
                     summary.append(f"{utility} meter {meter_id}: the parser failed - see report")
                 else:
                     summary.append(f"{utility} meter {meter_id}: parsed")
         return understood, summary
-
-
-def _open_questions() -> list[str]:
-    return [
-        "## Still unanswered by this report",
-        "",
-        "- Whether a wider fromDate/toDate window returns more than one day of hourly",
-        "  buckets, which would cut the backfill from hundreds of requests to a few.",
-        "- What the portal's own water multiplier is: consumption/readings.py stores the",
-        "  raw value, so if the portal's screen shows a different water figure, the",
-        "  multiplier is the reason.",
-        "- How far back fromDate may go before responses come back empty.",
-        "",
-    ]
 
 
 def main() -> int:
@@ -187,11 +159,10 @@ def main() -> int:
         except readings.SourceError as exc:
             lines += [f"The portal was reached but answered unusably: {exc}", ""]
             summary = [f"The portal answered unusably: {exc}"]
-        except Exception as exc:  # noqa: BLE001 - a diagnostic must report its own crash
+        except Exception as exc:  # noqa: BLE001
             lines += [f"Unexpected failure: {type(exc).__name__}: {exc}", ""]
             summary = [f"Unexpected failure: {type(exc).__name__}: {exc}"]
 
-    lines += _open_questions()
     lines += [
         "## Verdict",
         "",
