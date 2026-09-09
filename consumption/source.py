@@ -49,7 +49,7 @@ class SourceError(RuntimeError):
 def portal_session():
     """A logged-in session. Cookies live for the duration of the `with` block only."""
     if not config.credentials_present():
-        raise SourceNotReady("MYCITYGRID_USERNAME / MYCITYGRID_PASSWORD are not set in .env")
+        raise SourceNotReady("No mycitygrid credentials stored. Run set-credentials.bat.")
     # Imported here, not at module level: it drags in the whole browser stack, and the
     # API and the self-checks must start without it.
     from scrapling.fetchers import FetcherSession
