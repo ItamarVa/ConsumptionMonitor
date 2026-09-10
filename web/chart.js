@@ -135,8 +135,8 @@ export function createChart(canvasEl, t) {
       datasets: {
         bar: {
           maxBarThickness: 48,
-          categoryPercentage: 0.8,
-          barPercentage: 0.9,
+          categoryPercentage: 0.75,
+          barPercentage: 1.0,
           borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 },
         },
       },

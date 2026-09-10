@@ -15,6 +15,7 @@ import {
   onGranularityChange,
   readRangeFromControls,
   rebuildPresetSelect,
+  snapRangeForMode,
   syncRangeControls,
 } from "./controls.js";
 import {
@@ -118,6 +119,7 @@ function syncPresetFromState() {
 }
 
 function syncControlsFromState() {
+  snapRangeForMode(state);
   syncRangeControls(els, state, state.granularity, coverage);
   syncPresetFromState();
   syncUtilityButtons();
@@ -126,6 +128,14 @@ function syncControlsFromState() {
 }
 
 function syncModeButtons() {
+  const modeGroup = document.getElementById("mode-group");
+  const allowed = state.granularity !== "year";
+  if (modeGroup) {
+    modeGroup.hidden = !allowed;
+  }
+  if (!allowed) {
+    state.mode = "running";
+  }
   if (!els.mode) {
     return;
   }
@@ -236,6 +246,9 @@ function applyHash(hash) {
     state.mode = hash.mode;
   } else if (hash.compare && hash.compare !== "none") {
     state.mode = "comparison";
+  }
+  if (state.granularity === "year" && state.mode === "comparison") {
+    state.mode = "running";
   }
   if (hash.start) {
     state.start = hash.start;
@@ -922,7 +935,7 @@ function bindEvents() {
     }
     state.mode = m;
     hiddenSeries = new Set();
-    syncModeButtons();
+    syncControlsFromState();
     writeHash();
     loadData();
   });

@@ -79,6 +79,9 @@ to 2024-01 complete (~27k readings). Remote: `https://github.com/ItamarVa/Consum
   screenshots and console errors, no new dependency.
 - Dashboard comparison mode folds the selected range into coloured series (by year/month/day);
   `#mode` toggle replaces the old compare dropdown; `preset.custom` is read-only status.
+- Comparison fold needs whole parent units: rolling presets (30d, last_12) straddle two
+  partial months/years so series never share a category; `snapRangeForMode` snaps day→full
+  months and month→full years on entry; year granularity hides comparison (no sub-unit).
 - `/summary` was ~50s because `_period_total` looped daily queries; `db.period_total` uses two boundary reads (~700ms).
 - Status pill must read `last_reading_utc` from `/health`, not `/summary`.
 - Known data gap: no readings for 2026-09-01..02; jobs only cover the last 7 days and the

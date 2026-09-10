@@ -119,9 +119,13 @@ Markup classes are `.breadcrumb__item`, `.breadcrumb__item--current`, `.breadcru
 ### Fold rules (comparison mode)
 
 - hour: categories = hour window; one series per day (max 12 newest)
-- day: categories = 1–31; one series per month
+- day: categories = 1–31 (trailing all-null days trimmed); one series per month
 - month: categories = month names; one series per year
-- year: one bar per year, each year its own coloured series
+- year: comparison disabled (`#mode-group` hidden; hash `m=comparison` coerced to running)
+
+### Range snap (comparison mode)
+
+`snapRangeForMode` in `controls.js`: day granularity snaps start/end to full calendar months; month granularity snaps to full calendar years. Called from `syncControlsFromState` so presets and pickers align before fetch.
 
 ### Range controls (`data-range-for`)
 

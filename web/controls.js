@@ -62,6 +62,20 @@ export function monthEnd(isoMonth) {
   return `${y}-${String(m).padStart(2, "0")}-${String(last).padStart(2, "0")}`;
 }
 
+/** Comparison folds by the parent unit, so partial parents must not enter the range. */
+export function snapRangeForMode(state) {
+  if (state.mode !== "comparison") {
+    return;
+  }
+  if (state.granularity === "day") {
+    state.start = `${state.start.slice(0, 7)}-01`;
+    state.end = monthEnd(state.end.slice(0, 7));
+  } else if (state.granularity === "month") {
+    state.start = `${state.start.slice(0, 4)}-01-01`;
+    state.end = `${state.end.slice(0, 4)}-12-31`;
+  }
+}
+
 export function lastCoveredDay(coverage, utility, fallback) {
   const last = coverage[utility]?.last_date;
   return last && last < fallback ? last : fallback;

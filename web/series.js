@@ -90,23 +90,29 @@ function capSeries(entries) {
   return { series: kept, capped };
 }
 
+function trimTrailingEmptyCategories(categories, series) {
+  let end = categories.length;
+  while (end > 0) {
+    const idx = end - 1;
+    const allNull = series.every((s) => s.points[idx]?.value == null);
+    if (!allNull) {
+      break;
+    }
+    end -= 1;
+  }
+  if (end === categories.length) {
+    return { categories, series };
+  }
+  return {
+    categories: categories.slice(0, end),
+    series: series.map((s) => ({ ...s, points: s.points.slice(0, end) })),
+  };
+}
+
 /**
  * @returns {{ categories: string[], series: Array<{key, label, colorIndex, points, total}>, capped: boolean }}
  */
 export function foldForComparison(points, granularity, t, hourStart, hourEnd) {
-  if (granularity === "year") {
-    const categories = points.map((p) => p.label);
-    const series = points.map((p, idx) => ({
-      key: p.label,
-      label: p.label,
-      colorIndex: idx,
-      points: categories.map((cat) => (cat === p.label ? { ...p } : { label: cat, iso: p.iso, value: null })),
-      total: p.value,
-    }));
-    const { series: kept, capped } = capSeries(series);
-    return { categories, series: kept, capped };
-  }
-
   if (granularity === "month") {
     const categories = Array.from({ length: 12 }, (_, i) => formatMonthCategory(i + 1, t));
     const byYear = new Map();
@@ -162,7 +168,8 @@ export function foldForComparison(points, granularity, t, hourStart, hourEnd) {
       e.colorIndex = idx;
     });
     const { series, capped } = capSeries(entries);
-    return { categories, series, capped };
+    const trimmed = trimTrailingEmptyCategories(categories, series);
+    return { categories: trimmed.categories, series: trimmed.series, capped };
   }
 
   // hour
