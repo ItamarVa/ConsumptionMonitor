@@ -50,10 +50,10 @@ Electricity: import=consumption, export=production (solar return).
 
 ## State
 
-Production-ready on `master`. Dashboard at `/ui`: bar chart, drill-down, comparison,
-30-day default, theme toggle; chart canvas height bug fixed. `/summary` ~700ms via
-`db.period_total`. Raw reading log live; backfill to 2024-01 complete (~27k readings).
-Remote: `https://github.com/ItamarVa/ConsumptionMonitor.git`.
+Production-ready on `master`. Dashboard at `/ui`: running vs comparison fold mode
+(multi-series legend), per-granularity range pickers (year/month/day/hour), drill-down,
+theme toggle. `/summary` ~700ms via `db.period_total`. Raw reading log live; backfill
+to 2024-01 complete (~27k readings). Remote: `https://github.com/ItamarVa/ConsumptionMonitor.git`.
 
 ## Lessons
 
@@ -77,6 +77,8 @@ Remote: `https://github.com/ItamarVa/ConsumptionMonitor.git`.
   and leaving it restores the previous range.
 - Verify the dashboard with headless Chrome plus CDP over Node's built-in WebSocket — real
   screenshots and console errors, no new dependency.
+- Dashboard comparison mode folds the selected range into coloured series (by year/month/day);
+  `#mode` toggle replaces the old compare dropdown; `preset.custom` is read-only status.
 - `/summary` was ~50s because `_period_total` looped daily queries; `db.period_total` uses two boundary reads (~700ms).
 - Status pill must read `last_reading_utc` from `/health`, not `/summary`.
 - Known data gap: no readings for 2026-09-01..02; jobs only cover the last 7 days and the

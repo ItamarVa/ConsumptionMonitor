@@ -51,35 +51,61 @@
             </div>
           </div>
 
-          <div class="control-group">
+          <div class="control-group range-group" data-range-for="year" hidden>
+            <label class="control-label" for="year-start" data-i18n="range.from_year"></label>
+            <select id="year-start" class="select-input" name="year-start"></select>
+          </div>
+          <div class="control-group range-group" data-range-for="year" hidden>
+            <label class="control-label" for="year-end" data-i18n="range.to_year"></label>
+            <select id="year-end" class="select-input" name="year-end"></select>
+          </div>
+
+          <div class="control-group range-group" data-range-for="month" hidden>
+            <label class="control-label" for="month-start" data-i18n="range.from_month"></label>
+            <input type="month" id="month-start" class="date-input" name="month-start">
+          </div>
+          <div class="control-group range-group" data-range-for="month" hidden>
+            <label class="control-label" for="month-end" data-i18n="range.to_month"></label>
+            <input type="month" id="month-end" class="date-input" name="month-end">
+          </div>
+
+          <div class="control-group range-group" data-range-for="day">
             <label class="control-label" for="range-start" data-i18n="range.from"></label>
             <input type="date" id="range-start" class="date-input" name="range-start">
           </div>
-
-          <div class="control-group">
+          <div class="control-group range-group" data-range-for="day">
             <label class="control-label" for="range-end" data-i18n="range.to"></label>
             <input type="date" id="range-end" class="date-input" name="range-end">
           </div>
 
-          <div class="control-group">
-            <label class="control-label" for="preset" data-i18n="control.preset"></label>
-            <select id="preset" class="select-input" name="preset">
-              <option value="7d" data-i18n="preset.7d"></option>
-              <option value="30d" selected data-i18n="preset.30d"></option>
-              <option value="this_month" data-i18n="preset.this_month"></option>
-              <option value="this_year" data-i18n="preset.this_year"></option>
-              <option value="all" data-i18n="preset.all"></option>
-              <option value="custom" data-i18n="preset.custom"></option>
-            </select>
+          <div class="control-group range-group" data-range-for="hour" hidden>
+            <label class="control-label" for="hour-day-start" data-i18n="range.from"></label>
+            <input type="date" id="hour-day-start" class="date-input" name="hour-day-start">
+          </div>
+          <div class="control-group range-group" data-range-for="hour" hidden>
+            <label class="control-label" for="hour-day-end" data-i18n="range.to"></label>
+            <input type="date" id="hour-day-end" class="date-input" name="hour-day-end">
+          </div>
+          <div class="control-group range-group" data-range-for="hour" hidden>
+            <label class="control-label" for="hour-start" data-i18n="range.hour_from"></label>
+            <select id="hour-start" class="select-input" name="hour-start"></select>
+          </div>
+          <div class="control-group range-group" data-range-for="hour" hidden>
+            <label class="control-label" for="hour-end" data-i18n="range.hour_to"></label>
+            <select id="hour-end" class="select-input" name="hour-end"></select>
           </div>
 
           <div class="control-group">
-            <label class="control-label" for="compare" data-i18n="control.compare"></label>
-            <select id="compare" class="select-input" name="compare">
-              <option value="none" selected data-i18n="compare.none"></option>
-              <option value="previous" data-i18n="compare.previous"></option>
-              <option value="last_year" data-i18n="compare.last_year"></option>
-            </select>
+            <label class="control-label" for="preset" data-i18n="control.preset"></label>
+            <select id="preset" class="select-input" name="preset"></select>
+          </div>
+
+          <div class="control-group">
+            <span class="control-label" id="mode-label" data-i18n="control.mode"></span>
+            <div id="mode" class="segment-group" role="group" aria-labelledby="mode-label">
+              <button type="button" class="segment-btn" data-mode="running" aria-pressed="true" data-i18n="mode.running"></button>
+              <button type="button" class="segment-btn" data-mode="comparison" aria-pressed="false" data-i18n="mode.comparison"></button>
+            </div>
           </div>
         </div>
       </section>
@@ -183,16 +209,7 @@
           <button type="button" id="retry" class="btn-primary" data-i18n="chart.retry"></button>
         </div>
 
-        <div id="chart-legend" class="chart-legend" hidden>
-          <span class="chart-legend__item chart-legend__item--primary">
-            <span class="chart-legend__swatch" aria-hidden="true"></span>
-            <span data-i18n="legend.current"></span>
-          </span>
-          <span class="chart-legend__item chart-legend__item--comparison">
-            <span class="chart-legend__swatch" aria-hidden="true"></span>
-            <span data-i18n="legend.comparison"></span>
-          </span>
-        </div>
+        <div id="chart-legend" class="chart-legend" hidden></div>
         <p id="chart-note" class="chart-note" hidden></p>
       </section>
 

@@ -1,27 +1,53 @@
 /**
- * Consumption dashboard controller: state machine, drill-down stack, URL hash
- * sync, 60s polling (paused when hidden), KPI/table/CSV wiring. Binds to the
- * frozen DOM ids from dashboard-contract; no exports. Depends on api.js, chart.js,
- * vendor/chart.umd.min.js, and the HTML shell from index.html.
+ * Consumption dashboard controller: state, drill-down, URL hash sync, 60s polling,
+ * comparison fold mode, and KPI/legend/table wiring. Depends on api.js, chart.js,
+ * controls.js, series.js, and index.html shell.
  */
 
 import { ApiError, fetchHealth, fetchLocale, fetchSeries } from "./api.js";
 import { createChart, onBarClick, refreshChartTheme, renderSeries } from "./chart.js";
+import {
+  DEFAULT_PRESET,
+  applyPreset,
+  defaultRangeFor,
+  detectPreset,
+  daysInMonth,
+  onGranularityChange,
+  readRangeFromControls,
+  rebuildPresetSelect,
+  syncRangeControls,
+} from "./controls.js";
+import {
+  buildRunningChart,
+  computeKpis,
+  flatPointsForTable,
+  foldForComparison,
+  formatNumber,
+  isEmptyChart,
+} from "./series.js";
 
 const POLL_MS = 60_000;
 const STALE_HOURS = 4;
+const THEME_KEY = "cm-theme";
 
 const $ = (id) => document.getElementById(id);
-
 const chartWrap = document.querySelector(".chart-wrap");
 
 const els = {
   utility: $("utility"),
   granularity: $("granularity"),
+  mode: $("mode"),
   rangeStart: $("range-start"),
   rangeEnd: $("range-end"),
+  yearStart: $("year-start"),
+  yearEnd: $("year-end"),
+  monthStart: $("month-start"),
+  monthEnd: $("month-end"),
+  hourDayStart: $("hour-day-start"),
+  hourDayEnd: $("hour-day-end"),
+  hourStart: $("hour-start"),
+  hourEnd: $("hour-end"),
   preset: $("preset"),
-  compare: $("compare"),
   kpiTotal: $("kpi-total"),
   kpiAverage: $("kpi-average"),
   kpiPeak: $("kpi-peak"),
@@ -48,64 +74,27 @@ const state = {
   utility: "electricity",
   direction: "import",
   granularity: "day",
+  mode: "running",
   start: "",
   end: "",
-  compare: "none",
+  hourStart: "00:00",
+  hourEnd: "23:00",
   drillStack: [],
 };
 
 let t = {};
 let chart = null;
 let pollTimer = null;
-let primarySeries = [];
-let comparisonSeries = null;
+let chartData = { categories: [], series: [], capped: false };
 let seriesMeta = { unit: "", estimated: false };
 let coverage = {};
-// Restored when the user leaves the hour view, which had to collapse the range to one day.
-let rangeBeforeHour = null;
-const THEME_KEY = "cm-theme";
+let hiddenSeries = new Set();
+let rawPoints = [];
 
-function todayIso() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function parseIso(s) {
-  const [y, m, d] = s.split("-").map(Number);
-  return new Date(y, m - 1, d);
-}
-
-function formatIso(d) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
-function addDays(iso, n) {
-  const d = parseIso(iso);
-  d.setDate(d.getDate() + n);
-  return formatIso(d);
-}
-
-function daysInclusive(start, end) {
-  const ms = parseIso(end) - parseIso(start);
-  return Math.floor(ms / 86_400_000) + 1;
-}
-
-function daysInMonth(year, month) {
-  return new Date(year, month, 0).getDate();
-}
-
-function shiftYear(iso, delta) {
-  const d = parseIso(iso);
-  d.setFullYear(d.getFullYear() + delta);
-  return formatIso(d);
-}
-
-function defaultRange() {
-  const end = todayIso();
-  const start = addDays(end, -29);
-  return { start, end };
+function setText(el, text) {
+  if (el) {
+    el.textContent = text ?? "";
+  }
 }
 
 function seriesLabel() {
@@ -120,41 +109,30 @@ function granularityLabel() {
   return t[`granularity.${state.granularity}`] ?? state.granularity;
 }
 
-function detectPreset(start, end) {
-  const endToday = todayIso();
-  if (end !== endToday) {
-    return "custom";
-  }
-  if (start === addDays(end, -6)) {
-    return "7d";
-  }
-  if (start === addDays(end, -29)) {
-    return "30d";
-  }
-  if (start === `${end.slice(0, 8)}01`) {
-    return "this_month";
-  }
-  if (start === `${end.slice(0, 4)}-01-01`) {
-    return "this_year";
-  }
-  const first = coverage[state.utility]?.first_date;
-  if (first && start === first) {
-    return "all";
-  }
-  return "custom";
-}
-
-/** Last day that actually holds readings, so the hour view never opens on an empty day. */
-function lastCoveredDay(fallback) {
-  const last = coverage[state.utility]?.last_date;
-  return last && last < fallback ? last : fallback;
-}
-
 function syncPresetFromState() {
   if (!els.preset) {
     return;
   }
-  els.preset.value = detectPreset(state.start, state.end);
+  const id = detectPreset(state.granularity, state, coverage);
+  els.preset.value = id;
+}
+
+function syncControlsFromState() {
+  syncRangeControls(els, state, state.granularity, coverage);
+  syncPresetFromState();
+  syncUtilityButtons();
+  syncGranularityButtons();
+  syncModeButtons();
+}
+
+function syncModeButtons() {
+  if (!els.mode) {
+    return;
+  }
+  for (const btn of els.mode.querySelectorAll("button")) {
+    const m = btn.dataset.mode;
+    btn.setAttribute("aria-pressed", m === state.mode ? "true" : "false");
+  }
 }
 
 function initTheme() {
@@ -175,27 +153,13 @@ function toggleTheme() {
   if (els.themeToggle) {
     els.themeToggle.setAttribute("aria-pressed", next === "dark" ? "true" : "false");
   }
-  if (chart && primarySeries.length) {
-    renderSeries(chart, {
-      primary: primarySeries,
-      comparison: comparisonSeries,
-      granularity: state.granularity,
-      unit: seriesMeta.unit,
-      estimated: seriesMeta.estimated,
-      t,
-    });
+  if (chart && chartData.series.length) {
+    paintChart();
   } else {
     refreshChartTheme(chart);
   }
 }
 
-function setText(el, text) {
-  if (el) {
-    el.textContent = text ?? "";
-  }
-}
-
-/** Loading, empty and error replace the canvas only; controls stay reachable. */
 function showState(which) {
   const states = { loading: els.stateLoading, empty: els.stateEmpty, error: els.stateError };
   for (const [name, el] of Object.entries(states)) {
@@ -229,9 +193,12 @@ function parseHash() {
     utility: params.get("u"),
     direction: params.get("d"),
     granularity: params.get("g"),
+    mode: params.get("m"),
+    compare: params.get("c"),
     start: params.get("s"),
     end: params.get("e"),
-    compare: params.get("c"),
+    hourStart: params.get("hs"),
+    hourEnd: params.get("he"),
   };
 }
 
@@ -240,9 +207,11 @@ function writeHash() {
     u: state.utility,
     d: state.direction,
     g: state.granularity,
+    m: state.mode,
     s: state.start,
     e: state.end,
-    c: state.compare,
+    hs: state.hourStart,
+    he: state.hourEnd,
   });
   const next = `#${params}`;
   if (location.hash !== next) {
@@ -263,23 +232,24 @@ function applyHash(hash) {
   if (hash.granularity) {
     state.granularity = hash.granularity;
   }
+  if (hash.mode === "comparison" || hash.mode === "running") {
+    state.mode = hash.mode;
+  } else if (hash.compare && hash.compare !== "none") {
+    state.mode = "comparison";
+  }
   if (hash.start) {
     state.start = hash.start;
   }
   if (hash.end) {
     state.end = hash.end;
   }
-  if (hash.compare) {
-    state.compare = hash.compare === "prev" ? "previous" : hash.compare;
+  if (hash.hourStart) {
+    state.hourStart = hash.hourStart;
+  }
+  if (hash.hourEnd) {
+    state.hourEnd = hash.hourEnd;
   }
   state.drillStack = [];
-}
-
-function utilityKey() {
-  if (state.utility === "water") {
-    return "water";
-  }
-  return `${state.utility}_${state.direction}`;
 }
 
 function buttonMatchesUtility(btn) {
@@ -310,41 +280,6 @@ function syncGranularityButtons() {
   }
 }
 
-/**
- * The hour endpoint serves exactly one day, so entering the hour view collapses the
- * range and leaving it restores whatever range the user had before.
- */
-function setGranularity(g) {
-  if (g === "hour" && state.granularity !== "hour") {
-    if (state.start !== state.end) {
-      rangeBeforeHour = { start: state.start, end: state.end };
-    }
-    const day = lastCoveredDay(state.end);
-    state.start = day;
-    state.end = day;
-  } else if (g !== "hour" && state.granularity === "hour" && rangeBeforeHour) {
-    state.start = rangeBeforeHour.start;
-    state.end = rangeBeforeHour.end;
-    rangeBeforeHour = null;
-  }
-  state.granularity = g;
-}
-
-function syncControlsFromState() {
-  if (els.rangeStart) {
-    els.rangeStart.value = state.start;
-  }
-  if (els.rangeEnd) {
-    els.rangeEnd.value = state.end;
-  }
-  syncPresetFromState();
-  if (els.compare) {
-    els.compare.value = state.compare;
-  }
-  syncUtilityButtons();
-  syncGranularityButtons();
-}
-
 function readUtilityFromEvent(btn) {
   const u = btn.dataset.utility;
   if (!u) {
@@ -354,63 +289,27 @@ function readUtilityFromEvent(btn) {
   state.direction = u === "water" ? "water" : btn.dataset.direction ?? "import";
 }
 
-function comparisonRange() {
-  if (state.compare === "none") {
-    return null;
+function buildChartData(points) {
+  if (state.mode === "comparison") {
+    return foldForComparison(points, state.granularity, t, state.hourStart, state.hourEnd);
   }
-  const span = daysInclusive(state.start, state.end);
-  if (state.compare === "previous" || state.compare === "prev") {
-    const end = addDays(state.start, -1);
-    const start = addDays(end, -(span - 1));
-    return { start, end };
-  }
-  if (state.compare === "last_year") {
-    return { start: shiftYear(state.start, -1), end: shiftYear(state.end, -1) };
-  }
-  return null;
+  return buildRunningChart(points, state.granularity, t);
 }
 
-function alignByPosition(primary, comparison) {
-  return primary.map((_, i) => comparison[i] ?? null);
-}
-
-function formatNumber(n) {
-  if (n == null || Number.isNaN(n)) {
-    return "—";
+function paintChart() {
+  if (!chart) {
+    return;
   }
-  return new Intl.NumberFormat("he-IL", { maximumFractionDigits: 2 }).format(n);
-}
-
-function computeKpis(points) {
-  const values = points.filter((p) => p.value != null).map((p) => p.value);
-  if (!values.length) {
-    return { total: null, average: null, peak: null, peakLabel: "", latest: null };
-  }
-  const total = values.reduce((a, b) => a + b, 0);
-  const average = total / values.length;
-  let peak = values[0];
-  let peakIdx = 0;
-  for (let i = 0; i < points.length; i += 1) {
-    const v = points[i].value;
-    if (v != null && v >= peak) {
-      peak = v;
-      peakIdx = i;
-    }
-  }
-  let latest = null;
-  for (let i = points.length - 1; i >= 0; i -= 1) {
-    if (points[i].value != null) {
-      latest = points[i].value;
-      break;
-    }
-  }
-  return {
-    total,
-    average,
-    peak,
-    peakLabel: points[peakIdx]?.label ?? "",
-    latest,
-  };
+  chart.resize();
+  renderSeries(chart, {
+    categories: chartData.categories,
+    series: chartData.series,
+    granularity: state.granularity,
+    unit: seriesMeta.unit,
+    estimated: seriesMeta.estimated,
+    hiddenKeys: hiddenSeries,
+    t,
+  });
 }
 
 function renderKpiDelta(el, current, previous) {
@@ -441,16 +340,38 @@ function renderKpiDelta(el, current, previous) {
   }
 }
 
-function renderKpis(kpis, unit, compKpis = null) {
+function kpiSourceSeries() {
+  const visible = chartData.series.filter((s) => !hiddenSeries.has(s.key));
+  if (!visible.length) {
+    return [];
+  }
+  if (state.mode === "comparison") {
+    return visible[visible.length - 1].points;
+  }
+  return visible[0].points;
+}
+
+function renderKpis() {
+  const points = kpiSourceSeries();
+  const kpis = computeKpis(points);
   setText(els.kpiTotal, formatNumber(kpis.total));
   setText(els.kpiAverage, formatNumber(kpis.average));
-  setText(els.kpiPeak, kpis.peak != null ? `${formatNumber(kpis.peak)}` : "—");
+  setText(els.kpiPeak, kpis.peak != null ? formatNumber(kpis.peak) : "—");
   setText(els.kpiLatest, formatNumber(kpis.latest));
-  const unitKey = unit === "m3" || unit === "m³" ? "unit.m3" : "unit.kwh";
-  const unitLabel = t[unitKey] ?? unit ?? "";
+  const unitKey = seriesMeta.unit === "m3" || seriesMeta.unit === "m³" ? "unit.m3" : "unit.kwh";
+  const unitLabel = t[unitKey] ?? seriesMeta.unit ?? "";
   for (const el of document.querySelectorAll("[data-kpi-unit]")) {
     setText(el, unitLabel);
   }
+
+  let compKpis = null;
+  if (state.mode === "comparison" && chartData.series.length > 1) {
+    const visible = chartData.series.filter((s) => !hiddenSeries.has(s.key));
+    if (visible.length >= 2) {
+      compKpis = computeKpis(visible[visible.length - 2].points);
+    }
+  }
+
   const cards = document.querySelectorAll(".kpi-card");
   const deltas = [kpis.total, kpis.average, kpis.peak, kpis.latest];
   const compDeltas = compKpis
@@ -458,30 +379,79 @@ function renderKpis(kpis, unit, compKpis = null) {
     : [];
   cards.forEach((card, idx) => {
     const deltaEl = card.querySelector("[data-kpi-delta]");
-    renderKpiDelta(deltaEl, deltas[idx], compDeltas[idx] ?? null);
+    renderKpiDelta(deltaEl, deltas[idx], state.mode === "comparison" ? compDeltas[idx] : null);
   });
 }
 
 function renderChartTitles() {
   const titleTpl = t["chart.title_template"] ?? "{series} — {granularity}";
+  const modeSuffix =
+    state.mode === "comparison" ? ` (${t["mode.comparison"] ?? ""})` : "";
   setText(
     els.chartTitle,
     titleTpl
       .replace("{series}", seriesLabel())
-      .replace("{granularity}", granularityLabel()),
+      .replace("{granularity}", granularityLabel()) + modeSuffix,
   );
   const subTpl = t["chart.subtitle_range"] ?? "{start} – {end}";
-  setText(
-    els.chartSubtitle,
-    subTpl.replace("{start}", state.start).replace("{end}", state.end),
-  );
+  let subtitle = subTpl.replace("{start}", state.start).replace("{end}", state.end);
+  if (state.granularity === "hour") {
+    subtitle += ` · ${state.hourStart}–${state.hourEnd}`;
+  }
+  if (state.mode === "comparison" && chartData.series.length > 1) {
+    const visible = chartData.series.filter((s) => !hiddenSeries.has(s.key));
+    if (visible.length >= 2) {
+      const tpl = t["chart.subtitle_compare"] ?? "{current} מול {previous}";
+      subtitle = tpl
+        .replace("{current}", visible[visible.length - 1].label)
+        .replace("{previous}", visible[visible.length - 2].label);
+    }
+  }
+  setText(els.chartSubtitle, subtitle);
 }
 
-function renderLegend(show) {
+function renderLegend() {
   if (!els.chartLegend) {
     return;
   }
-  els.chartLegend.hidden = !show;
+  while (els.chartLegend.firstChild) {
+    els.chartLegend.removeChild(els.chartLegend.firstChild);
+  }
+  els.chartLegend.hidden = chartData.series.length === 0;
+  if (chartData.series.length === 0) {
+    return;
+  }
+  for (const s of chartData.series) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chart-legend__item";
+    const hidden = hiddenSeries.has(s.key);
+    btn.setAttribute("aria-pressed", hidden ? "false" : "true");
+    btn.dataset.seriesKey = s.key;
+    const swatch = document.createElement("span");
+    swatch.className = "chart-legend__swatch";
+    swatch.style.background = `var(--series-${(s.colorIndex % 12) + 1})`;
+    if (hidden) {
+      swatch.style.opacity = "0.35";
+    }
+    const label = document.createElement("span");
+    const total = s.total != null ? formatNumber(s.total) : "—";
+    label.textContent = `${s.label} (${total})`;
+    btn.appendChild(swatch);
+    btn.appendChild(label);
+    btn.addEventListener("click", () => {
+      if (hiddenSeries.has(s.key)) {
+        hiddenSeries.delete(s.key);
+      } else {
+        hiddenSeries.add(s.key);
+      }
+      paintChart();
+      renderLegend();
+      renderKpis();
+      renderChartTitles();
+    });
+    els.chartLegend.appendChild(btn);
+  }
 }
 
 function renderCoverageNote(health) {
@@ -504,7 +474,6 @@ function renderCoverageNote(health) {
   els.coverageNote.hidden = false;
 }
 
-/** A crumb names the view it returns to, not the first period inside that view. */
 function crumbLabel(granularity, start, end) {
   if (granularity === "year") {
     const from = start.slice(0, 4);
@@ -567,8 +536,13 @@ function popDrill(index) {
   const target = state.drillStack[index];
   state.drillStack = state.drillStack.slice(0, index);
   state.granularity = target.granularity;
+  state.mode = target.mode ?? "running";
   state.start = target.start;
   state.end = target.end;
+  state.hourStart = target.hourStart ?? "00:00";
+  state.hourEnd = target.hourEnd ?? "23:00";
+  hiddenSeries = new Set();
+  rebuildPresetSelect(els.preset, state.granularity, t);
   syncControlsFromState();
   writeHash();
   loadData();
@@ -577,65 +551,141 @@ function popDrill(index) {
 function drillDown(next) {
   state.drillStack.push({
     granularity: state.granularity,
+    mode: state.mode,
     start: state.start,
     end: state.end,
+    hourStart: state.hourStart,
+    hourEnd: state.hourEnd,
   });
   state.granularity = next.granularity;
+  state.mode = next.mode ?? state.mode;
   state.start = next.start;
   state.end = next.end;
+  state.hourStart = next.hourStart ?? state.hourStart;
+  state.hourEnd = next.hourEnd ?? state.hourEnd;
+  hiddenSeries = new Set();
   syncControlsFromState();
   writeHash();
   loadData();
 }
 
-function handleBarClick({ point, granularity }) {
+function handleBarClick({ seriesKey, point, granularity }) {
+  if (state.mode === "comparison") {
+    if (granularity === "month") {
+      const year = seriesKey;
+      const mo = Number(point.iso.slice(5, 7));
+      const last = daysInMonth(Number(year), mo);
+      const mm = String(mo).padStart(2, "0");
+      drillDown({
+        granularity: "day",
+        mode: "running",
+        start: `${year}-${mm}-01`,
+        end: `${year}-${mm}-${String(last).padStart(2, "0")}`,
+        hourStart: state.hourStart,
+        hourEnd: state.hourEnd,
+      });
+      return;
+    }
+    if (granularity === "day") {
+      const [y, m] = seriesKey.split("-").map(Number);
+      const day = Number(point.iso.slice(8, 10));
+      const mm = String(m).padStart(2, "0");
+      const dd = String(day).padStart(2, "0");
+      drillDown({
+        granularity: "hour",
+        mode: "running",
+        start: `${y}-${mm}-${dd}`,
+        end: `${y}-${mm}-${dd}`,
+        hourStart: "00:00",
+        hourEnd: "23:00",
+      });
+      return;
+    }
+    if (granularity === "hour") {
+      return;
+    }
+    if (granularity === "year") {
+      const year = point.label;
+      drillDown({
+        granularity: "month",
+        mode: state.mode,
+        start: `${year}-01-01`,
+        end: `${year}-12-31`,
+        hourStart: state.hourStart,
+        hourEnd: state.hourEnd,
+      });
+      return;
+    }
+  }
+
   if (granularity === "year") {
     const year = point.label;
-    drillDown({ granularity: "month", start: `${year}-01-01`, end: `${year}-12-31` });
+    drillDown({
+      granularity: "month",
+      mode: state.mode,
+      start: `${year}-01-01`,
+      end: `${year}-12-31`,
+      hourStart: state.hourStart,
+      hourEnd: state.hourEnd,
+    });
   } else if (granularity === "month") {
     const [y, m] = point.label.split("-").map(Number);
     const last = daysInMonth(y, m);
     const mm = String(m).padStart(2, "0");
     drillDown({
       granularity: "day",
+      mode: state.mode,
       start: `${y}-${mm}-01`,
       end: `${y}-${mm}-${String(last).padStart(2, "0")}`,
+      hourStart: state.hourStart,
+      hourEnd: state.hourEnd,
     });
   } else if (granularity === "day") {
-    drillDown({ granularity: "hour", start: point.iso, end: point.iso });
+    drillDown({
+      granularity: "hour",
+      mode: state.mode,
+      start: point.iso,
+      end: point.iso,
+      hourStart: "00:00",
+      hourEnd: "23:00",
+    });
   }
 }
 
-function renderTable(points, unit) {
+function renderTable() {
   if (!els.dataTable) {
     return;
   }
-  const tbody = els.dataTable.querySelector("tbody") ?? els.dataTable;
+  const tbody = els.dataTable.querySelector("tbody");
+  if (!tbody) {
+    return;
+  }
   while (tbody.firstChild) {
     tbody.removeChild(tbody.firstChild);
   }
-  for (const p of points) {
+  const rows = flatPointsForTable(chartData);
+  for (const p of rows) {
     const tr = document.createElement("tr");
     const tdPeriod = document.createElement("td");
-    tdPeriod.textContent = p.label;
+    tdPeriod.textContent = state.mode === "comparison" ? `${p.series} · ${p.label}` : p.label;
     const tdValue = document.createElement("td");
     tdValue.dir = "ltr";
     tdValue.textContent =
-      p.value != null ? `${formatNumber(p.value)} ${unit}` : "—";
+      p.value != null ? `${formatNumber(p.value)} ${seriesMeta.unit}` : "—";
     tr.appendChild(tdPeriod);
     tr.appendChild(tdValue);
     tbody.appendChild(tr);
   }
 }
 
-function updateChartAria(points, unit) {
+function updateChartAria() {
   if (!els.chart) {
     return;
   }
-  const count = points.filter((p) => p.value != null).length;
+  const count = chartData.categories.length;
   const tpl = t["chart.aria_summary"] ?? "{count} periods, unit {unit}";
   const summary = count
-    ? tpl.replace("{count}", String(count)).replace("{unit}", unit)
+    ? tpl.replace("{count}", String(count)).replace("{unit}", seriesMeta.unit)
     : t["chart.no_data"] ?? "no data";
   els.chart.setAttribute("aria-label", summary);
 }
@@ -644,26 +694,26 @@ function renderChartNote() {
   if (!els.chartNote) {
     return;
   }
+  const notes = [];
   if (state.granularity === "hour" && seriesMeta.estimated) {
-    setText(els.chartNote, t["chart.estimated_note"] ?? "");
-    els.chartNote.hidden = false;
+    notes.push(t["chart.estimated_note"] ?? "");
+  }
+  if (rawPoints.some((p) => p.partial)) {
+    notes.push(t["chart.partial_note"] ?? "");
+  }
+  if (chartData.capped) {
+    notes.push(t["chart.series_cap_note"] ?? "");
+  }
+  if (!notes.length) {
+    els.chartNote.hidden = true;
     return;
   }
-  if (primarySeries.some((p) => p.partial)) {
-    setText(els.chartNote, t["chart.partial_note"] ?? "");
-    els.chartNote.hidden = false;
-    return;
-  }
-  els.chartNote.hidden = true;
-}
-
-function isEmptySeries(points) {
-  return !points.length || points.every((p) => p.value == null);
+  setText(els.chartNote, notes.join(" "));
+  els.chartNote.hidden = false;
 }
 
 async function loadData() {
-  // A skeleton on every 60s poll would blink the chart away; only the first load needs it.
-  if (!primarySeries.length) {
+  if (!rawPoints.length) {
     showState("loading");
   }
   try {
@@ -673,65 +723,39 @@ async function loadData() {
       granularity: state.granularity,
       start: state.start,
       end: state.end,
+      hourStart: state.hourStart,
+      hourEnd: state.hourEnd,
     });
-    primarySeries = points;
+    rawPoints = points;
     seriesMeta = meta;
-
-    let comparison = null;
-    const compRange = comparisonRange();
-    if (compRange) {
-      const comp = await fetchSeries({
-        utility: state.utility,
-        direction: state.direction,
-        granularity: state.granularity,
-        start: compRange.start,
-        end: compRange.end,
-      });
-      comparison = alignByPosition(points, comp.points);
+    chartData = buildChartData(points);
+    if (state.mode === "running" && chartData.series[0]) {
+      const subTpl = t["chart.subtitle_range"] ?? "{start} – {end}";
+      chartData.series[0].label = subTpl
+        .replace("{start}", state.start)
+        .replace("{end}", state.end);
     }
-    comparisonSeries = comparison;
 
-    const compKpis = comparison ? computeKpis(comparison.filter(Boolean)) : null;
-
-    if (isEmptySeries(points)) {
+    if (isEmptyChart(chartData)) {
       showState("empty");
-      if (chart) {
-        renderSeries(chart, {
-          primary: [],
-          comparison: null,
-          granularity: state.granularity,
-          unit: meta.unit,
-          estimated: meta.estimated,
-          t,
-        });
-      }
-      renderKpis(computeKpis([]), meta.unit);
-      renderTable([], meta.unit);
+      paintChart();
+      renderKpis();
+      renderTable();
       renderBreadcrumb();
       renderChartTitles();
-      renderLegend(false);
+      renderLegend();
       renderChartNote();
       return;
     }
 
     hideStates();
-    if (chart) {
-      chart.resize();
-      renderSeries(chart, {
-        primary: points,
-        comparison,
-        granularity: state.granularity,
-        unit: meta.unit,
-        estimated: meta.estimated,
-        t,
-      });
-    }
-    renderKpis(computeKpis(points), meta.unit, compKpis);
-    renderTable(points, meta.unit);
-    updateChartAria(points, meta.unit);
+    paintChart();
+    renderKpis();
+    renderTable();
+    updateChartAria();
     renderBreadcrumb();
     renderChartTitles();
-    renderLegend(Boolean(comparison));
+    renderLegend();
     renderChartNote();
   } catch (err) {
     showState("error");
@@ -740,37 +764,6 @@ async function loadData() {
       els.stateError?.querySelector(".state-panel__message") ?? els.stateError;
     setText(errText, msg);
   }
-}
-
-function applyPreset(value) {
-  // "custom" only ever reports a hand-picked range; selecting it must not move the dates.
-  if (value === "custom") {
-    syncPresetFromState();
-    return;
-  }
-  const end = todayIso();
-  let start = end;
-  if (value === "7d") {
-    start = addDays(end, -6);
-  } else if (value === "30d") {
-    start = addDays(end, -29);
-  } else if (value === "this_month") {
-    start = `${end.slice(0, 8)}01`;
-  } else if (value === "this_year") {
-    start = `${end.slice(0, 4)}-01-01`;
-  } else if (value === "all") {
-    start = coverage[state.utility]?.first_date ?? `${end.slice(0, 4)}-01-01`;
-  }
-  state.start = start;
-  state.end = end;
-  state.drillStack = [];
-  if (state.granularity === "hour" && start !== end) {
-    state.granularity = "day";
-    rangeBeforeHour = null;
-  }
-  syncControlsFromState();
-  writeHash();
-  loadData();
 }
 
 const relativeFmt = new Intl.RelativeTimeFormat("he", { numeric: "auto", style: "short" });
@@ -858,9 +851,10 @@ function exportCsv() {
   const headerPeriod = t["table.period"] ?? "period";
   const headerValue = t["table.value"] ?? "value";
   const lines = [`\uFEFF${headerPeriod},${headerValue} (${unit})`];
-  for (const p of primarySeries) {
+  for (const p of flatPointsForTable(chartData)) {
+    const period = state.mode === "comparison" ? `${p.series} · ${p.label}` : p.label;
     const val = p.value != null ? String(p.value) : "";
-    lines.push(`"${p.label.replace(/"/g, '""')}",${val}`);
+    lines.push(`"${period.replace(/"/g, '""')}",${val}`);
   }
   const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
@@ -871,6 +865,15 @@ function exportCsv() {
   URL.revokeObjectURL(url);
 }
 
+function onRangeChange() {
+  readRangeFromControls(els, state, state.granularity, coverage);
+  state.drillStack = [];
+  hiddenSeries = new Set();
+  syncControlsFromState();
+  writeHash();
+  loadData();
+}
+
 function bindEvents() {
   els.utility?.addEventListener("click", (ev) => {
     const btn = ev.target.closest("button");
@@ -879,8 +882,12 @@ function bindEvents() {
     }
     readUtilityFromEvent(btn);
     state.drillStack = [];
+    hiddenSeries = new Set();
+    const defaults = defaultRangeFor(state.granularity, coverage, state.utility);
+    Object.assign(state, defaults);
     syncUtilityButtons();
-    syncPresetFromState();
+    rebuildPresetSelect(els.preset, state.granularity, t);
+    syncControlsFromState();
     writeHash();
     refresh();
   });
@@ -891,53 +898,65 @@ function bindEvents() {
       return;
     }
     const g = btn.dataset.granularity ?? btn.value;
-    if (g) {
-      setGranularity(g);
-      state.drillStack = [];
-      syncControlsFromState();
-      writeHash();
-      loadData();
+    if (!g) {
+      return;
     }
-  });
-
-  els.rangeStart?.addEventListener("change", () => {
-    state.start = els.rangeStart.value;
-    if (state.granularity === "hour" || (state.end && state.start > state.end)) {
-      state.end = state.start;
-    }
+    onGranularityChange(state, g, coverage);
     state.drillStack = [];
+    hiddenSeries = new Set();
+    rebuildPresetSelect(els.preset, g, t);
+    els.preset.value = DEFAULT_PRESET[g] ?? "custom";
     syncControlsFromState();
     writeHash();
     loadData();
   });
 
-  els.rangeEnd?.addEventListener("change", () => {
-    state.end = els.rangeEnd.value;
-    if (state.granularity === "hour" || (state.start && state.end < state.start)) {
-      state.start = state.end;
+  els.mode?.addEventListener("click", (ev) => {
+    const btn = ev.target.closest("button");
+    if (!btn) {
+      return;
     }
-    state.drillStack = [];
-    syncControlsFromState();
+    const m = btn.dataset.mode;
+    if (!m || m === state.mode) {
+      return;
+    }
+    state.mode = m;
+    hiddenSeries = new Set();
+    syncModeButtons();
     writeHash();
     loadData();
   });
+
+  for (const id of [
+    "rangeStart",
+    "rangeEnd",
+    "yearStart",
+    "yearEnd",
+    "monthStart",
+    "monthEnd",
+    "hourDayStart",
+    "hourDayEnd",
+    "hourStart",
+    "hourEnd",
+  ]) {
+    els[id]?.addEventListener("change", onRangeChange);
+  }
 
   els.preset?.addEventListener("change", () => {
-    if (els.preset.value) {
-      applyPreset(els.preset.value);
+    const id = els.preset.value;
+    if (id === "custom" || !applyPreset(state.granularity, id, state, coverage)) {
+      syncPresetFromState();
+      return;
     }
-  });
-
-  els.compare?.addEventListener("change", () => {
-    state.compare = els.compare.value || "none";
+    state.drillStack = [];
+    hiddenSeries = new Set();
+    syncControlsFromState();
     writeHash();
     loadData();
   });
 
   els.themeToggle?.addEventListener("click", toggleTheme);
-
   els.retry?.addEventListener("click", () => loadData());
-
   els.downloadCsv?.addEventListener("click", exportCsv);
 
   els.tableToggle?.addEventListener("click", () => {
@@ -952,6 +971,8 @@ function bindEvents() {
 
   window.addEventListener("hashchange", () => {
     applyHash(parseHash());
+    hiddenSeries = new Set();
+    rebuildPresetSelect(els.preset, state.granularity, t);
     syncControlsFromState();
     loadData();
   });
@@ -984,16 +1005,17 @@ async function init() {
   t = await fetchLocale();
   applyLocale(t);
 
+  const health = await fetchHealth();
+  coverage = health.coverage ?? {};
+
   const hash = parseHash();
-  const defaults = defaultRange();
-  state.start = defaults.start;
-  state.end = defaults.end;
+  const g = hash?.granularity ?? "day";
+  const defaults = defaultRangeFor(g, coverage, hash?.utility ?? "electricity");
+  Object.assign(state, defaults);
+  state.granularity = g;
   applyHash(hash);
 
-  if (!state.start || !state.end) {
-    Object.assign(state, defaults);
-  }
-
+  rebuildPresetSelect(els.preset, state.granularity, t);
   syncControlsFromState();
   bindEvents();
 

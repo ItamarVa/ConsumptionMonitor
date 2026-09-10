@@ -94,31 +94,74 @@ function normalizeYearly(body) {
   }));
 }
 
+function addDaysIso(iso, n) {
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(y, m - 1, d);
+  dt.setDate(dt.getDate() + n);
+  const yy = dt.getFullYear();
+  const mm = String(dt.getMonth() + 1).padStart(2, "0");
+  const dd = String(dt.getDate()).padStart(2, "0");
+  return `${yy}-${mm}-${dd}`;
+}
+
+function daysBetween(start, end) {
+  const dates = [];
+  let cur = start;
+  while (cur <= end) {
+    dates.push(cur);
+    cur = addDaysIso(cur, 1);
+  }
+  return dates;
+}
+
+function hourInWindow(label, hourStart, hourEnd) {
+  const h = Number(label.slice(0, 2));
+  const lo = Number(hourStart.slice(0, 2));
+  const hi = Number(hourEnd.slice(0, 2));
+  return h >= lo && h <= hi;
+}
+
+async function fetchHourlyRange({ utility, direction, start, end, hourStart, hourEnd }) {
+  const days = daysBetween(start, end);
+  const params = new URLSearchParams({ utility, direction });
+  const chunks = await Promise.all(
+    days.map(async (day) => {
+      params.set("date", day);
+      const body = await requestJson(`${GRANULARITY_PATHS.hour}?${params}`);
+      return normalizeHourly(body, day).filter((p) => hourInWindow(p.label, hourStart, hourEnd));
+    }),
+  );
+  const points = chunks.flat();
+  const unit = points[0]?.unit ?? "";
+  return { points, meta: { unit, estimated: true } };
+}
+
 /**
- * @param {{utility: string, direction: string, granularity: string, start: string, end: string}} opts
+ * @param {{utility: string, direction: string, granularity: string, start: string, end: string, hourStart?: string, hourEnd?: string}} opts
  * @returns {Promise<{points: Array, meta: {unit: string, estimated: boolean}}>}
  */
-export async function fetchSeries({ utility, direction, granularity, start, end }) {
+export async function fetchSeries({ utility, direction, granularity, start, end, hourStart, hourEnd }) {
   const path = GRANULARITY_PATHS[granularity];
   if (!path) {
     throw new ApiError(`unknown granularity: ${granularity}`, 0);
   }
 
-  const params = new URLSearchParams({ utility, direction });
-
   if (granularity === "hour") {
-    params.set("date", start);
-  } else {
-    params.set("start", start);
-    params.set("end", end);
+    return fetchHourlyRange({
+      utility,
+      direction,
+      start,
+      end,
+      hourStart: hourStart ?? "00:00",
+      hourEnd: hourEnd ?? "23:00",
+    });
   }
 
+  const params = new URLSearchParams({ utility, direction, start, end });
   const body = await requestJson(`${path}?${params}`);
 
   let points;
-  if (granularity === "hour") {
-    points = normalizeHourly(body, start);
-  } else if (granularity === "day") {
+  if (granularity === "day") {
     points = normalizeDaily(body);
   } else if (granularity === "month") {
     points = normalizeMonthly(body);
@@ -127,7 +170,5 @@ export async function fetchSeries({ utility, direction, granularity, start, end 
   }
 
   const unit = body.unit ?? points[0]?.unit ?? "";
-  const estimated = granularity === "hour" && body.estimated !== false;
-
-  return { points, meta: { unit, estimated } };
+  return { points, meta: { unit, estimated: false } };
 }

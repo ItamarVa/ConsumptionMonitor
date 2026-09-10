@@ -109,3 +109,39 @@ Every row from `/readings/daily|monthly|yearly` carries `partial`. It is true wh
 ### Breadcrumb
 
 Markup classes are `.breadcrumb__item`, `.breadcrumb__item--current`, `.breadcrumb__sep`. A crumb is labelled for the view it returns to (`2024–2026`, `2026`, `אוגוסט 2026`, `2026-08-21`), and the last crumb is a non-interactive span.
+
+## 7. Contract addendum (comparison fold wave)
+
+### View mode
+
+`#mode` segment: `running` (default) | `comparison`. Hash param `m=running|comparison`. Replaces the old `#compare` select.
+
+### Fold rules (comparison mode)
+
+- hour: categories = hour window; one series per day (max 12 newest)
+- day: categories = 1–31; one series per month
+- month: categories = month names; one series per year
+- year: one bar per year, each year its own coloured series
+
+### Range controls (`data-range-for`)
+
+- year: `#year-start`, `#year-end` whole-year selects from coverage
+- month: `#month-start`, `#month-end` (`input type=month`)
+- day: `#range-start`, `#range-end` with coverage min/max
+- hour: `#hour-day-start/end` plus `#hour-start/end` (00:00–23:00); max 14-day span
+
+### Presets per granularity
+
+year: all, last_3, last_5 — month: last_12, this_year, all — day: 7d, 30d, this_month, last_month — hour: last_day, 3d, 7d. `preset.custom` is disabled, auto-selected when hand-picked.
+
+### Chart API
+
+`renderSeries(chart, { categories, series, granularity, unit, estimated, hiddenKeys, t })` where `series = [{ key, label, colorIndex, points, total }]`.
+
+### Module split
+
+`controls.js` (pickers/presets), `series.js` (fold/KPI), `app.js` (wiring), `chart.js` (Chart.js).
+
+### Palette
+
+`--series-1` through `--series-12` on both themes. Legend entries are toggle buttons with `aria-pressed`.

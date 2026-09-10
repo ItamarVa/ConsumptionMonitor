@@ -1,5 +1,5 @@
 /**
- * Chart.js bar chart for consumption series: RTL tooltips, comparison overlay,
+ * Chart.js bar chart for consumption series: RTL tooltips, multi-series comparison,
  * estimated-hour alpha, and drill-down click forwarding. Expects Chart global
  * from vendor/chart.umd.min.js. Depends on: CSS custom properties on :root.
  */
@@ -20,18 +20,16 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-function colorVar(name, alpha) {
-  const raw = cssVar(name);
+function seriesColor(index, alpha = 0.9) {
+  const raw = cssVar(`--series-${(index % 12) + 1}`);
   if (raw.startsWith("#")) {
     return hexToRgba(raw, alpha);
   }
-  return raw;
+  return raw || cssVar("--primary");
 }
 
 const numberFmt = new Intl.NumberFormat("he-IL", { maximumFractionDigits: 4 });
 
-// Ticks stay bare numbers: the unit already appears on the KPI cards and in the tooltip,
-// and repeating it on every gridline crowds the axis.
 function formatAxisValue(value) {
   if (value == null || Number.isNaN(value)) {
     return "";
@@ -39,41 +37,14 @@ function formatAxisValue(value) {
   return numberFmt.format(value);
 }
 
-function formatCategoryLabel(point, granularity, t) {
-  if (!point) {
-    return "";
+function barAlpha(point, granularity, estimated) {
+  if (granularity === "hour" && estimated && (point?.estimated || point?.partial)) {
+    return 0.65;
   }
-  if (granularity === "hour") {
-    return point.label;
+  if (point?.partial) {
+    return 0.5;
   }
-  if (granularity === "day") {
-    const [, m, d] = point.iso.split("-");
-    return `${Number(d)}.${Number(m)}`;
-  }
-  if (granularity === "month") {
-    const [y, mo] = point.iso.split("-");
-    const monthKey = `month.${Number(mo)}`;
-    const name = t[monthKey] ?? mo;
-    return `${name} ${String(y).slice(-2)}`;
-  }
-  return point.label;
-}
-
-function barColors(points, granularity, estimated, baseAlpha) {
-  const hover = cssVar("--primary-hover") || colorVar("--primary", 1);
-  return points.map((p) => {
-    let alpha = baseAlpha;
-    if (granularity === "hour" && estimated) {
-      alpha = 0.65;
-    } else if (p.partial) {
-      // A period still in progress is not comparable to the closed ones beside it.
-      alpha = 0.5;
-    }
-    return {
-      backgroundColor: colorVar("--primary", alpha),
-      hoverBackgroundColor: hover,
-    };
-  });
+  return 0.9;
 }
 
 function reducedMotion() {
@@ -81,11 +52,9 @@ function reducedMotion() {
 }
 
 export function createChart(canvasEl, t) {
-  const border = colorVar("--border", 1);
+  const border = cssVar("--border") || "#E2E8F0";
   const textMuted = cssVar("--text-muted") || "#475569";
 
-  // Chart.js runs the tick and tooltip callbacks during construction, before the
-  // assignment below completes, so every reference to `chart` here must tolerate undefined.
   let chart;
   chart = new Chart(canvasEl, {
     type: "bar",
@@ -103,18 +72,24 @@ export function createChart(canvasEl, t) {
           callbacks: {
             title(items) {
               const idx = items[0]?.dataIndex ?? 0;
-              const labels = chart?.$seriesLabels ?? [];
-              return labels[idx] ?? "";
+              return chart?.$categories?.[idx] ?? "";
             },
             label(ctx) {
+              const ds = chart?.data.datasets[ctx.datasetIndex];
+              if (!ds || ds.hidden) {
+                return null;
+              }
               const val = ctx.parsed.y;
+              if (val == null) {
+                return null;
+              }
               const unit = chart?.$unit ?? "";
-              const lines = [`${numberFmt.format(val)} ${unit}`];
-              const point = chart?.$primaryPoints?.[ctx.dataIndex];
+              const point = ds.$points?.[ctx.dataIndex];
+              const lines = [`${ds.label}: ${numberFmt.format(val)} ${unit}`];
               const note =
                 chart?.$granularity === "hour"
-                  ? point?.estimated && t["chart.estimated_note"]
-                  : point?.partial && t["chart.partial_note"];
+                  ? point?.estimated && chart?.$t?.["chart.estimated_note"]
+                  : point?.partial && chart?.$t?.["chart.partial_note"];
               if (note) {
                 lines.push(note);
               }
@@ -145,11 +120,16 @@ export function createChart(canvasEl, t) {
         if (!barClickHandler || !elements.length) {
           return;
         }
-        const el = elements.find((e) => e.datasetIndex === 0) ?? elements[0];
-        const idx = el.index;
-        const point = chart?.$primaryPoints?.[idx];
-        if (point) {
-          barClickHandler({ index: idx, point, granularity: chart?.$granularity });
+        const el = elements[0];
+        const ds = chart.data.datasets[el.datasetIndex];
+        const point = ds?.$points?.[el.index];
+        if (point && point.value != null) {
+          barClickHandler({
+            seriesKey: ds.$seriesKey,
+            category: chart.$categories?.[el.index],
+            point,
+            granularity: chart.$granularity,
+          });
         }
       },
       datasets: {
@@ -169,39 +149,26 @@ export function createChart(canvasEl, t) {
 
 /**
  * @param {import('chart.js').Chart} chart
- * @param {{primary: Array, comparison: Array|null, granularity: string, unit: string, estimated: boolean, t: object}} opts
+ * @param {{categories: string[], series: Array, granularity: string, unit: string, estimated: boolean, hiddenKeys: Set, t: object}} opts
  */
-export function renderSeries(chart, { primary, comparison, granularity, unit, estimated, t }) {
-  const labels = primary.map((p) => formatCategoryLabel(p, granularity, t));
-  const primaryColors = barColors(primary, granularity, estimated, 0.9);
+export function renderSeries(chart, { categories, series, granularity, unit, estimated, hiddenKeys, t }) {
+  const datasets = series.map((s) => {
+    const hidden = hiddenKeys?.has(s.key);
+    const alpha = (p) => barAlpha(p, granularity, estimated);
+    return {
+      label: s.label,
+      data: s.points.map((p) => p.value),
+      backgroundColor: s.points.map((p) => seriesColor(s.colorIndex, alpha(p))),
+      hoverBackgroundColor: seriesColor(s.colorIndex, 1),
+      hidden,
+      $seriesKey: s.key,
+      $points: s.points,
+    };
+  });
 
-  const datasets = [
-    {
-      label: "primary",
-      data: primary.map((p) => p.value),
-      backgroundColor: primaryColors.map((c) => c.backgroundColor),
-      hoverBackgroundColor: primaryColors.map((c) => c.hoverBackgroundColor),
-    },
-  ];
-
-  if (comparison && comparison.length) {
-    const compLen = Math.max(primary.length, comparison.length);
-    const compData = [];
-    for (let i = 0; i < compLen; i += 1) {
-      compData.push(comparison[i]?.value ?? null);
-    }
-    datasets.push({
-      label: "comparison",
-      data: compData.slice(0, primary.length),
-      backgroundColor: colorVar("--accent", 0.75),
-      hoverBackgroundColor: colorVar("--accent", 0.9),
-    });
-  }
-
-  chart.data.labels = labels;
+  chart.data.labels = categories;
   chart.data.datasets = datasets;
-  chart.$primaryPoints = primary;
-  chart.$seriesLabels = labels;
+  chart.$categories = categories;
   chart.$granularity = granularity;
   chart.$unit = unit;
   chart.$t = t;
@@ -217,10 +184,12 @@ export function refreshChartTheme(chart) {
   if (!chart) {
     return;
   }
-  const border = colorVar("--border", 1);
+  const border = cssVar("--border") || "#E2E8F0";
   const textMuted = cssVar("--text-muted") || "#475569";
   chart.options.scales.x.ticks.color = textMuted;
   chart.options.scales.y.ticks.color = textMuted;
   chart.options.scales.y.grid.color = border;
   chart.update("none");
 }
+
+export { seriesColor };
