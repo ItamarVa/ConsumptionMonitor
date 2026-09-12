@@ -39,7 +39,13 @@ def _env(key: str, default: str) -> str:
 
 
 def _credentials() -> tuple[str, str, str | None]:
-    """Encrypted store first; the environment stays available as a manual override."""
+    """Encrypted store first on Windows; elsewhere env vars only (HA add-on path)."""
+    if os.name != "nt":
+        return (
+            os.environ.get("MYCITYGRID_USERNAME", "").strip(),
+            os.environ.get("MYCITYGRID_PASSWORD", ""),
+            None,
+        )
     try:
         stored = secrets.load()
     except secrets.SecretsError as exc:
@@ -69,6 +75,16 @@ PORT = int(_env("PORT", "8123"))
 
 # Comma-separated Host header values accepted by TrustedHostMiddleware (port stripped).
 ALLOWED_HOSTS = [h.strip() for h in _env("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",") if h.strip()]
+
+# Comma-separated peer addresses; empty means the check is off (Ingress sets 172.30.32.2).
+ALLOWED_CLIENT_IPS = [
+    ip.strip() for ip in _env("ALLOWED_CLIENT_IPS", "").split(",") if ip.strip()
+]
+
+# Home Assistant add-on bridge (read by ha_bridge.py in track E).
+HA_BRIDGE = _env("HA_BRIDGE", "") == "1"
+SUPERVISOR_TOKEN = os.environ.get("SUPERVISOR_TOKEN", "").strip()
+ADDON_VERSION = _env("ADDON_VERSION", "")
 
 # How often the scheduler loop wakes up to check whether any job is due.
 TICK_SECONDS = int(_env("TICK_SECONDS", "300"))

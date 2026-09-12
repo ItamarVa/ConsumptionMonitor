@@ -3,7 +3,11 @@
  * from the ConsumptionMonitor read endpoints. Maps granularity to the correct
  * route and coerces every response into [{label, iso, value, unit, estimated, partial}].
  * Depends on: same-origin API at the site root (/health, /readings/*).
+ * api.js lives under /ui/; import.meta.url resolves paths for any Ingress prefix.
  */
+
+const API_ROOT = new URL("../", import.meta.url);
+const url = (path) => new URL(path, API_ROOT).toString();
 
 export class ApiError extends Error {
   constructor(message, status) {
@@ -31,18 +35,18 @@ async function requestJson(url) {
 }
 
 export async function fetchLocale() {
-  return requestJson("/ui/locales/he.json");
+  return requestJson(url("ui/locales/he.json"));
 }
 
 export async function fetchHealth() {
-  return requestJson("/health");
+  return requestJson(url("health"));
 }
 
 const GRANULARITY_PATHS = {
-  hour: "/readings/hourly",
-  day: "/readings/daily",
-  month: "/readings/monthly",
-  year: "/readings/yearly",
+  hour: "readings/hourly",
+  day: "readings/daily",
+  month: "readings/monthly",
+  year: "readings/yearly",
 };
 
 function normalizeHourly(body, day) {
@@ -127,7 +131,7 @@ async function fetchHourlyRange({ utility, direction, start, end, hourStart, hou
   const chunks = await Promise.all(
     days.map(async (day) => {
       params.set("date", day);
-      const body = await requestJson(`${GRANULARITY_PATHS.hour}?${params}`);
+      const body = await requestJson(`${url(GRANULARITY_PATHS.hour)}?${params}`);
       return normalizeHourly(body, day).filter((p) => hourInWindow(p.label, hourStart, hourEnd));
     }),
   );
@@ -158,7 +162,7 @@ export async function fetchSeries({ utility, direction, granularity, start, end,
   }
 
   const params = new URLSearchParams({ utility, direction, start, end });
-  const body = await requestJson(`${path}?${params}`);
+  const body = await requestJson(`${url(path)}?${params}`);
 
   let points;
   if (granularity === "day") {

@@ -16,7 +16,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 
-from . import config, db, source
+from . import config, db, ha_bridge, source
 
 Range = tuple[date, date]
 
@@ -166,6 +166,7 @@ def run_due(now: datetime | None = None) -> list[str]:
                 continue
             run_job(conn, job, today)
             ran.append(job)
+        ha_bridge.sync(conn)
         return ran
     finally:
         conn.close()

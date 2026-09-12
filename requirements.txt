@@ -10,3 +10,5 @@ scrapling[fetchers]==0.4.15
 tzdata==2026.3
 # FastAPI TestClient (Starlette) needs an HTTP client for the self-checks.
 httpx==0.28.1
+# Home Assistant recorder/import_statistics over the Supervisor WebSocket proxy.
+websockets==17.1

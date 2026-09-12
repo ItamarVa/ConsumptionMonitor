@@ -108,6 +108,27 @@ tests/test_source_session.py  login and pagination self-checks
 tests/test_api_contract.py    HTTP endpoint shape self-checks
 ```
 
+## Run on Home Assistant
+
+Install the add-on from this repository:
+
+1. In Home Assistant: **Settings → Add-ons → Add-on store → ⋮ → Repositories**, paste
+   `https://github.com/ItamarVa/ConsumptionMonitor`, then install **ConsumptionMonitor**.
+2. On the add-on **Configuration** tab, enter your mycitygrid **username** and **password**.
+   Leave **energy statistics** enabled unless you only want the dashboard.
+3. **Start** the add-on and turn on **Show in sidebar**. The Hebrew dashboard opens inside
+   Home Assistant behind your existing login.
+
+**Move existing history (one time):** install the official **Samba share** add-on, then on
+Windows double-click `copy-db-to-ha.bat`. It copies `data/consumption.sqlite` to
+`\\homeassistant\share\consumptionmonitor\` (about 35 MB). Restart the add-on so it adopts
+the file instead of re-scraping from 2024.
+
+**Energy dashboard:** after the first statistics import, open **Settings → Dashboards →
+Energy**, add grid consumption from `consumptionmonitor:electricity_import`, return to grid
+from `consumptionmonitor:electricity_export`, and water from `consumptionmonitor:water`. History
+goes back to 2024 when the copied database is used.
+
 ## Notes
 
 - The API binds to `127.0.0.1` and has no authentication. That is only safe locally —

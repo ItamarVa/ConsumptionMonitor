@@ -1,0 +1,16 @@
+---
+configuration:
+  username:
+    name: mycitygrid username
+    description: Login email or username for www.mycitygrid.com.
+  password:
+    name: mycitygrid password
+    description: Portal password (stored by the Supervisor, never logged).
+  local_tz:
+    name: Local timezone
+    description: IANA timezone for portal dates (default Asia/Jerusalem).
+  energy_statistics:
+    name: Import Energy dashboard statistics
+    description: >-
+      Write hourly external statistics to Home Assistant for the Energy dashboard.
+      Disable if import fails; the dashboard and MQTT device still work.

@@ -4,9 +4,8 @@
       "web_vendor_chart_umd_min",
       "web_vendor_chart_umd_min_afterinit",
       "web_vendor_chart_umd_min_at",
-      "web_vendor_chart_umd_min_b",
+      "web_vendor_chart_umd_min_beforelayout",
       "web_vendor_chart_umd_min_beforeupdate",
-      "web_vendor_chart_umd_min_cn",
       "web_vendor_chart_umd_min_colors",
       "web_vendor_chart_umd_min_constructor",
       "web_vendor_chart_umd_min_decimation",
@@ -20,7 +19,8 @@
       "web_vendor_chart_umd_min_f",
       "web_vendor_chart_umd_min_filler",
       "web_vendor_chart_umd_min_getmaxoverflow",
-      "web_vendor_chart_umd_min_hn",
+      "web_vendor_chart_umd_min_go",
+      "web_vendor_chart_umd_min_ho_beforelayout",
       "web_vendor_chart_umd_min_initialize",
       "web_vendor_chart_umd_min_js_addelements",
       "web_vendor_chart_umd_min_js_buildorupdateelements",
@@ -64,6 +64,7 @@
       "web_vendor_chart_umd_min_ls",
       "web_vendor_chart_umd_min_n_datasetelementscopekeys",
       "web_vendor_chart_umd_min_n_parse",
+      "web_vendor_chart_umd_min_n_resolvenamedoptions",
       "web_vendor_chart_umd_min_nn",
       "web_vendor_chart_umd_min_passive",
       "web_vendor_chart_umd_min_pe",
@@ -75,16 +76,62 @@
       "web_vendor_chart_umd_min_subtitle",
       "web_vendor_chart_umd_min_title",
       "web_vendor_chart_umd_min_tooltip",
-      "web_vendor_chart_umd_min_un",
       "web_vendor_chart_umd_min_uo",
       "web_vendor_chart_umd_min_updaterangefromparsed",
       "web_vendor_chart_umd_min_w",
       "web_vendor_chart_umd_min_wa_initialize",
       "web_vendor_chart_umd_min_wn",
       "web_vendor_chart_umd_min_xe",
+      "web_vendor_chart_umd_min_ye",
       "web_vendor_chart_umd_min_zo"
     ],
     "1": [
+      "web_vendor_chart_umd_min_bs",
+      "web_vendor_chart_umd_min_ct",
+      "web_vendor_chart_umd_min_eo",
+      "web_vendor_chart_umd_min_et",
+      "web_vendor_chart_umd_min_fi_f",
+      "web_vendor_chart_umd_min_fs",
+      "web_vendor_chart_umd_min_ge",
+      "web_vendor_chart_umd_min_getrange",
+      "web_vendor_chart_umd_min_i",
+      "web_vendor_chart_umd_min_is",
+      "web_vendor_chart_umd_min_ji",
+      "web_vendor_chart_umd_min_js_getminmax_g",
+      "web_vendor_chart_umd_min_ko",
+      "web_vendor_chart_umd_min_ks",
+      "web_vendor_chart_umd_min_label",
+      "web_vendor_chart_umd_min_m",
+      "web_vendor_chart_umd_min_ms",
+      "web_vendor_chart_umd_min_ns",
+      "web_vendor_chart_umd_min_ns_s",
+      "web_vendor_chart_umd_min_os",
+      "web_vendor_chart_umd_min_p",
+      "web_vendor_chart_umd_min_parseobjectdata",
+      "web_vendor_chart_umd_min_qi",
+      "web_vendor_chart_umd_min_ss",
+      "web_vendor_chart_umd_min_ss_acquirecontext",
+      "web_vendor_chart_umd_min_ss_addeventlistener",
+      "web_vendor_chart_umd_min_ss_getmaximumsize",
+      "web_vendor_chart_umd_min_ss_isattached",
+      "web_vendor_chart_umd_min_ss_releasecontext",
+      "web_vendor_chart_umd_min_ss_removeeventlistener",
+      "web_vendor_chart_umd_min_tn_bindevents",
+      "web_vendor_chart_umd_min_tn_bindresponsiveevents",
+      "web_vendor_chart_umd_min_tn_binduserevents",
+      "web_vendor_chart_umd_min_tn_getpadding",
+      "web_vendor_chart_umd_min_to",
+      "web_vendor_chart_umd_min_update",
+      "web_vendor_chart_umd_min_update_i",
+      "web_vendor_chart_umd_min_v",
+      "web_vendor_chart_umd_min_vs",
+      "web_vendor_chart_umd_min_wo",
+      "web_vendor_chart_umd_min_ws",
+      "web_vendor_chart_umd_min_xo",
+      "web_vendor_chart_umd_min_xs",
+      "web_vendor_chart_umd_min_zs"
+    ],
+    "2": [
       "any",
       "consumption_hourly",
       "consumption_hourly_build_buckets",
@@ -127,7 +174,7 @@
       "tests_test_hourly_values",
       "zoneinfo"
     ],
-    "2": [
+    "3": [
       "web_vendor_chart_umd_min_ae",
       "web_vendor_chart_umd_min_bn",
       "web_vendor_chart_umd_min_calculatebarindexpixels",
@@ -169,7 +216,7 @@
       "web_vendor_chart_umd_min_yn_parseobjectdata",
       "web_vendor_chart_umd_min_yn_updateelements"
     ],
-    "3": [
+    "4": [
       "web_vendor_chart_umd_min_addelements",
       "web_vendor_chart_umd_min_ce",
       "web_vendor_chart_umd_min_de",
@@ -210,7 +257,7 @@
       "web_vendor_chart_umd_min_ss_getdevicepixelratio",
       "web_vendor_chart_umd_min_tn_register"
     ],
-    "4": [
+    "5": [
       "web_app",
       "web_app_applylocale",
       "web_app_chartdata",
@@ -248,45 +295,6 @@
       "web_series_flatpointsfortable",
       "web_series_formatnumber",
       "web_series_isemptychart"
-    ],
-    "5": [
-      "web_vendor_chart_umd_min_bs",
-      "web_vendor_chart_umd_min_ct",
-      "web_vendor_chart_umd_min_dn",
-      "web_vendor_chart_umd_min_e",
-      "web_vendor_chart_umd_min_ei",
-      "web_vendor_chart_umd_min_fe",
-      "web_vendor_chart_umd_min_fs",
-      "web_vendor_chart_umd_min_ge",
-      "web_vendor_chart_umd_min_is",
-      "web_vendor_chart_umd_min_je",
-      "web_vendor_chart_umd_min_ks",
-      "web_vendor_chart_umd_min_ms",
-      "web_vendor_chart_umd_min_n_resolvenamedoptions",
-      "web_vendor_chart_umd_min_ps",
-      "web_vendor_chart_umd_min_qe",
-      "web_vendor_chart_umd_min_qi",
-      "web_vendor_chart_umd_min_rn_add",
-      "web_vendor_chart_umd_min_rn_override",
-      "web_vendor_chart_umd_min_ss",
-      "web_vendor_chart_umd_min_ss_acquirecontext",
-      "web_vendor_chart_umd_min_ss_addeventlistener",
-      "web_vendor_chart_umd_min_ss_getmaximumsize",
-      "web_vendor_chart_umd_min_ss_isattached",
-      "web_vendor_chart_umd_min_ss_releasecontext",
-      "web_vendor_chart_umd_min_ss_removeeventlistener",
-      "web_vendor_chart_umd_min_ti",
-      "web_vendor_chart_umd_min_tn_bindevents",
-      "web_vendor_chart_umd_min_tn_bindresponsiveevents",
-      "web_vendor_chart_umd_min_tn_binduserevents",
-      "web_vendor_chart_umd_min_tn_getpadding",
-      "web_vendor_chart_umd_min_update_i",
-      "web_vendor_chart_umd_min_vs",
-      "web_vendor_chart_umd_min_ws",
-      "web_vendor_chart_umd_min_xs",
-      "web_vendor_chart_umd_min_ye",
-      "web_vendor_chart_umd_min_ze",
-      "web_vendor_chart_umd_min_zs"
     ],
     "6": [
       "web_vendor_chart_umd_min_ro_drawborder",
@@ -327,44 +335,8 @@
       "web_vendor_chart_umd_min_y"
     ],
     "7": [
-      "conn",
-      "consumption_api",
-      "consumption_api_directions_for",
-      "consumption_api_first_stored",
-      "consumption_api_health",
-      "consumption_api_index",
-      "consumption_api_latest_register",
-      "consumption_api_lifespan",
-      "consumption_api_meter_ids",
-      "consumption_api_period_total",
-      "consumption_api_primary_meter",
-      "consumption_api_py_connection",
-      "consumption_api_py_date",
-      "consumption_api_range",
-      "consumption_api_rationale_1",
-      "consumption_api_rationale_119",
-      "consumption_api_read_alerts",
-      "consumption_api_read_daily",
-      "consumption_api_read_hourly",
-      "consumption_api_read_intervals",
-      "consumption_api_read_monthly",
-      "consumption_api_read_raw",
-      "consumption_api_read_yearly",
-      "consumption_api_register_field",
-      "consumption_api_summary",
-      "consumption_api_unit",
-      "consumption_api_validate_direction",
-      "consumption_db_alert_flags",
-      "consumption_db_coverage",
-      "cursor_memory_index_trust_boundary",
-      "direction",
-      "fastapi",
-      "get",
-      "readme_no_authentication",
-      "utility"
-    ],
-    "8": [
       "consumption_db",
+      "consumption_db_alert_flags",
       "consumption_db_daily_totals",
       "consumption_db_due",
       "consumption_db_fetch_readings_for_meter",
@@ -399,7 +371,7 @@
       "consumption_db_yearly_totals",
       "row"
     ],
-    "9": [
+    "8": [
       "web_vendor_chart_umd_min_buildlookuptable",
       "web_vendor_chart_umd_min_generate",
       "web_vendor_chart_umd_min_getdecimalforvalue",
@@ -435,7 +407,7 @@
       "web_vendor_chart_umd_min_so_getvalueforpixel",
       "web_vendor_chart_umd_min_tn_getdecimalforpixel"
     ],
-    "10": [
+    "9": [
       "web_vendor_chart_umd_min_a",
       "web_vendor_chart_umd_min_bo_handletickrangeoptions",
       "web_vendor_chart_umd_min_draw",
@@ -470,7 +442,7 @@
       "web_vendor_chart_umd_min_zi",
       "web_vendor_chart_umd_min_zn"
     ],
-    "11": [
+    "10": [
       "web_vendor_chart_umd_min_bt",
       "web_vendor_chart_umd_min_color",
       "web_vendor_chart_umd_min_ft",
@@ -504,6 +476,40 @@
       "web_vendor_chart_umd_min_vt",
       "web_vendor_chart_umd_min_wt",
       "web_vendor_chart_umd_min_zt"
+    ],
+    "11": [
+      "conn",
+      "consumption_api",
+      "consumption_api_directions_for",
+      "consumption_api_first_stored",
+      "consumption_api_health",
+      "consumption_api_index",
+      "consumption_api_latest_register",
+      "consumption_api_meter_ids",
+      "consumption_api_period_total",
+      "consumption_api_primary_meter",
+      "consumption_api_py_connection",
+      "consumption_api_py_date",
+      "consumption_api_range",
+      "consumption_api_rationale_1",
+      "consumption_api_rationale_119",
+      "consumption_api_read_alerts",
+      "consumption_api_read_daily",
+      "consumption_api_read_hourly",
+      "consumption_api_read_intervals",
+      "consumption_api_read_monthly",
+      "consumption_api_read_raw",
+      "consumption_api_read_yearly",
+      "consumption_api_register_field",
+      "consumption_api_summary",
+      "consumption_api_unit",
+      "consumption_api_validate_direction",
+      "consumption_db_coverage",
+      "cursor_memory_index_trust_boundary",
+      "direction",
+      "get",
+      "readme_no_authentication",
+      "utility"
     ],
     "12": [
       "consumption_reading_log",
@@ -765,31 +771,6 @@
       "web_vendor_chart_umd_min_pi"
     ],
     "21": [
-      "web_vendor_chart_umd_min_beforelayout",
-      "web_vendor_chart_umd_min_eo",
-      "web_vendor_chart_umd_min_et",
-      "web_vendor_chart_umd_min_fi_f",
-      "web_vendor_chart_umd_min_getrange",
-      "web_vendor_chart_umd_min_go",
-      "web_vendor_chart_umd_min_ho_beforelayout",
-      "web_vendor_chart_umd_min_i",
-      "web_vendor_chart_umd_min_ji",
-      "web_vendor_chart_umd_min_js_getminmax_g",
-      "web_vendor_chart_umd_min_ko",
-      "web_vendor_chart_umd_min_label",
-      "web_vendor_chart_umd_min_m",
-      "web_vendor_chart_umd_min_ns",
-      "web_vendor_chart_umd_min_ns_s",
-      "web_vendor_chart_umd_min_os",
-      "web_vendor_chart_umd_min_p",
-      "web_vendor_chart_umd_min_parseobjectdata",
-      "web_vendor_chart_umd_min_to",
-      "web_vendor_chart_umd_min_update",
-      "web_vendor_chart_umd_min_v",
-      "web_vendor_chart_umd_min_wo",
-      "web_vendor_chart_umd_min_xo"
-    ],
-    "22": [
       "web_vendor_chart_umd_min_d",
       "web_vendor_chart_umd_min_di",
       "web_vendor_chart_umd_min_n_chartoptionscopes",
@@ -814,7 +795,7 @@
       "web_vendor_chart_umd_min_tn_generateticklabels",
       "web_vendor_chart_umd_min_tn_update"
     ],
-    "23": [
+    "22": [
       "consumption_db_get_state",
       "consumption_records_meterreading",
       "exception",
@@ -838,7 +819,7 @@
       "tests_test_jobs_test_recent_week_covers_seven_days",
       "tests_test_jobs_test_scheduler_skips_out_of_season_jobs"
     ],
-    "24": [
+    "23": [
       "consumption_readings_py_runtimeerror",
       "consumption_readings_rationale_48",
       "consumption_readings_sourcenotready",
@@ -861,7 +842,7 @@
       "consumption_source_token_expiry",
       "consumption_source_url"
     ],
-    "25": [
+    "24": [
       "web_app_applyhash",
       "web_app_bindevents",
       "web_app_buttonmatchesutility",
@@ -884,7 +865,7 @@
       "web_app_writehash",
       "web_controls_rebuildpresetselect"
     ],
-    "26": [
+    "25": [
       "web_vendor_chart_umd_min_afterevent",
       "web_vendor_chart_umd_min_ba",
       "web_vendor_chart_umd_min_js_updateelement",
@@ -907,7 +888,7 @@
       "web_vendor_chart_umd_min_wa_updateanimationtarget",
       "web_vendor_chart_umd_min_za"
     ],
-    "27": [
+    "26": [
       "web_vendor_chart_umd_min_ai",
       "web_vendor_chart_umd_min_average",
       "web_vendor_chart_umd_min_beforedraw",
@@ -929,7 +910,7 @@
       "web_vendor_chart_umd_min_xi",
       "web_vendor_chart_umd_min_yi"
     ],
-    "28": [
+    "27": [
       "web_vendor_chart_umd_min_ao",
       "web_vendor_chart_umd_min_co",
       "web_vendor_chart_umd_min_do",
@@ -950,7 +931,7 @@
       "web_vendor_chart_umd_min_ro_getvaluefordistancefromcenter",
       "web_vendor_chart_umd_min_ro_setcenterpoint"
     ],
-    "29": [
+    "28": [
       "web_vendor_chart_umd_min_buildticks",
       "web_vendor_chart_umd_min_determinedatalimits",
       "web_vendor_chart_umd_min_ii",
@@ -971,7 +952,7 @@
       "web_vendor_chart_umd_min_tn_init",
       "web_vendor_chart_umd_min_vn"
     ],
-    "30": [
+    "29": [
       "consumption_db_upsert_meter_readings",
       "tests_test_db_readings",
       "tests_test_db_readings_conn",
@@ -990,7 +971,7 @@
       "tests_test_db_readings_test_upsert_idempotent_on_meter_data_id",
       "tests_test_db_readings_test_upsert_replaces_reissued_id_at_same_timestamp"
     ],
-    "31": [
+    "30": [
       "web_vendor_chart_umd_min_as",
       "web_vendor_chart_umd_min_as_active",
       "web_vendor_chart_umd_min_as_cancel",
@@ -1009,7 +990,7 @@
       "web_vendor_chart_umd_min_xt_stop",
       "web_vendor_chart_umd_min_xt_update"
     ],
-    "32": [
+    "31": [
       "consumption_readings",
       "consumption_readings_buckets",
       "consumption_readings_exists_locally",
@@ -1027,7 +1008,7 @@
       "consumption_readings_rationale_285",
       "consumption_readings_reading"
     ],
-    "33": [
+    "32": [
       "web_api",
       "web_api_adddaysiso",
       "web_api_apierror",
@@ -1045,7 +1026,7 @@
       "web_api_normalizeyearly",
       "web_api_requestjson"
     ],
-    "34": [
+    "33": [
       "chart_js",
       "web_app_paintchart",
       "web_app_toggletheme",
@@ -1062,7 +1043,7 @@
       "web_chart_renderseries",
       "web_chart_seriescolor"
     ],
-    "35": [
+    "34": [
       "consumption_records",
       "consumption_records_alert_flags",
       "consumption_records_coverage",
@@ -1078,6 +1059,23 @@
       "consumption_records_rationale_1",
       "consumption_records_upsert_meter_readings",
       "consumption_records_yearly_totals"
+    ],
+    "35": [
+      "web_vendor_chart_umd_min_b",
+      "web_vendor_chart_umd_min_cn",
+      "web_vendor_chart_umd_min_dn",
+      "web_vendor_chart_umd_min_e",
+      "web_vendor_chart_umd_min_ei",
+      "web_vendor_chart_umd_min_fe",
+      "web_vendor_chart_umd_min_hn",
+      "web_vendor_chart_umd_min_je",
+      "web_vendor_chart_umd_min_ps",
+      "web_vendor_chart_umd_min_qe",
+      "web_vendor_chart_umd_min_rn_add",
+      "web_vendor_chart_umd_min_rn_override",
+      "web_vendor_chart_umd_min_ti",
+      "web_vendor_chart_umd_min_un",
+      "web_vendor_chart_umd_min_ze"
     ],
     "36": [
       "web_vendor_chart_umd_min_en_get",
@@ -1234,6 +1232,19 @@
       "web_vendor_chart_umd_min_u"
     ],
     "46": [
+      "consumption_api_get_conn",
+      "consumption_api_lifespan",
+      "consumption_db_connect",
+      "consumption_db_init_schema",
+      "consumption_db_rationale_99",
+      "fastapi",
+      "path",
+      "scripts_backfill_loop",
+      "scripts_backfill_loop_log",
+      "scripts_backfill_loop_main",
+      "scripts_backfill_loop_rationale_1"
+    ],
+    "47": [
       "consumption_readings_rationale_56",
       "consumption_readings_redact",
       "scripts_connection_report",
@@ -1246,7 +1257,7 @@
       "scripts_connection_report_rationale_60",
       "scripts_connection_report_reading_log_section"
     ],
-    "47": [
+    "48": [
       "web_vendor_chart_umd_min_bi",
       "web_vendor_chart_umd_min_ci",
       "web_vendor_chart_umd_min_cs",
@@ -1259,7 +1270,7 @@
       "web_vendor_chart_umd_min_tn_getcontext",
       "web_vendor_chart_umd_min_wa_getcontext"
     ],
-    "48": [
+    "49": [
       "web_vendor_chart_umd_min_bo",
       "web_vendor_chart_umd_min_bo_buildticks",
       "web_vendor_chart_umd_min_bo_computeticklimit",
@@ -1272,7 +1283,7 @@
       "web_vendor_chart_umd_min_ro_computeticklimit",
       "web_vendor_chart_umd_min_tn_maxdigits"
     ],
-    "49": [
+    "50": [
       "web_vendor_chart_umd_min_oi",
       "web_vendor_chart_umd_min_si",
       "web_vendor_chart_umd_min_wa_drawbody",
@@ -1285,7 +1296,7 @@
       "web_vendor_chart_umd_min_ya_draw",
       "web_vendor_chart_umd_min_ya_drawtitle"
     ],
-    "50": [
+    "51": [
       "web_vendor_chart_umd_min_ke",
       "web_vendor_chart_umd_min_tn_eventhandler",
       "web_vendor_chart_umd_min_tn_handleevent",
@@ -1297,7 +1308,7 @@
       "web_vendor_chart_umd_min_tn_updatedatasets",
       "web_vendor_chart_umd_min_xt_running"
     ],
-    "51": [
+    "52": [
       "web_vendor_chart_umd_min_o_computeticklimit",
       "web_vendor_chart_umd_min_tn_computelabelitems",
       "web_vendor_chart_umd_min_tn_computelabelsizes",
@@ -1309,7 +1320,7 @@
       "web_vendor_chart_umd_min_us",
       "web_vendor_chart_umd_min_ys"
     ],
-    "52": [
+    "53": [
       "web_vendor_chart_umd_min_xt",
       "web_vendor_chart_umd_min_xt_add",
       "web_vendor_chart_umd_min_xt_constructor",
@@ -1320,17 +1331,6 @@
       "web_vendor_chart_umd_min_xt_refresh",
       "web_vendor_chart_umd_min_xt_remove",
       "web_vendor_chart_umd_min_xt_start"
-    ],
-    "53": [
-      "consumption_api_get_conn",
-      "consumption_db_connect",
-      "consumption_db_init_schema",
-      "consumption_db_rationale_99",
-      "path",
-      "scripts_backfill_loop",
-      "scripts_backfill_loop_log",
-      "scripts_backfill_loop_main",
-      "scripts_backfill_loop_rationale_1"
     ],
     "54": [
       "consumption_readings_parse_meters",
@@ -1440,18 +1440,18 @@
     ]
   },
   "cohesion": {
-    "0": 0.037940379403794036,
-    "1": 0.09146341463414634,
-    "2": 0.0858974358974359,
-    "3": 0.08232118758434548,
-    "4": 0.10510510510510511,
-    "5": 0.08708708708708708,
+    "0": 0.03702615339406406,
+    "1": 0.08139534883720931,
+    "2": 0.09146341463414634,
+    "3": 0.0858974358974359,
+    "4": 0.08232118758434548,
+    "5": 0.10510510510510511,
     "6": 0.07301587301587302,
-    "7": 0.17983193277310924,
-    "8": 0.16399286987522282,
-    "9": 0.0873440285204991,
-    "10": 0.13068181818181818,
-    "11": 0.08712121212121213,
+    "7": 0.15798319327731092,
+    "8": 0.0873440285204991,
+    "9": 0.13068181818181818,
+    "10": 0.08712121212121213,
+    "11": 0.20766129032258066,
     "12": 0.14623655913978495,
     "13": 0.14022988505747128,
     "14": 0.14285714285714285,
@@ -1461,21 +1461,21 @@
     "18": 0.13405797101449277,
     "19": 0.08695652173913043,
     "20": 0.14855072463768115,
-    "21": 0.13043478260869565,
-    "22": 0.13438735177865613,
-    "23": 0.21212121212121213,
-    "24": 0.1761904761904762,
-    "25": 0.1619047619047619,
-    "26": 0.2,
-    "27": 0.15789473684210525,
-    "28": 0.18128654970760233,
-    "29": 0.1286549707602339,
-    "30": 0.3382352941176471,
-    "31": 0.19852941176470587,
-    "32": 0.20833333333333334,
-    "33": 0.225,
-    "34": 0.20952380952380953,
-    "35": 0.2571428571428571,
+    "21": 0.13438735177865613,
+    "22": 0.21212121212121213,
+    "23": 0.1761904761904762,
+    "24": 0.1619047619047619,
+    "25": 0.2,
+    "26": 0.15789473684210525,
+    "27": 0.18128654970760233,
+    "28": 0.1286549707602339,
+    "29": 0.3382352941176471,
+    "30": 0.19852941176470587,
+    "31": 0.20833333333333334,
+    "32": 0.225,
+    "33": 0.20952380952380953,
+    "34": 0.2571428571428571,
+    "35": 0.17142857142857143,
     "36": 0.1619047619047619,
     "37": 0.13333333333333333,
     "38": 0.25274725274725274,
@@ -1486,14 +1486,14 @@
     "43": 0.18181818181818182,
     "44": 0.3181818181818182,
     "45": 0.22727272727272727,
-    "46": 0.2909090909090909,
-    "47": 0.2727272727272727,
-    "48": 0.2,
-    "49": 0.43636363636363634,
-    "50": 0.3333333333333333,
-    "51": 0.24444444444444444,
-    "52": 0.28888888888888886,
-    "53": 0.2777777777777778,
+    "46": 0.21818181818181817,
+    "47": 0.2909090909090909,
+    "48": 0.2727272727272727,
+    "49": 0.2,
+    "50": 0.43636363636363634,
+    "51": 0.3333333333333333,
+    "52": 0.24444444444444444,
+    "53": 0.28888888888888886,
     "54": 0.3055555555555556,
     "55": 0.2222222222222222,
     "56": 0.2857142857142857,
@@ -1599,26 +1599,26 @@
       "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; peripheral node `Lazy Scrapling Import Lesson` unexpectedly reaches hub `portal_session()`"
     },
     {
-      "source": "_range()",
-      "target": "api.py as Only Trust Boundary",
+      "source": "_login()",
+      "target": "Fetching Not Implemented Status",
       "source_files": [
-        "consumption/api.py",
-        ".cursor/memory/INDEX.md"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "references",
-      "why": "crosses file types (code \u2194 doc); connects across different repos/directories; peripheral node `api.py as Only Trust Boundary` unexpectedly reaches hub `_range()`"
-    },
-    {
-      "source": "summary()",
-      "target": "Endpoint Reference Table",
-      "source_files": [
-        "consumption/api.py",
+        "consumption/source.py",
         "README.md"
       ],
       "confidence": "EXTRACTED",
       "relation": "references",
-      "why": "crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities"
+      "why": "crosses file types (code \u2194 doc); connects across different repos/directories; peripheral node `Fetching Not Implemented Status` unexpectedly reaches hub `_login()`"
+    },
+    {
+      "source": "portal_session()",
+      "target": "mycitygrid.com Portal",
+      "source_files": [
+        "consumption/source.py",
+        "README.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (code \u2194 doc); connects across different repos/directories; peripheral node `mycitygrid.com Portal` unexpectedly reaches hub `portal_session()`"
     }
   ],
   "tokens": {

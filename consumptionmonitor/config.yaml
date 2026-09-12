@@ -1,0 +1,30 @@
+name: ConsumptionMonitor
+version: "1.0.0"
+slug: consumptionmonitor
+description: >-
+  Household electricity and water consumption from mycitygrid.com — dashboard,
+  meter sensors, alerts, and Energy dashboard history.
+url: https://github.com/ItamarVa/ConsumptionMonitor
+arch:
+  - amd64
+startup: application
+boot: auto
+init: false
+ingress: true
+ingress_port: 8099
+ingress_entry: /ui
+panel_icon: mdi:flash
+panel_title: Consumption
+homeassistant_api: true
+map:
+  - share:ro
+options:
+  username: ""
+  password: ""
+  local_tz: Asia/Jerusalem
+  energy_statistics: true
+schema:
+  username: str
+  password: password
+  local_tz: str
+  energy_statistics: bool

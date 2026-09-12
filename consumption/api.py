@@ -17,6 +17,7 @@ from typing import Annotated, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from starlette.middleware.trustedhost import TrustedHostMiddleware
+from starlette.responses import JSONResponse
 from starlette.staticfiles import StaticFiles
 
 from . import config, db, jobs, source
@@ -76,6 +77,24 @@ async def security_headers(request: Request, call_next):
     return response
 
 
+class _AllowedClientIPMiddleware:
+    """Reject peers outside ALLOWED_CLIENT_IPS when that list is non-empty."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http" and config.ALLOWED_CLIENT_IPS:
+            client = scope.get("client")
+            host = client[0] if client else ""
+            if host not in config.ALLOWED_CLIENT_IPS:
+                response = JSONResponse({"detail": "Forbidden"}, status_code=403)
+                await response(scope, receive, send)
+                return
+        await self.app(scope, receive, send)
+
+
+app.add_middleware(_AllowedClientIPMiddleware)
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=config.ALLOWED_HOSTS)
 
 

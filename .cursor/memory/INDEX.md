@@ -9,8 +9,9 @@ serve exact aggregates to Home Assistant or a future custom tool.
 ## Stack
 
 Python 3.14, FastAPI + uvicorn + httpx (TestClient), SQLite (stdlib), Scrapling for
-scraping, `zoneinfo` + `tzdata` for Asia/Jerusalem. Runs on the user's Windows machine.
-Dependencies pinned exactly in `requirements.txt`.
+scraping, `zoneinfo` + `tzdata` for Asia/Jerusalem, `websockets==17.1` for the HA
+Supervisor statistics bridge. Windows dev machine; Home Assistant add-on on Debian
+(`consumptionmonitor/`). Dependencies pinned exactly in `requirements.txt`.
 
 ## How to run
 
@@ -19,11 +20,17 @@ Double-click `run.bat` (creates `.venv`, installs, self-checks, serves on
 once per machine. `test-connection.bat` signs in and writes `data/connection-report.txt`.
 History backfill: `python scripts/backfill-loop.py` or wait for the `backfill` job (every 6h).
 
+**Home Assistant add-on (v1.0.0):** add repo URL in HA add-on store, configure mycitygrid
+credentials, start add-on, sidebar opens Ingress at `/ui`. One-time DB copy:
+`copy-db-to-ha.bat` → `/share/consumptionmonitor/consumption.sqlite`. See README
+"Run on Home Assistant".
+
 ## Layout
 
 `consumption/records.py` frozen contract — `config.py` / `secrets.py` — `source.py` +
 `reading_log.py` (GET meterdata reading log) — `db.py` exact aggregates — `jobs.py` schedule
-— `api.py` HTTP. Portal recon: `.cursor/memory/topics/mycitygrid-portal.md`.
+— `api.py` HTTP — `ha_bridge.py` / `ha_entities.py` / `ha_statistics.py` MQTT device and
+Energy statistics. Portal recon: `.cursor/memory/topics/mycitygrid-portal.md`.
 
 ## API (browser)
 
@@ -50,10 +57,10 @@ Electricity: import=consumption, export=production (solar return).
 
 ## State
 
-Production-ready on `master`. Dashboard at `/ui`: running vs comparison fold mode
-(multi-series legend), per-granularity range pickers (year/month/day/hour), drill-down,
-theme toggle. `/summary` ~700ms via `db.period_total`. Raw reading log live; backfill
-to 2024-01 complete (~27k readings). Remote: `https://github.com/ItamarVa/ConsumptionMonitor.git`.
+`v1.0.0` on `master`: Windows API + HA add-on with Ingress dashboard, one MQTT device
+(all meter sensors and alert binary sensors), and external statistics
+(`consumptionmonitor:electricity_import|export|water`) for the Energy dashboard back to
+2024 when the SQLite file is copied. Remote: `https://github.com/ItamarVa/ConsumptionMonitor.git`.
 
 ## Lessons
 
@@ -88,3 +95,11 @@ to 2024-01 complete (~27k readings). Remote: `https://github.com/ItamarVa/Consum
   backfill is `done`, so a hole in the middle is never refilled on its own.
 - Portal reading cadence ~2h (elec ~120 min, water ~160 min) forces hourly view to be a
   proportional estimate; day/month/year stay exact register deltas.
+- HA add-on cannot use Alpine `base-python`: `scrapling[fetchers]` needs glibc wheels
+  (playwright/patchright have no musllinux builds). Use `base-debian:trixie` + `python3`.
+- Ingress serves under `/api/hassio_ingress/<token>/`; `web/index.html` and `web/api.js`
+  must use relative URLs (`import.meta.url` for API root), not root-absolute paths.
+- One MQTT device `consumptionmonitor` (retained discovery + JSON state topic); Energy
+  history via `recorder/import_statistics` over the Supervisor WebSocket (`websockets`).
+- Off Windows, `config._credentials()` must fall through to env vars when DPAPI is absent;
+  Ingress add-on sets `ALLOWED_CLIENT_IPS=172.30.32.2`.

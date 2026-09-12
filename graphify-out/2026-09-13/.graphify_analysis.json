@@ -608,6 +608,35 @@
       "timedelta"
     ],
     "15": [
+      "consumption_config",
+      "consumption_config_credentials_present",
+      "consumption_config_env",
+      "consumption_config_load_env_file",
+      "consumption_config_py_path",
+      "consumption_config_rationale_1",
+      "consumption_config_rationale_22",
+      "consumption_init",
+      "consumption_init_consumption_package",
+      "consumption_init_rationale_1",
+      "consumption_main",
+      "consumption_main_console_utf8_reconfigure",
+      "consumption_main_main",
+      "consumption_main_rationale_1",
+      "consumption_source_portal_session",
+      "consumption_source_rationale_178",
+      "cursor_memory_index_lazy_scrapling_import",
+      "cursor_memory_index_scrapling_fetchers_extra",
+      "cursor_memory_index_undocumented_portal",
+      "cursor_memory_index_utf8_console_lesson",
+      "readme_mycitygrid_portal",
+      "readme_stealthy_session_fallback",
+      "requirements_fastapi",
+      "requirements_pinning_policy",
+      "requirements_scrapling",
+      "requirements_tzdata",
+      "requirements_uvicorn"
+    ],
+    "16": [
       "web_vendor_chart_umd_min_beforedatasetdraw",
       "web_vendor_chart_umd_min_beforedatasetsdraw",
       "web_vendor_chart_umd_min_ca",
@@ -636,7 +665,7 @@
       "web_vendor_chart_umd_min_ua",
       "web_vendor_chart_umd_min_xa"
     ],
-    "16": [
+    "17": [
       "web_controls",
       "web_controls_adddays",
       "web_controls_applypreset",
@@ -663,7 +692,7 @@
       "web_controls_syncrangecontrols",
       "web_controls_todayiso"
     ],
-    "17": [
+    "18": [
       "array",
       "consumption_config_credentials",
       "consumption_config_rationale_42",
@@ -689,7 +718,7 @@
       "scripts_set_credentials_rationale_1",
       "tests_test_jobs_test_encrypted_credentials_round_trip"
     ],
-    "18": [
+    "19": [
       "cursor_memory_topics_dashboard_contract",
       "cursor_memory_topics_dashboard_contract_1_hourly_endpoint_json",
       "cursor_memory_topics_dashboard_contract_2_the_pure_function",
@@ -715,7 +744,7 @@
       "cursor_memory_topics_dashboard_contract_theme_contract",
       "cursor_memory_topics_dashboard_contract_view_mode"
     ],
-    "19": [
+    "20": [
       "web_vendor_chart_umd_min_fn",
       "web_vendor_chart_umd_min_gn",
       "web_vendor_chart_umd_min_n",
@@ -741,7 +770,7 @@
       "web_vendor_chart_umd_min_oe",
       "web_vendor_chart_umd_min_pi"
     ],
-    "20": [
+    "21": [
       "web_vendor_chart_umd_min_d",
       "web_vendor_chart_umd_min_di",
       "web_vendor_chart_umd_min_n_chartoptionscopes",
@@ -766,7 +795,7 @@
       "web_vendor_chart_umd_min_tn_generateticklabels",
       "web_vendor_chart_umd_min_tn_update"
     ],
-    "21": [
+    "22": [
       "consumption_db_get_state",
       "consumption_records_meterreading",
       "exception",
@@ -790,7 +819,7 @@
       "tests_test_jobs_test_recent_week_covers_seven_days",
       "tests_test_jobs_test_scheduler_skips_out_of_season_jobs"
     ],
-    "22": [
+    "23": [
       "consumption_readings_py_runtimeerror",
       "consumption_readings_rationale_48",
       "consumption_readings_sourcenotready",
@@ -813,7 +842,7 @@
       "consumption_source_token_expiry",
       "consumption_source_url"
     ],
-    "23": [
+    "24": [
       "web_app_applyhash",
       "web_app_bindevents",
       "web_app_buttonmatchesutility",
@@ -836,19 +865,19 @@
       "web_app_writehash",
       "web_controls_rebuildpresetselect"
     ],
-    "24": [
+    "25": [
       "web_vendor_chart_umd_min_afterevent",
       "web_vendor_chart_umd_min_ba",
       "web_vendor_chart_umd_min_js_updateelement",
+      "web_vendor_chart_umd_min_ki",
+      "web_vendor_chart_umd_min_ro_setdimensions",
       "web_vendor_chart_umd_min_ta",
       "web_vendor_chart_umd_min_wa",
       "web_vendor_chart_umd_min_wa_constructor",
       "web_vendor_chart_umd_min_wa_createitems",
-      "web_vendor_chart_umd_min_wa_drawcaret",
       "web_vendor_chart_umd_min_wa_getafterbody",
       "web_vendor_chart_umd_min_wa_getbeforebody",
       "web_vendor_chart_umd_min_wa_getbody",
-      "web_vendor_chart_umd_min_wa_getcaretposition",
       "web_vendor_chart_umd_min_wa_getfooter",
       "web_vendor_chart_umd_min_wa_gettitle",
       "web_vendor_chart_umd_min_wa_handleevent",
@@ -859,7 +888,7 @@
       "web_vendor_chart_umd_min_wa_updateanimationtarget",
       "web_vendor_chart_umd_min_za"
     ],
-    "25": [
+    "26": [
       "web_vendor_chart_umd_min_ai",
       "web_vendor_chart_umd_min_average",
       "web_vendor_chart_umd_min_beforedraw",
@@ -881,7 +910,7 @@
       "web_vendor_chart_umd_min_xi",
       "web_vendor_chart_umd_min_yi"
     ],
-    "26": [
+    "27": [
       "web_vendor_chart_umd_min_ao",
       "web_vendor_chart_umd_min_co",
       "web_vendor_chart_umd_min_do",
@@ -902,7 +931,7 @@
       "web_vendor_chart_umd_min_ro_getvaluefordistancefromcenter",
       "web_vendor_chart_umd_min_ro_setcenterpoint"
     ],
-    "27": [
+    "28": [
       "web_vendor_chart_umd_min_buildticks",
       "web_vendor_chart_umd_min_determinedatalimits",
       "web_vendor_chart_umd_min_ii",
@@ -923,7 +952,7 @@
       "web_vendor_chart_umd_min_tn_init",
       "web_vendor_chart_umd_min_vn"
     ],
-    "28": [
+    "29": [
       "consumption_db_upsert_meter_readings",
       "tests_test_db_readings",
       "tests_test_db_readings_conn",
@@ -942,25 +971,26 @@
       "tests_test_db_readings_test_upsert_idempotent_on_meter_data_id",
       "tests_test_db_readings_test_upsert_replaces_reissued_id_at_same_timestamp"
     ],
-    "29": [
-      "consumption_init_consumption_package",
-      "consumption_main_console_utf8_reconfigure",
-      "consumption_main_main",
-      "consumption_source_portal_session",
-      "consumption_source_rationale_178",
-      "cursor_memory_index_lazy_scrapling_import",
-      "cursor_memory_index_scrapling_fetchers_extra",
-      "cursor_memory_index_undocumented_portal",
-      "cursor_memory_index_utf8_console_lesson",
-      "readme_mycitygrid_portal",
-      "readme_stealthy_session_fallback",
-      "requirements_fastapi",
-      "requirements_pinning_policy",
-      "requirements_scrapling",
-      "requirements_tzdata",
-      "requirements_uvicorn"
-    ],
     "30": [
+      "web_vendor_chart_umd_min_as",
+      "web_vendor_chart_umd_min_as_active",
+      "web_vendor_chart_umd_min_as_cancel",
+      "web_vendor_chart_umd_min_as_constructor",
+      "web_vendor_chart_umd_min_as_notify",
+      "web_vendor_chart_umd_min_as_tick",
+      "web_vendor_chart_umd_min_as_update",
+      "web_vendor_chart_umd_min_as_wait",
+      "web_vendor_chart_umd_min_rs",
+      "web_vendor_chart_umd_min_ts",
+      "web_vendor_chart_umd_min_ts_animateoptions",
+      "web_vendor_chart_umd_min_ts_configure",
+      "web_vendor_chart_umd_min_ts_constructor",
+      "web_vendor_chart_umd_min_ts_createanimations",
+      "web_vendor_chart_umd_min_ts_update",
+      "web_vendor_chart_umd_min_xt_stop",
+      "web_vendor_chart_umd_min_xt_update"
+    ],
+    "31": [
       "consumption_readings",
       "consumption_readings_buckets",
       "consumption_readings_exists_locally",
@@ -978,7 +1008,7 @@
       "consumption_readings_rationale_285",
       "consumption_readings_reading"
     ],
-    "31": [
+    "32": [
       "web_api",
       "web_api_adddaysiso",
       "web_api_apierror",
@@ -996,7 +1026,7 @@
       "web_api_normalizeyearly",
       "web_api_requestjson"
     ],
-    "32": [
+    "33": [
       "chart_js",
       "web_app_paintchart",
       "web_app_toggletheme",
@@ -1013,7 +1043,7 @@
       "web_chart_renderseries",
       "web_chart_seriescolor"
     ],
-    "33": [
+    "34": [
       "consumption_records",
       "consumption_records_alert_flags",
       "consumption_records_coverage",
@@ -1030,7 +1060,7 @@
       "consumption_records_upsert_meter_readings",
       "consumption_records_yearly_totals"
     ],
-    "34": [
+    "35": [
       "web_vendor_chart_umd_min_b",
       "web_vendor_chart_umd_min_cn",
       "web_vendor_chart_umd_min_dn",
@@ -1047,7 +1077,7 @@
       "web_vendor_chart_umd_min_un",
       "web_vendor_chart_umd_min_ze"
     ],
-    "35": [
+    "36": [
       "web_vendor_chart_umd_min_en_get",
       "web_vendor_chart_umd_min_js_configure",
       "web_vendor_chart_umd_min_js_resolveanimations",
@@ -1064,7 +1094,7 @@
       "web_vendor_chart_umd_min_rn_init",
       "web_vendor_chart_umd_min_rn_parse"
     ],
-    "36": [
+    "37": [
       "web_vendor_chart_umd_min_es",
       "web_vendor_chart_umd_min_generatelabels",
       "web_vendor_chart_umd_min_ie",
@@ -1081,7 +1111,7 @@
       "web_vendor_chart_umd_min_yn_update",
       "web_vendor_chart_umd_min_yn_updateradius"
     ],
-    "37": [
+    "38": [
       "web_app_buildchartdata",
       "web_series",
       "web_series_buildhourcategories",
@@ -1097,7 +1127,7 @@
       "web_series_seriestotal",
       "web_series_trimtrailingemptycategories"
     ],
-    "38": [
+    "39": [
       "web_vendor_chart_umd_min_aa",
       "web_vendor_chart_umd_min_afterdatasetsupdate",
       "web_vendor_chart_umd_min_n_getmaxborderwidth",
@@ -1113,7 +1143,7 @@
       "web_vendor_chart_umd_min_tn_updatehoverstyles",
       "web_vendor_chart_umd_min_tn_updatevisibility"
     ],
-    "39": [
+    "40": [
       "web_vendor_chart_umd_min_js_initialize",
       "web_vendor_chart_umd_min_js_updateindex",
       "web_vendor_chart_umd_min_kn",
@@ -1129,7 +1159,7 @@
       "web_vendor_chart_umd_min_tn_unregister",
       "web_vendor_chart_umd_min_tn_updatemetasets"
     ],
-    "40": [
+    "41": [
       "web_vendor_chart_umd_min_afterupdate",
       "web_vendor_chart_umd_min_va",
       "web_vendor_chart_umd_min_ya",
@@ -1144,7 +1174,7 @@
       "web_vendor_chart_umd_min_ya_setdimensions",
       "web_vendor_chart_umd_min_ya_update"
     ],
-    "41": [
+    "42": [
       "web_vendor_chart_umd_min_io",
       "web_vendor_chart_umd_min_no",
       "web_vendor_chart_umd_min_oo",
@@ -1159,7 +1189,7 @@
       "web_vendor_chart_umd_min_rn_startof",
       "web_vendor_chart_umd_min_vo"
     ],
-    "42": [
+    "43": [
       "consumption_api_job_status",
       "consumption_api_rationale_224",
       "consumption_api_rationale_402",
@@ -1172,20 +1202,6 @@
       "readme_endpoints",
       "readme_layout",
       "request"
-    ],
-    "43": [
-      "consumption_config_credentials_present",
-      "consumption_readings_rationale_56",
-      "consumption_readings_redact",
-      "scripts_connection_report",
-      "scripts_connection_report_dump",
-      "scripts_connection_report_main",
-      "scripts_connection_report_mask",
-      "scripts_connection_report_meters_section",
-      "scripts_connection_report_probe",
-      "scripts_connection_report_rationale_1",
-      "scripts_connection_report_rationale_60",
-      "scripts_connection_report_reading_log_section"
     ],
     "44": [
       "scripts_launcher_common",
@@ -1229,6 +1245,19 @@
       "scripts_backfill_loop_rationale_1"
     ],
     "47": [
+      "consumption_readings_rationale_56",
+      "consumption_readings_redact",
+      "scripts_connection_report",
+      "scripts_connection_report_dump",
+      "scripts_connection_report_main",
+      "scripts_connection_report_mask",
+      "scripts_connection_report_meters_section",
+      "scripts_connection_report_probe",
+      "scripts_connection_report_rationale_1",
+      "scripts_connection_report_rationale_60",
+      "scripts_connection_report_reading_log_section"
+    ],
+    "48": [
       "web_vendor_chart_umd_min_bi",
       "web_vendor_chart_umd_min_ci",
       "web_vendor_chart_umd_min_cs",
@@ -1241,7 +1270,7 @@
       "web_vendor_chart_umd_min_tn_getcontext",
       "web_vendor_chart_umd_min_wa_getcontext"
     ],
-    "48": [
+    "49": [
       "web_vendor_chart_umd_min_bo",
       "web_vendor_chart_umd_min_bo_buildticks",
       "web_vendor_chart_umd_min_bo_computeticklimit",
@@ -1254,7 +1283,7 @@
       "web_vendor_chart_umd_min_ro_computeticklimit",
       "web_vendor_chart_umd_min_tn_maxdigits"
     ],
-    "49": [
+    "50": [
       "web_vendor_chart_umd_min_oi",
       "web_vendor_chart_umd_min_si",
       "web_vendor_chart_umd_min_wa_drawbody",
@@ -1267,31 +1296,7 @@
       "web_vendor_chart_umd_min_ya_draw",
       "web_vendor_chart_umd_min_ya_drawtitle"
     ],
-    "50": [
-      "consumption_config",
-      "consumption_config_env",
-      "consumption_config_load_env_file",
-      "consumption_config_py_path",
-      "consumption_config_rationale_1",
-      "consumption_config_rationale_22",
-      "consumption_init",
-      "consumption_init_rationale_1",
-      "consumption_main",
-      "consumption_main_rationale_1"
-    ],
     "51": [
-      "web_vendor_chart_umd_min_ho_getlabelcapacity",
-      "web_vendor_chart_umd_min_ho_getlabelsize",
-      "web_vendor_chart_umd_min_ki",
-      "web_vendor_chart_umd_min_qs",
-      "web_vendor_chart_umd_min_ro_setdimensions",
-      "web_vendor_chart_umd_min_tn_configure",
-      "web_vendor_chart_umd_min_tn_drawtitle",
-      "web_vendor_chart_umd_min_tn_setdimensions",
-      "web_vendor_chart_umd_min_wa_drawargs",
-      "web_vendor_chart_umd_min_wa_ishorizontal"
-    ],
-    "52": [
       "web_vendor_chart_umd_min_ke",
       "web_vendor_chart_umd_min_tn_eventhandler",
       "web_vendor_chart_umd_min_tn_handleevent",
@@ -1303,7 +1308,7 @@
       "web_vendor_chart_umd_min_tn_updatedatasets",
       "web_vendor_chart_umd_min_xt_running"
     ],
-    "53": [
+    "52": [
       "web_vendor_chart_umd_min_o_computeticklimit",
       "web_vendor_chart_umd_min_tn_computelabelitems",
       "web_vendor_chart_umd_min_tn_computelabelsizes",
@@ -1315,7 +1320,7 @@
       "web_vendor_chart_umd_min_us",
       "web_vendor_chart_umd_min_ys"
     ],
-    "54": [
+    "53": [
       "web_vendor_chart_umd_min_xt",
       "web_vendor_chart_umd_min_xt_add",
       "web_vendor_chart_umd_min_xt_constructor",
@@ -1327,7 +1332,7 @@
       "web_vendor_chart_umd_min_xt_remove",
       "web_vendor_chart_umd_min_xt_start"
     ],
-    "55": [
+    "54": [
       "consumption_readings_parse_meters",
       "consumption_readings_rationale_71",
       "tests_test_source_parsing",
@@ -1338,18 +1343,7 @@
       "tests_test_source_parsing_test_local_timezone_is_the_one_the_parser_assumes",
       "tests_test_source_parsing_test_meter_discovery"
     ],
-    "56": [
-      "web_vendor_chart_umd_min_as",
-      "web_vendor_chart_umd_min_as_cancel",
-      "web_vendor_chart_umd_min_as_constructor",
-      "web_vendor_chart_umd_min_as_notify",
-      "web_vendor_chart_umd_min_as_tick",
-      "web_vendor_chart_umd_min_as_update",
-      "web_vendor_chart_umd_min_rs",
-      "web_vendor_chart_umd_min_xt_stop",
-      "web_vendor_chart_umd_min_xt_update"
-    ],
-    "57": [
+    "55": [
       "web_vendor_chart_umd_min_hs",
       "web_vendor_chart_umd_min_hs_acquirecontext",
       "web_vendor_chart_umd_min_hs_addeventlistener",
@@ -1360,17 +1354,27 @@
       "web_vendor_chart_umd_min_hs_removeeventlistener",
       "web_vendor_chart_umd_min_hs_updateconfig"
     ],
-    "58": [
-      "web_vendor_chart_umd_min_as_active",
-      "web_vendor_chart_umd_min_as_wait",
-      "web_vendor_chart_umd_min_ts",
-      "web_vendor_chart_umd_min_ts_animateoptions",
-      "web_vendor_chart_umd_min_ts_configure",
-      "web_vendor_chart_umd_min_ts_constructor",
-      "web_vendor_chart_umd_min_ts_createanimations",
-      "web_vendor_chart_umd_min_ts_update"
+    "56": [
+      "web_vendor_chart_umd_min_afterdraw",
+      "web_vendor_chart_umd_min_js_draw",
+      "web_vendor_chart_umd_min_tn_layers",
+      "web_vendor_chart_umd_min_wa_draw",
+      "web_vendor_chart_umd_min_wa_drawbackground",
+      "web_vendor_chart_umd_min_wa_drawcaret",
+      "web_vendor_chart_umd_min_wa_getcaretposition",
+      "web_vendor_chart_umd_min_wa_willrender"
     ],
-    "59": [
+    "57": [
+      "web_vendor_chart_umd_min_ho_getlabelcapacity",
+      "web_vendor_chart_umd_min_ho_getlabelsize",
+      "web_vendor_chart_umd_min_qs",
+      "web_vendor_chart_umd_min_tn_configure",
+      "web_vendor_chart_umd_min_tn_drawtitle",
+      "web_vendor_chart_umd_min_tn_setdimensions",
+      "web_vendor_chart_umd_min_wa_drawargs",
+      "web_vendor_chart_umd_min_wa_ishorizontal"
+    ],
+    "58": [
       "cursor_memory_topics_mycitygrid_portal",
       "cursor_memory_topics_mycitygrid_portal_best_guess_at_the_consumption_endpoints",
       "cursor_memory_topics_mycitygrid_portal_best_guess_at_the_login_flow",
@@ -1379,7 +1383,7 @@
       "cursor_memory_topics_mycitygrid_portal_unknowns_that_only_credentials_can_answer",
       "cursor_memory_topics_mycitygrid_portal_what_we_know"
     ],
-    "60": [
+    "59": [
       "web_vendor_chart_umd_min_an",
       "web_vendor_chart_umd_min_on",
       "web_vendor_chart_umd_min_on_constructor",
@@ -1388,58 +1392,50 @@
       "web_vendor_chart_umd_min_on_notify",
       "web_vendor_chart_umd_min_on_notifystatechanges"
     ],
-    "61": [
-      "web_vendor_chart_umd_min_afterdraw",
-      "web_vendor_chart_umd_min_js_draw",
-      "web_vendor_chart_umd_min_tn_layers",
-      "web_vendor_chart_umd_min_wa_draw",
-      "web_vendor_chart_umd_min_wa_drawbackground",
-      "web_vendor_chart_umd_min_wa_willrender"
-    ],
-    "62": [
+    "60": [
       "web_vendor_chart_umd_min_j",
       "web_vendor_chart_umd_min_so",
       "web_vendor_chart_umd_min_so_buildticks",
       "web_vendor_chart_umd_min_so_constructor",
       "web_vendor_chart_umd_min_so_getlabelforvalue"
     ],
-    "63": [
+    "61": [
       "scripts_env",
       "scripts_env_initialize_venv",
       "scripts_env_show_phase",
       "scripts_env_wait_withprogress"
     ],
-    "64": [
+    "62": [
       "web_vendor_chart_umd_min_be",
       "web_vendor_chart_umd_min_n_getlabelandvalue",
       "web_vendor_chart_umd_min_ne",
       "web_vendor_chart_umd_min_numeric"
     ],
-    "65": [
+    "63": [
       "web_vendor_readme",
       "web_vendor_readme_chart_js",
       "web_vendor_readme_vendored_third_party_assets"
     ],
-    "66": [
+    "64": [
       "cursor_memory_index_hourly_granularity",
       "readme_storage_model"
     ],
-    "67": [
+    "65": [
       "consumption_db_py_path"
     ],
-    "68": [
+    "66": [
       "cursor_memory_index_launcher_preference"
     ],
-    "69": [
+    "67": [
       "readme_run_it"
     ],
-    "70": [
+    "68": [
       "scripts_launch"
     ],
-    "71": [
+    "69": [
       "scripts_set_credentials_ps1_scripts_set_credentials"
     ],
-    "72": [
+    "70": [
       "scripts_test_connection"
     ]
   },
@@ -1459,64 +1455,62 @@
     "12": 0.14623655913978495,
     "13": 0.14022988505747128,
     "14": 0.14285714285714285,
-    "15": 0.09971509971509972,
-    "16": 0.18,
-    "17": 0.13405797101449277,
-    "18": 0.08695652173913043,
-    "19": 0.14855072463768115,
-    "20": 0.13438735177865613,
-    "21": 0.21212121212121213,
-    "22": 0.1761904761904762,
-    "23": 0.1619047619047619,
-    "24": 0.2,
-    "25": 0.15789473684210525,
-    "26": 0.18128654970760233,
-    "27": 0.1286549707602339,
-    "28": 0.3382352941176471,
-    "29": 0.13333333333333333,
-    "30": 0.20833333333333334,
-    "31": 0.225,
-    "32": 0.20952380952380953,
-    "33": 0.2571428571428571,
-    "34": 0.17142857142857143,
-    "35": 0.1619047619047619,
-    "36": 0.13333333333333333,
-    "37": 0.25274725274725274,
-    "38": 0.21978021978021978,
-    "39": 0.16483516483516483,
-    "40": 0.23076923076923078,
-    "41": 0.19230769230769232,
-    "42": 0.18181818181818182,
-    "43": 0.25757575757575757,
+    "15": 0.08262108262108261,
+    "16": 0.09971509971509972,
+    "17": 0.18,
+    "18": 0.13405797101449277,
+    "19": 0.08695652173913043,
+    "20": 0.14855072463768115,
+    "21": 0.13438735177865613,
+    "22": 0.21212121212121213,
+    "23": 0.1761904761904762,
+    "24": 0.1619047619047619,
+    "25": 0.2,
+    "26": 0.15789473684210525,
+    "27": 0.18128654970760233,
+    "28": 0.1286549707602339,
+    "29": 0.3382352941176471,
+    "30": 0.19852941176470587,
+    "31": 0.20833333333333334,
+    "32": 0.225,
+    "33": 0.20952380952380953,
+    "34": 0.2571428571428571,
+    "35": 0.17142857142857143,
+    "36": 0.1619047619047619,
+    "37": 0.13333333333333333,
+    "38": 0.25274725274725274,
+    "39": 0.21978021978021978,
+    "40": 0.16483516483516483,
+    "41": 0.23076923076923078,
+    "42": 0.19230769230769232,
+    "43": 0.18181818181818182,
     "44": 0.3181818181818182,
     "45": 0.22727272727272727,
     "46": 0.21818181818181817,
-    "47": 0.2727272727272727,
-    "48": 0.2,
-    "49": 0.43636363636363634,
-    "50": 0.2222222222222222,
-    "51": 0.2222222222222222,
-    "52": 0.3333333333333333,
-    "53": 0.24444444444444444,
-    "54": 0.28888888888888886,
-    "55": 0.3055555555555556,
-    "56": 0.3888888888888889,
-    "57": 0.2222222222222222,
-    "58": 0.35714285714285715,
-    "59": 0.2857142857142857,
-    "60": 0.47619047619047616,
-    "61": 0.4,
-    "62": 0.4,
-    "63": 1.0,
-    "64": 0.5,
-    "65": 0.6666666666666666,
+    "47": 0.2909090909090909,
+    "48": 0.2727272727272727,
+    "49": 0.2,
+    "50": 0.43636363636363634,
+    "51": 0.3333333333333333,
+    "52": 0.24444444444444444,
+    "53": 0.28888888888888886,
+    "54": 0.3055555555555556,
+    "55": 0.2222222222222222,
+    "56": 0.2857142857142857,
+    "57": 0.2857142857142857,
+    "58": 0.2857142857142857,
+    "59": 0.47619047619047616,
+    "60": 0.4,
+    "61": 1.0,
+    "62": 0.5,
+    "63": 0.6666666666666666,
+    "64": 1.0,
+    "65": 1.0,
     "66": 1.0,
     "67": 1.0,
     "68": 1.0,
     "69": 1.0,
-    "70": 1.0,
-    "71": 1.0,
-    "72": 1.0
+    "70": 1.0
   },
   "gods": [
     {

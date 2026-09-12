@@ -301,6 +301,26 @@ def test_security_headers_present() -> None:
     assert r.headers.get("referrer-policy") == "no-referrer"
 
 
+def test_allowed_client_ip_unset_allows_testclient() -> None:
+    with _test_client() as client, patch.object(config, "ALLOWED_CLIENT_IPS", []):
+        r = client.get("/health")
+    assert r.status_code == 200, r.text
+
+
+def test_allowed_client_ip_rejects_unknown_peer() -> None:
+    with _test_client() as client, patch.object(config, "ALLOWED_CLIENT_IPS", ["172.30.32.2"]):
+        r = client.get("/health")
+    assert r.status_code == 403, r.text
+
+
+def test_allowed_client_ip_allows_listed_peer() -> None:
+    with _test_client() as client, patch.object(
+        config, "ALLOWED_CLIENT_IPS", ["testclient"]
+    ):
+        r = client.get("/health")
+    assert r.status_code == 200, r.text
+
+
 def main() -> int:
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for test in tests:
