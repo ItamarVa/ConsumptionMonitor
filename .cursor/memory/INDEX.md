@@ -30,7 +30,8 @@ credentials, start add-on, sidebar opens Ingress at `/ui`. One-time DB copy:
 `consumption/records.py` frozen contract — `config.py` / `secrets.py` — `source.py` +
 `reading_log.py` (GET meterdata reading log) — `db.py` exact aggregates — `jobs.py` schedule
 — `api.py` HTTP — `ha_bridge.py` / `ha_entities.py` / `ha_statistics.py` MQTT device and
-Energy statistics. Portal recon: `.cursor/memory/topics/mycitygrid-portal.md`.
+Energy statistics. Portal recon: `.cursor/memory/topics/mycitygrid-portal.md`. HA add-on:
+`.cursor/memory/topics/ha-addon.md`.
 
 ## API (browser)
 
@@ -60,7 +61,8 @@ Electricity: import=consumption, export=production (solar return).
 `v1.0.0` on `master`: Windows API + HA add-on with Ingress dashboard, one MQTT device
 (all meter sensors and alert binary sensors), and external statistics
 (`consumptionmonitor:electricity_import|export|water`) for the Energy dashboard back to
-2024 when the SQLite file is copied. Remote: `https://github.com/ItamarVa/ConsumptionMonitor.git`.
+2024 when the SQLite file is copied. Add-on `icon.png` / `logo.png` match the `/ui` favicon
+(three bars: blue, blue, amber). Remote: `https://github.com/ItamarVa/ConsumptionMonitor.git`.
 
 ## Lessons
 

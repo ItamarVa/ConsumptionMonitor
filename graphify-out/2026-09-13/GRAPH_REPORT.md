@@ -1,16 +1,16 @@
 # Graph Report - ConsumptionMonitor  (2026-09-13)
 
 ## Corpus Check
-- 50 files · ~35,501 words
+- 49 files · ~35,600 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1415 nodes · 3681 edges · 75 communities (65 shown, 10 thin omitted)
+- 1414 nodes · 3681 edges · 74 communities (64 shown, 10 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 134 edges (avg confidence: 0.84)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1da0d9d9`
+- Built from commit: `f982dd75`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -35,7 +35,7 @@
 - controls.js
 - secrets.py
 - 7. Contract addendum (comparison fold wave)
-- test_api_contract.py
+- o
 - .update
 - test_jobs.py
 - source.py
@@ -56,7 +56,7 @@
 - series.js
 - .getDatasetMeta
 - .buildOrUpdateControllers
-- de
+- test_api_contract.py
 - _AllowedClientIPMiddleware
 - refresh
 - launcher-common.ps1
@@ -65,7 +65,7 @@
 - connection_report.py
 - .getContext
 - ha_entities.py
-- rn
+- de
 - .notifyPlugins
 - bo
 - test_source_parsing.py
@@ -73,18 +73,18 @@
 - .isHorizontal
 - Z
 - mycitygrid.com portal recon (no credentials)
-- o
+- rn
 - ConsumptionMonitor
 - env.ps1
 - yn
 - Vendored third-party assets
 - Hourly-Only Granularity Convention
+- ne
 - Double-Clickable Launcher Preference
 - Run via run.bat
 - .add
 - Si
 - ki
-- ne
 
 ## God Nodes (most connected - your core abstractions)
 1. `tn` - 124 edges
@@ -113,7 +113,7 @@
 ## Import Cycles
 - 3-file cycle: `consumption/ha_bridge.py -> consumption/ha_entities.py -> consumption/jobs.py -> consumption/ha_bridge.py`
 
-## Communities (75 total, 10 thin omitted)
+## Communities (74 total, 10 thin omitted)
 
 ### Community 0 - "chart.umd.min.js"
 Cohesion: 0.05
@@ -191,9 +191,9 @@ Nodes (25): Array, _credentials(), Encrypted store first on Windows; elsewhere e
 Cohesion: 0.08
 Nodes (24): 1. Hourly endpoint JSON, 2. The pure function, 3. CSS custom properties, 4. Locale keys and JS module exports, 5. Contract addendum (redesign wave), 6. Contract addendum (data-completeness wave), 7. Contract addendum (comparison fold wave), Breadcrumb (+16 more)
 
-### Community 20 - "test_api_contract.py"
-Cohesion: 0.17
-Nodes (18): Offline contract checks for the HTTP API against the records.py storage…, test_alerts_per_meter(), test_allowed_client_ip_allows_listed_peer(), test_allowed_client_ip_rejects_unknown_peer(), test_allowed_client_ip_unset_allows_testclient(), test_bad_utility_returns_422(), _test_client(), test_health_coverage_shape() (+10 more)
+### Community 20 - "o"
+Cohesion: 0.12
+Nodes (15): at(), b(), cn(), dn(), e(), fe(), gi(), hn() (+7 more)
 
 ### Community 21 - ".update"
 Cohesion: 0.13
@@ -275,9 +275,9 @@ Nodes (4): aa(), afterDatasetsUpdate(), generateLabels(), onClick()
 Cohesion: 0.19
 Nodes (4): addElements(), kn(), ln(), qn()
 
-### Community 41 - "de"
+### Community 41 - "test_api_contract.py"
 Cohesion: 0.17
-Nodes (4): ce(), de, en, he()
+Nodes (18): Offline contract checks for the HTTP API against the records.py storage…, test_alerts_per_meter(), test_allowed_client_ip_allows_listed_peer(), test_allowed_client_ip_rejects_unknown_peer(), test_allowed_client_ip_unset_allows_testclient(), test_bad_utility_returns_422(), _test_client(), test_health_coverage_shape() (+10 more)
 
 ### Community 43 - "refresh"
 Cohesion: 0.22
@@ -307,6 +307,10 @@ Nodes (4): Bi(), Ci(), cs, Fi()
 Cohesion: 0.16
 Nodes (26): alert_flags(), _binary_cmp(), build_discovery(), build_state(), _directions(), _ha_unit(), _latest_scraper_error(), _meter_ids() (+18 more)
 
+### Community 50 - "de"
+Cohesion: 0.17
+Nodes (4): ce(), de, en, he()
+
 ### Community 52 - "bo"
 Cohesion: 0.18
 Nodes (3): bo, H(), xo()
@@ -327,10 +331,6 @@ Nodes (23): ai(), average(), beforeDraw(), dataset(), es(), getCenterPoint(), hi
 Cohesion: 0.29
 Nodes (6): Best guess at the consumption endpoints, Best guess at the login flow, Dead ends, mycitygrid.com portal recon (no credentials), Unknowns that only credentials can answer, What we know
 
-### Community 59 - "o"
-Cohesion: 0.12
-Nodes (15): at(), b(), cn(), dn(), e(), fe(), gi(), hn() (+7 more)
-
 ### Community 60 - "ConsumptionMonitor"
 Cohesion: 0.17
 Nodes (11): Add-on options, Adopt existing history (recommended), Automations, ConsumptionMonitor, Daily electricity threshold, Energy dashboard, Entities, Install (+3 more)
@@ -338,6 +338,10 @@ Nodes (11): Add-on options, Adopt existing history (recommended), Automations, C
 ### Community 61 - "env.ps1"
 Cohesion: 1.00
 Nodes (3): Initialize-Venv(), Show-Phase(), Wait-WithProgress()
+
+### Community 65 - "ne"
+Cohesion: 0.40
+Nodes (3): Be(), ne(), numeric()
 
 ### Community 71 - ".add"
 Cohesion: 0.60
@@ -351,10 +355,6 @@ Nodes (6): Ee(), Le(), Oi(), Si(), wi(), x()
 Cohesion: 0.40
 Nodes (3): ki(), Qs(), zs()
 
-### Community 74 - "ne"
-Cohesion: 0.40
-Nodes (3): Be(), ne(), numeric()
-
 ## Knowledge Gaps
 - **80 isolated node(s):** `IntervalReading`, `run.sh script`, `HOST`, `PORT`, `DB_PATH` (+75 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -363,9 +363,9 @@ Nodes (3): Be(), ne(), numeric()
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `tn` connect `tn` to `chart.umd.min.js`, `i`, `updateElements`, `sn`, `ho`, `a`, `.update`, `s`, `l`, `.getDatasetMeta`, `.buildOrUpdateControllers`, `de`, `u`, `.getContext`, `.notifyPlugins`, `bo`, `Z`, `yn`, `Si`, `ki`?**
+- **Why does `tn` connect `tn` to `chart.umd.min.js`, `i`, `updateElements`, `sn`, `ho`, `a`, `.update`, `s`, `l`, `.getDatasetMeta`, `.buildOrUpdateControllers`, `u`, `.getContext`, `de`, `.notifyPlugins`, `bo`, `Z`, `yn`, `Si`, `ki`?**
   _High betweenness centrality (0.039) - this node is a cross-community bridge._
-- **Why does `n()` connect `n` to `chart.umd.min.js`, `i`, `tn`, `ho`, `a`, `da`, `.update`, `.update`, `s`, `ro`, `l`, `xt`, `.getDatasetMeta`, `.buildOrUpdateControllers`, `u`, `rn`, `o`, `.add`, `Si`, `ki`, `ne`?**
+- **Why does `n()` connect `n` to `chart.umd.min.js`, `i`, `tn`, `ho`, `a`, `da`, `o`, `.update`, `.update`, `s`, `ro`, `l`, `xt`, `.getDatasetMeta`, `.buildOrUpdateControllers`, `u`, `rn`, `ne`, `.add`, `Si`, `ki`?**
   _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **Why does `wa` connect `.update` to `chart.umd.min.js`, `updateElements`, `Si`, `.getContext`, `.isHorizontal`?**
   _High betweenness centrality (0.012) - this node is a cross-community bridge._
