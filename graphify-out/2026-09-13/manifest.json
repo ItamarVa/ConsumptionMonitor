@@ -12,10 +12,10 @@
     "semantic_hash": "8efd004749e73fdaf47d25ad6d36652f"
   },
   "consumption/api.py": {
-    "mtime": 1789248207.1559844,
-    "seen": 1789293584.2075372,
-    "ast_hash": "af441867a5190cbe2e0fc164d352c426",
-    "semantic_hash": "af441867a5190cbe2e0fc164d352c426"
+    "mtime": 1789294800.493844,
+    "seen": 1789294884.7857478,
+    "ast_hash": "167b3e724b207db215140f3c33c8bb18",
+    "semantic_hash": ""
   },
   "consumption/config.py": {
     "mtime": 1789248205.1162715,
@@ -48,9 +48,9 @@
     "semantic_hash": "4beb80acc355fd74f0b5fd77473d71e6"
   },
   ".cursor/memory/INDEX.md": {
-    "mtime": 1789293626.443041,
-    "seen": 1789293650.6313775,
-    "ast_hash": "ff98c033e1bf4315163df431ad53d29b",
+    "mtime": 1789294806.452131,
+    "seen": 1789294884.7859173,
+    "ast_hash": "c03ad95d516a8b56ffe7200ab092347d",
     "semantic_hash": ""
   },
   "README.md": {
@@ -144,10 +144,10 @@
     "semantic_hash": "79f222264a9445bb5c2d968eeec75d99"
   },
   "tests/test_api_contract.py": {
-    "mtime": 1789248214.1546233,
-    "seen": 1789293584.2161446,
-    "ast_hash": "81e8d5b19a14580165a51364b2e95bd0",
-    "semantic_hash": "81e8d5b19a14580165a51364b2e95bd0"
+    "mtime": 1789294800.1334019,
+    "seen": 1789294884.7858472,
+    "ast_hash": "9d71aeb63af92fd398f584f9b7cfdb86",
+    "semantic_hash": ""
   },
   "tests/test_db_readings.py": {
     "mtime": 1788992045.719342,
@@ -282,15 +282,15 @@
     "semantic_hash": "1b20d9382d23d95be07a45e210454d2e"
   },
   "consumptionmonitor/CHANGELOG.md": {
-    "mtime": 1789248296.782745,
-    "seen": 1789248356.3489077,
-    "ast_hash": "1323dc47caa638e886900e15ed115023",
+    "mtime": 1789294802.061892,
+    "seen": 1789294884.78594,
+    "ast_hash": "8a722d4fc52e1436d0a5babf6549d2e7",
     "semantic_hash": ""
   },
   "consumptionmonitor/config.yaml": {
-    "mtime": 1789248291.1632092,
-    "seen": 1789248356.3489146,
-    "ast_hash": "94c29aa30e26b8ad1c861bc831a351c7",
+    "mtime": 1789294800.339926,
+    "seen": 1789294884.7859485,
+    "ast_hash": "f8fef20977c0f5677059cce49ef35eef",
     "semantic_hash": ""
   },
   "consumptionmonitor/translations/en.yaml": {
@@ -324,9 +324,9 @@
     "semantic_hash": ""
   },
   ".cursor/memory/topics/ha-addon.md": {
-    "mtime": 1789293626.102352,
-    "seen": 1789293650.6313896,
-    "ast_hash": "eef49180d78bdf0cd6723c8ea13b1d04",
+    "mtime": 1789293781.893386,
+    "seen": 1789293862.69024,
+    "ast_hash": "a8f36e375f53fec18f7f590d893fb96e",
     "semantic_hash": ""
   },
   "consumptionmonitor/icon.png": {

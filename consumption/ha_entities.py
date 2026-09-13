@@ -101,9 +101,17 @@ def _binary_cmp(key: str, name: str) -> dict:
         "unique_id": f"{DEVICE_ID}_{key}",
         "name": name,
         "device_class": "problem",
-        "value_template": f"{{{{ value_json.{key} }}}}",
-        "payload_on": True,
-        "payload_off": False,
+        "value_template": f"{{{{ 'ON' if value_json.{key} else 'OFF' }}}}",
+    }
+
+
+def _timestamp_cmp(key: str, name: str) -> dict:
+    return {
+        "p": "sensor",
+        "unique_id": f"{DEVICE_ID}_{key}",
+        "name": name,
+        "device_class": "timestamp",
+        "value_template": f"{{{{ value_json.{key} | default('', true) }}}}",
     }
 
 
@@ -152,15 +160,13 @@ def build_discovery(conn: sqlite3.Connection, addon_version: str = "") -> dict:
                 name = f"{meter_id} {flag.replace('_', ' ')}"
                 cmps[key] = _binary_cmp(key, name)
 
-    cmps["last_reading_electricity"] = _sensor_cmp(
+    cmps["last_reading_electricity"] = _timestamp_cmp(
         "last_reading_electricity",
         "Last electricity reading",
-        device_class="timestamp",
     )
-    cmps["last_reading_water"] = _sensor_cmp(
+    cmps["last_reading_water"] = _timestamp_cmp(
         "last_reading_water",
         "Last water reading",
-        device_class="timestamp",
     )
     cmps["last_scraper_error"] = _sensor_cmp(
         "last_scraper_error",
@@ -224,5 +230,6 @@ def build_state(conn: sqlite3.Connection) -> dict:
             for flag in _ALERT_FLAGS:
                 state[f"alert_{safe}_{flag}"] = flags[flag]
 
-    state["last_scraper_error"] = _latest_scraper_error(conn)
+    err = _latest_scraper_error(conn)
+    state["last_scraper_error"] = err[:255] if err else None
     return state

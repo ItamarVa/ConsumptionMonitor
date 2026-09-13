@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.0.3
+
+- Fix CPU burn: `build_hourly_rows` uses a monotonic reading cursor and per-day
+  slices instead of rescanning the full history on every hour.
+- Import Energy statistics only when new readings arrive or the first full sync
+  is still pending; MQTT state still publishes every tick.
+- Run the HA bridge on a daemon thread with its own DB connection so scraping
+  never blocks on MQTT or WebSocket work.
+- MQTT: binary sensors use ON/OFF templates; timestamp sensors ignore empty
+  values; scraper errors truncate to 255 characters.
+- Re-publish MQTT discovery when the add-on version changes.
+- Ingress iframe: `X-Frame-Options: SAMEORIGIN` and `frame-ancestors 'self'`
+  instead of dropping security headers.
+- `recorder/import_statistics` retries with `has_mean: false` on older HA cores.
+
 ## 1.0.2
 
 - Ingress dashboard: redirect `/` to relative `ui/` so CSS/JS load from the `/ui` mount.

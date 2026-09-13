@@ -73,29 +73,41 @@ def _primary_meter(conn: sqlite3.Connection, utility: str) -> str | None:
     return row[0] if row else None
 
 
-def _register_at(rows: list[dict], field: str, moment: datetime) -> float | None:
-    best: float | None = None
-    for row in rows:
-        if _parse_utc(row["reading_time_utc"]) <= moment:
-            value = row.get(field)
-            if value is not None:
-                best = float(value)
-        else:
-            break
-    return best
+def _day_reading_slice(
+    readings: list[dict],
+    parsed_times: list[datetime],
+    day: date,
+) -> list[dict]:
+    """Readings for spread_to_hours: one before local midnight through the day."""
+    day_start = datetime(day.year, day.month, day.day, tzinfo=config.LOCAL_TZ).astimezone(UTC)
+    day_end = day_start + timedelta(days=1)
+    start = 0
+    while start < len(readings) and parsed_times[start] < day_start:
+        start += 1
+    slice_start = max(0, start - 1)
+    end = start
+    while end < len(readings) and parsed_times[end] < day_end:
+        end += 1
+    if end <= slice_start:
+        return []
+    return readings[slice_start:end]
 
 
-def metadata_for(statistic_id: str) -> dict:
+def metadata_for(statistic_id: str, *, legacy_mean: bool = True) -> dict:
     spec = SERIES[statistic_id]
-    return {
+    meta: dict[str, Any] = {
         "has_sum": True,
-        "mean_type": 0,
         "name": spec["name"],
         "source": SOURCE,
         "statistic_id": statistic_id,
         "unit_of_measurement": spec["unit"],
         "unit_class": spec["unit_class"],
     }
+    if legacy_mean:
+        meta["mean_type"] = 0
+    else:
+        meta["has_mean"] = False
+    return meta
 
 
 def build_hourly_rows(
@@ -124,31 +136,43 @@ def build_hourly_rows(
     if len(readings) < 2:
         return []
 
+    parsed_times = [_parse_utc(row["reading_time_utc"]) for row in readings]
+    reading_idx = 0
+    last_register: float | None = None
     running_sum = 0.0
     out: list[dict] = []
     day = first_date
     while day <= last_date:
+        day_readings = _day_reading_slice(readings, parsed_times, day)
+        if len(day_readings) < 2:
+            day += timedelta(days=1)
+            continue
+
         day_start = datetime(day.year, day.month, day.day, tzinfo=config.LOCAL_TZ)
-        day_end = day_start + timedelta(days=1)
-        buckets = _build_buckets(day_start, day_end)
-        hours = spread_to_hours(readings, field, day, config.LOCAL_TZ)
+        buckets = _build_buckets(day_start, day_start + timedelta(days=1))
+        hours = spread_to_hours(day_readings, field, day, config.LOCAL_TZ)
         for bucket, hour_row in zip(buckets, hours, strict=True):
+            hour_start = bucket["start"]
+            hour_end_utc = bucket["end"].astimezone(UTC)
+            while reading_idx < len(readings) and parsed_times[reading_idx] <= hour_end_utc:
+                value = readings[reading_idx].get(field)
+                if value is not None:
+                    last_register = float(value)
+                reading_idx += 1
+
             value = hour_row.get("value")
             if value is None:
                 continue
-            hour_start = bucket["start"]
             if since_utc is not None and hour_start.astimezone(UTC) < since_utc:
                 running_sum += float(value)
                 continue
             running_sum += float(value)
-            hour_end = bucket["end"]
-            state = _register_at(readings, field, hour_end.astimezone(UTC))
-            if state is None:
+            if last_register is None:
                 continue
             out.append(
                 {
                     "start": hour_start.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%S+00:00"),
-                    "state": round(state, 4),
+                    "state": round(last_register, 4),
                     "sum": round(running_sum, 4),
                 }
             )
@@ -172,6 +196,17 @@ def mark_full_sync_done(conn: sqlite3.Connection) -> None:
     db.set_state(conn, FULL_SYNC_KEY, "1")
 
 
+async def _send_chunk(ws, msg_id: int, metadata: dict, chunk: list[dict]) -> dict:
+    payload = {
+        "id": msg_id,
+        "type": "recorder/import_statistics",
+        "metadata": metadata,
+        "stats": chunk,
+    }
+    await ws.send(json.dumps(payload))
+    return json.loads(await ws.recv())
+
+
 async def import_statistics_ws(
     token: str,
     statistic_id: str,
@@ -184,7 +219,6 @@ async def import_statistics_ws(
         return
     import websockets
 
-    metadata = metadata_for(statistic_id)
     msg_id = 1
     async with websockets.connect(
         ws_url,
@@ -199,15 +233,13 @@ async def import_statistics_ws(
         if auth_result.get("type") != "auth_ok":
             raise RuntimeError(f"websocket auth failed: {auth_result}")
 
+        metadata = metadata_for(statistic_id, legacy_mean=True)
         for chunk in chunk_rows(rows):
-            payload = {
-                "id": msg_id,
-                "type": "recorder/import_statistics",
-                "metadata": metadata,
-                "stats": chunk,
-            }
-            await ws.send(json.dumps(payload))
-            result = json.loads(await ws.recv())
+            result = await _send_chunk(ws, msg_id, metadata, chunk)
             if result.get("type") == "result" and not result.get("success", True):
-                raise RuntimeError(f"import_statistics failed: {result}")
+                if "mean_type" in metadata:
+                    metadata = metadata_for(statistic_id, legacy_mean=False)
+                    result = await _send_chunk(ws, msg_id, metadata, chunk)
+                if result.get("type") == "result" and not result.get("success", True):
+                    raise RuntimeError(f"import_statistics failed: {result}")
             msg_id += 1

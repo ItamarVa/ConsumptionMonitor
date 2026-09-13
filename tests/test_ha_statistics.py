@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 import tempfile
+import time
 from contextlib import contextmanager
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -119,6 +120,41 @@ def test_all_series_defined() -> None:
         "consumptionmonitor:water",
     }
     assert set(SERIES) == expected
+
+
+def test_two_year_history_builds_quickly_with_monotonic_sum() -> None:
+    """Regression: full-history rebuild must not rescan every reading per hour."""
+    start = date(2024, 1, 1)
+    end = date(2025, 12, 31)
+    readings: list[MeterReading] = []
+    meter_data_id = 1
+    total = 0.0
+    day = start
+    while day <= end:
+        for hour in (6, 12, 18):
+            total += 1.5
+            readings.append(
+                _elec(
+                    meter_data_id,
+                    datetime(day.year, day.month, day.day, hour, tzinfo=UTC),
+                    day,
+                    total,
+                )
+            )
+            meter_data_id += 1
+        day += timedelta(days=1)
+
+    with _conn() as conn:
+        db.upsert_meter_readings(conn, readings)
+        started = time.perf_counter()
+        rows = build_hourly_rows(conn, STAT_ID)
+        elapsed = time.perf_counter() - started
+
+    assert elapsed < 1.0, f"build_hourly_rows took {elapsed:.2f}s"
+    assert rows
+    sums = [row["sum"] for row in rows]
+    assert all(sums[i] <= sums[i + 1] for i in range(len(sums) - 1))
+    assert sums[-1] > 0
 
 
 def main() -> int:

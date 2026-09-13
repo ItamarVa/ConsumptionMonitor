@@ -351,8 +351,8 @@ def test_ha_bridge_allows_iframe_embedding() -> None:
     with _test_client() as client, patch.object(config, "HA_BRIDGE", True):
         r = client.get("/ui/")
     assert r.status_code == 200, r.text
-    assert "x-frame-options" not in {k.lower() for k in r.headers}
-    assert "frame-ancestors" not in r.headers.get("content-security-policy", "")
+    assert r.headers.get("x-frame-options") == "SAMEORIGIN"
+    assert "frame-ancestors 'self'" in r.headers.get("content-security-policy", "")
 
 
 def main() -> int:

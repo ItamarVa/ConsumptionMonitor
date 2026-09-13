@@ -17,18 +17,22 @@ blue amber, transparent background.
 when `/data` has no DB.
 
 Ingress on port 8099, entry `/` (not `/ui` — that produced `//ui` and 404). When
-`HA_BRIDGE=1`, `/` serves `index.html`; `/ui` still works locally. Dashboard uses
-relative URLs under any Ingress prefix.
+`HA_BRIDGE=1`, `/` redirects to relative `ui/`; assets mount at `/ui`. Dashboard uses
+relative URLs under any Ingress prefix. Security headers: `X-Frame-Options: SAMEORIGIN`,
+`frame-ancestors 'self'`.
 
 ## Home Assistant integration
 
 - **Entities:** one MQTT device `consumptionmonitor` — registers, period totals, seven
-  `binary_sensor` alert flags per meter, diagnostics. Published via Supervisor `mqtt.publish`
-  (no direct broker credentials).
+  `binary_sensor` alert flags per meter (ON/OFF templates), diagnostics. Published via
+  Supervisor `mqtt.publish` (no direct broker credentials). Discovery re-publishes when
+  add-on version changes (`ha_mqtt_discovery_sent` stores version string).
 - **Energy dashboard:** external statistics `consumptionmonitor:electricity_import`,
   `:electricity_export`, `:water` via `recorder/import_statistics` over the Supervisor
-  WebSocket. Hourly rows use proportional spread from `hourly.py`; day/month/year totals stay
-  exact. Water unit `m³` in HA-facing output only.
+  WebSocket. Hourly rows use proportional spread from `hourly.py` with monotonic cursor;
+  import runs only on new data or pending first full sync. Bridge sync is a daemon thread
+  with its own DB connection. `mean_type` retries with `has_mean: false` on older cores.
+  Water unit `m³` in HA-facing output only.
 
 ## Windows handoff
 

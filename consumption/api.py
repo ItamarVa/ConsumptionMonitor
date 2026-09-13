@@ -74,16 +74,13 @@ async def security_headers(request: Request, call_next):
     response = await call_next(request)
     headers = _SECURITY_HEADERS
     if config.HA_BRIDGE:
-        # Ingress embeds this app in an iframe; DENY / frame-ancestors 'none' block it.
-        headers = {
-            k: v
-            for k, v in _SECURITY_HEADERS.items()
-            if k not in ("X-Frame-Options", "Content-Security-Policy")
-        }
+        # Ingress iframe is same-origin; SAMEORIGIN keeps clickjacking protection.
+        headers = dict(_SECURITY_HEADERS)
+        headers["X-Frame-Options"] = "SAMEORIGIN"
         headers["Content-Security-Policy"] = (
             "default-src 'self'; script-src 'self'; style-src 'self'; "
             "img-src 'self' data:; connect-src 'self'; base-uri 'none'; "
-            "form-action 'none'"
+            "form-action 'none'; frame-ancestors 'self'"
         )
     for key, value in headers.items():
         response.headers[key] = value

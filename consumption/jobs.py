@@ -159,14 +159,15 @@ def run_due(now: datetime | None = None) -> list[str]:
     try:
         states = db.job_states(conn)
         ran = []
+        rows_written = 0
         for job, spec in JOBS.items():
             if not spec.in_season(today) or not db.due(states.get(job), spec.every, moment):
                 continue
             if spec.covers(today, conn) is None:
                 continue
-            run_job(conn, job, today)
+            rows_written += run_job(conn, job, today)
             ran.append(job)
-        ha_bridge.sync(conn)
+        ha_bridge.sync(conn, data_changed=rows_written > 0)
         return ran
     finally:
         conn.close()
