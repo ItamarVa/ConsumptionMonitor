@@ -1,5 +1,5 @@
 name: ConsumptionMonitor
-version: "1.0.0"
+version: "1.0.1"
 slug: consumptionmonitor
 description: >-
   Household electricity and water consumption from mycitygrid.com — dashboard,
@@ -12,8 +12,7 @@ boot: auto
 init: false
 ingress: true
 ingress_port: 8099
-ingress_entry: /ui
-panel_icon: mdi:flash
+ingress_entry: /
 panel_title: Consumption
 homeassistant_api: true
 map:

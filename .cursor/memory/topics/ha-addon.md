@@ -16,7 +16,9 @@ blue amber, transparent background.
 `DB_PATH=/data/consumption.sqlite`. First start copies `/share/consumptionmonitor/consumption.sqlite`
 when `/data` has no DB.
 
-Ingress on port 8099, entry `/ui`. Dashboard uses relative URLs under any Ingress prefix.
+Ingress on port 8099, entry `/` (not `/ui` — that produced `//ui` and 404). When
+`HA_BRIDGE=1`, `/` serves `index.html`; `/ui` still works locally. Dashboard uses
+relative URLs under any Ingress prefix.
 
 ## Home Assistant integration
 

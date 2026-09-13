@@ -17,7 +17,7 @@ from typing import Annotated, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from starlette.middleware.trustedhost import TrustedHostMiddleware
-from starlette.responses import JSONResponse
+from starlette.responses import FileResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
 from . import config, db, jobs, source
@@ -77,6 +77,22 @@ async def security_headers(request: Request, call_next):
     return response
 
 
+class _NormalizePathMiddleware:
+    """Collapse duplicate slashes in the path (HA Ingress can request //ui)."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http":
+            path = scope.get("path") or ""
+            if "//" in path:
+                while "//" in path:
+                    path = path.replace("//", "/")
+                scope["path"] = path
+        await self.app(scope, receive, send)
+
+
 class _AllowedClientIPMiddleware:
     """Reject peers outside ALLOWED_CLIENT_IPS when that list is non-empty."""
 
@@ -94,6 +110,7 @@ class _AllowedClientIPMiddleware:
         await self.app(scope, receive, send)
 
 
+app.add_middleware(_NormalizePathMiddleware)
 app.add_middleware(_AllowedClientIPMiddleware)
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=config.ALLOWED_HOSTS)
 
@@ -427,7 +444,11 @@ def refresh(conn: Conn, job: str, request: Request) -> dict:
 
 
 @app.get("/")
-def index() -> dict:
+def index():
+    # ponytail: HA Ingress uses ingress_entry / and must not redirect (would escape the
+    # ingress prefix). Local Windows keeps the JSON discovery response.
+    if config.HA_BRIDGE:
+        return FileResponse(_ui_dir / "index.html")
     return {
         "docs": "/docs",
         "ui": "/ui",

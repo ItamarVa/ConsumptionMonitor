@@ -321,6 +321,32 @@ def test_allowed_client_ip_allows_listed_peer() -> None:
     assert r.status_code == 200, r.text
 
 
+def test_normalize_path_middleware_collapses_slashes() -> None:
+    seen: dict[str, str] = {}
+
+    async def inner(scope, receive, send):
+        seen["path"] = scope["path"]
+
+    middleware = api._NormalizePathMiddleware(inner)
+
+    async def run() -> None:
+        await middleware(
+            {"type": "http", "path": "//ui", "client": ("172.30.32.2", 0)},
+            lambda: None,
+            lambda _: None,
+        )
+
+    asyncio.run(run())
+    assert seen["path"] == "/ui"
+
+
+def test_ha_bridge_root_serves_dashboard() -> None:
+    with _test_client() as client, patch.object(config, "HA_BRIDGE", True):
+        r = client.get("/")
+    assert r.status_code == 200, r.text
+    assert "text/html" in r.headers.get("content-type", "")
+
+
 def main() -> int:
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for test in tests:

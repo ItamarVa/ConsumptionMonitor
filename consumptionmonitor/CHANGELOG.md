@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+- Fix Ingress 404: `ingress_entry` is `/` (not `/ui`, which produced `//ui`); dashboard
+  served at `/` when `HA_BRIDGE=1`; path middleware collapses duplicate slashes.
+- Add-on `icon.png` / `logo.png` from the dashboard favicon.
+
 ## 1.0.0
 
 Initial Home Assistant add-on release.
