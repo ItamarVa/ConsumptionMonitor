@@ -64,6 +64,8 @@ const els = {
   statusPill: $("status-pill"),
   dataTable: $("data-table"),
   tableToggle: $("table-toggle"),
+  controlsToggle: $("controls-toggle"),
+  controlsCard: document.querySelector(".controls-card"),
   downloadCsv: $("download-csv"),
   stateLoading: $("state-loading"),
   stateEmpty: $("state-empty"),
@@ -717,6 +719,10 @@ function renderChartNote() {
   if (chartData.capped) {
     notes.push(t["chart.series_cap_note"] ?? "");
   }
+  const drillable = state.granularity !== "hour";
+  if (drillable && window.matchMedia("(pointer: coarse)").matches) {
+    notes.push(t["chart.tap_hint"] ?? "");
+  }
   if (!notes.length) {
     els.chartNote.hidden = true;
     return;
@@ -980,6 +986,16 @@ function bindEvents() {
     const open = wrap.hidden;
     wrap.hidden = !open;
     els.tableToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  els.controlsToggle?.addEventListener("click", () => {
+    const card = els.controlsCard;
+    if (!card) {
+      return;
+    }
+    const open = !card.classList.contains("is-open");
+    card.classList.toggle("is-open", open);
+    els.controlsToggle.setAttribute("aria-expanded", open ? "true" : "false");
   });
 
   window.addEventListener("hashchange", () => {

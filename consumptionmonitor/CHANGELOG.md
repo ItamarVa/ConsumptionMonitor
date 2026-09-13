@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.4
+
+- Mobile dashboard: collapse date/preset/mode controls behind a "סינון וטווח"
+  button so the chart is visible without scrolling.
+- Two-tap drill on touch: first tap shows the tooltip, second tap on the same
+  bar drills down (mouse unchanged).
+- Narrow screens default to 7 days instead of 30 for day granularity.
+- Taller mobile chart, compact header/KPI/legend, horizontally scrolling
+  comparison legend.
+
 ## 1.0.3
 
 - Fix CPU burn: `build_hourly_rows` uses a monotonic reading cursor and per-day

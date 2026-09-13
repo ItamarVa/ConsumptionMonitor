@@ -5,6 +5,7 @@
  */
 
 let barClickHandler = null;
+let pendingKey = null;
 
 function cssVar(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -49,6 +50,17 @@ function barAlpha(point, granularity, estimated) {
 
 function reducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function isNarrow() {
+  return window.innerWidth <= 768;
+}
+
+function applyNarrowChartOptions(chart) {
+  const narrow = isNarrow();
+  chart.options.scales.x.ticks.font = narrow ? { size: 11 } : {};
+  chart.options.scales.x.ticks.autoSkipPadding = narrow ? 8 : undefined;
+  chart.options.datasets.bar.categoryPercentage = narrow ? 0.85 : 0.75;
 }
 
 export function createChart(canvasEl, t) {
@@ -123,14 +135,21 @@ export function createChart(canvasEl, t) {
         const el = elements[0];
         const ds = chart.data.datasets[el.datasetIndex];
         const point = ds?.$points?.[el.index];
-        if (point && point.value != null) {
-          barClickHandler({
-            seriesKey: ds.$seriesKey,
-            category: chart.$categories?.[el.index],
-            point,
-            granularity: chart.$granularity,
-          });
+        if (!point || point.value == null) {
+          return;
         }
+        const key = `${el.datasetIndex}:${el.index}`;
+        if (evt?.native?.pointerType !== "mouse" && pendingKey !== key) {
+          pendingKey = key;
+          return;
+        }
+        pendingKey = null;
+        barClickHandler({
+          seriesKey: ds.$seriesKey,
+          category: chart.$categories?.[el.index],
+          point,
+          granularity: chart.$granularity,
+        });
       },
       datasets: {
         bar: {
@@ -144,6 +163,7 @@ export function createChart(canvasEl, t) {
   });
 
   chart.$t = t;
+  applyNarrowChartOptions(chart);
   return chart;
 }
 
@@ -152,6 +172,7 @@ export function createChart(canvasEl, t) {
  * @param {{categories: string[], series: Array, granularity: string, unit: string, estimated: boolean, hiddenKeys: Set, t: object}} opts
  */
 export function renderSeries(chart, { categories, series, granularity, unit, estimated, hiddenKeys, t }) {
+  pendingKey = null;
   const datasets = series.map((s) => {
     const hidden = hiddenKeys?.has(s.key);
     const alpha = (p) => barAlpha(p, granularity, estimated);
@@ -172,6 +193,7 @@ export function renderSeries(chart, { categories, series, granularity, unit, est
   chart.$granularity = granularity;
   chart.$unit = unit;
   chart.$t = t;
+  applyNarrowChartOptions(chart);
   chart.update();
 }
 

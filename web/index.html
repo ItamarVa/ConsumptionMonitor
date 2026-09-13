@@ -31,8 +31,11 @@
   <main class="dashboard">
     <div class="dashboard__content">
       <section class="controls-card card">
+        <button type="button" id="controls-toggle" class="controls-toggle" aria-expanded="false">
+          <span data-i18n="control.filters"></span>
+        </button>
         <div class="controls-row">
-          <div class="control-group">
+          <div class="control-group control-group--primary">
             <span class="control-label" id="utility-label" data-i18n="control.utility"></span>
             <div id="utility" class="segment-group" role="group" aria-labelledby="utility-label">
               <button type="button" class="segment-btn" data-utility="electricity" data-direction="import" aria-pressed="true" data-i18n="utility.electricity_import"></button>
@@ -41,7 +44,7 @@
             </div>
           </div>
 
-          <div class="control-group">
+          <div class="control-group control-group--primary">
             <span class="control-label" id="granularity-label" data-i18n="control.granularity"></span>
             <div id="granularity" class="segment-group" role="group" aria-labelledby="granularity-label">
               <button type="button" class="segment-btn" data-granularity="hour" aria-pressed="false" data-i18n="granularity.hour"></button>

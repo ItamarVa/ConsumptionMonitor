@@ -1,5 +1,5 @@
 name: ConsumptionMonitor
-version: "1.0.3"
+version: "1.0.4"
 slug: consumptionmonitor
 description: >-
   Household electricity and water consumption from mycitygrid.com — dashboard,

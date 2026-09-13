@@ -18,10 +18,13 @@ export const PRESETS = {
   hour: ["last_day", "3d", "7d"],
 };
 
+// Phone plots fit about a week of bars; desktop keeps the month view.
+const NARROW = window.matchMedia("(max-width: 768px)").matches;
+
 export const DEFAULT_PRESET = {
   year: "all",
   month: "last_12",
-  day: "30d",
+  day: NARROW ? "7d" : "30d",
   hour: "last_day",
 };
 
@@ -130,7 +133,7 @@ export function defaultRangeFor(granularity, coverage, utility) {
     };
   }
   return {
-    start: addDays(today, -29),
+    start: addDays(today, NARROW ? -6 : -29),
     end: today,
     hourStart: "00:00",
     hourEnd: "23:00",

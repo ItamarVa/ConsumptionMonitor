@@ -20,7 +20,7 @@ Double-click `run.bat` (creates `.venv`, installs, self-checks, serves on
 once per machine. `test-connection.bat` signs in and writes `data/connection-report.txt`.
 History backfill: `python scripts/backfill-loop.py` or wait for the `backfill` job (every 6h).
 
-**Home Assistant add-on (v1.0.3):** add repo URL in HA add-on store, configure mycitygrid
+**Home Assistant add-on (v1.0.4):** add repo URL in HA add-on store, configure mycitygrid
 credentials, start add-on, sidebar opens Ingress at `/ui`. One-time DB copy:
 `copy-db-to-ha.bat` → `/share/consumptionmonitor/consumption.sqlite`. See README
 "Run on Home Assistant".
@@ -58,7 +58,7 @@ Electricity: import=consumption, export=production (solar return).
 
 ## State
 
-`v1.0.3` on `master`: Windows API + HA add-on with Ingress dashboard, one MQTT device
+`v1.0.4` on `master`: Windows API + HA add-on with Ingress dashboard, one MQTT device
 (all meter sensors and alert binary sensors), and external statistics
 (`consumptionmonitor:electricity_import|export|water`) for the Energy dashboard back to
 2024 when the SQLite file is copied. Add-on `icon.png` / `logo.png` match the `/ui` favicon
@@ -107,6 +107,8 @@ Electricity: import=consumption, export=production (solar return).
 - `build_hourly_rows` must not rescan all readings per hour; monotonic cursor + per-day
   slices. Gate statistics import on new data or pending first full sync; bridge runs on
   a daemon thread with its own DB connection.
+- Ingress mobile: collapse secondary controls behind one button; two-tap drill on touch;
+  day view defaults to 7d on narrow screens; comparison legend scrolls horizontally.
 - One MQTT device `consumptionmonitor` (retained discovery + JSON state topic); Energy
   history via `recorder/import_statistics` over the Supervisor WebSocket (`websockets`).
 - Off Windows, `config._credentials()` must fall through to env vars when DPAPI is absent;
