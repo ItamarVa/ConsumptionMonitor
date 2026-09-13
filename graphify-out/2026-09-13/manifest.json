@@ -48,9 +48,9 @@
     "semantic_hash": "4beb80acc355fd74f0b5fd77473d71e6"
   },
   ".cursor/memory/INDEX.md": {
-    "mtime": 1789249535.3614173,
-    "seen": 1789249881.6724985,
-    "ast_hash": "6ff3321c07c70312fb41ee06aaeec563",
+    "mtime": 1789293626.443041,
+    "seen": 1789293650.6313775,
+    "ast_hash": "ff98c033e1bf4315163df431ad53d29b",
     "semantic_hash": ""
   },
   "README.md": {
@@ -321,6 +321,24 @@
     "mtime": 1789248308.8612835,
     "seen": 1789248401.4113028,
     "ast_hash": "6aab007ade2c1fa838b637f2cc08176f",
+    "semantic_hash": ""
+  },
+  ".cursor/memory/topics/ha-addon.md": {
+    "mtime": 1789293626.102352,
+    "seen": 1789293650.6313896,
+    "ast_hash": "eef49180d78bdf0cd6723c8ea13b1d04",
+    "semantic_hash": ""
+  },
+  "consumptionmonitor/icon.png": {
+    "mtime": 1789293394.4929607,
+    "seen": 1789293650.6314445,
+    "ast_hash": "f466b0680aa2fff15587ef6d50971cb5",
+    "semantic_hash": ""
+  },
+  "consumptionmonitor/logo.png": {
+    "mtime": 1789293394.4929607,
+    "seen": 1789293650.6314495,
+    "ast_hash": "f466b0680aa2fff15587ef6d50971cb5",
     "semantic_hash": ""
   }
 }

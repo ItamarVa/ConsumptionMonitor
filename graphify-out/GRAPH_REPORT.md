@@ -1,16 +1,16 @@
 # Graph Report - ConsumptionMonitor  (2026-09-13)
 
 ## Corpus Check
-- 50 files · ~35,942 words
+- 50 files · ~36,168 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1421 nodes · 3674 edges · 69 communities (57 shown, 12 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 128 edges (avg confidence: 0.84)
+- 1430 nodes · 3682 edges · 75 communities (63 shown, 12 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 127 edges (avg confidence: 0.84)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a86bc9c2`
+- Built from commit: `cd501687`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -18,7 +18,7 @@
 - ha_bridge.py
 - chart.umd.min.js
 - ho
-- ha_entities.py
+- jobs.py
 - api.py
 - tn
 - app.js
@@ -30,50 +30,56 @@
 - ya
 - spread_to_hours
 - .update
-- excerpt
+- SourceError
 - controls.js
-- updateElements
+- s
 - jt
 - i
 - config.py
 - 7. Contract addendum (comparison fold wave)
 - n
-- .getProps
+- inRange
 - ro
-- s
+- So
 - Home Assistant add-on
 - source.py
-- Bt
+- .update
 - bindEvents
-- .apply
+- da
 - sn
 - api.js
-- .configure
+- u
 - parse
-- ._resolveElementOptions
-- SourceError
+- test_jobs.py
+- readings.py
 - records.py
 - test_api_contract.py
 - web/chart.js
 - .getDatasetMeta
-- o
+- Si
 - series.js
 - .getContext
 - .isHorizontal
 - connection_report.py
-- de
+- upsert_meter_readings
 - ConsumptionMonitor
 - run.sh
 - launcher-common.ps1
-- cs
-- rn
+- .buildOrUpdateControllers
+- refresh
 - .notifyPlugins
-- .add
+- connect
+- test_source_parsing.py
+- o
 - hs
-- m
+- update
 - mycitygrid.com portal recon (no credentials)
-- yn
-- 1.0.0
+- .getSortedVisibleDatasetMetas
+- ki
+- _AllowedClientIPMiddleware
+- Connection
+- date
+- Changelog
 - env.ps1
 - Vendored third-party assets
 - Hourly-Only Granularity Convention
@@ -96,70 +102,70 @@
 ## Surprising Connections (you probably didn't know these)
 - `_login()` --conceptually_related_to--> `Undocumented mycitygrid Portal Lesson`  [INFERRED]
   consumption/source.py → .cursor/memory/INDEX.md
-- `run_job()` --implements--> `Idempotent Refresh Jobs Convention`  [INFERRED]
-  consumption/jobs.py → .cursor/memory/INDEX.md
 - `portal_session()` --implements--> `Lazy Scrapling Import Lesson`  [INFERRED]
   consumption/source.py → .cursor/memory/INDEX.md
-- `_login()` --references--> `Fetching Not Implemented Status`  [EXTRACTED]
-  consumption/source.py → README.md
-- `portal_session()` --references--> `mycitygrid.com Portal`  [EXTRACTED]
-  consumption/source.py → README.md
+- `run_job()` --implements--> `Idempotent Refresh Jobs Convention`  [INFERRED]
+  consumption/jobs.py → .cursor/memory/INDEX.md
+- `_range()` --references--> `api.py as Only Trust Boundary`  [EXTRACTED]
+  consumption/api.py → .cursor/memory/INDEX.md
+- `summary()` --references--> `Endpoint Reference Table`  [EXTRACTED]
+  consumption/api.py → README.md
 
 ## Import Cycles
 - 3-file cycle: `consumption/ha_bridge.py -> consumption/ha_entities.py -> consumption/jobs.py -> consumption/ha_bridge.py`
 
-## Communities (69 total, 12 thin omitted)
+## Communities (75 total, 12 thin omitted)
 
 ### Community 0 - "ha_bridge.py"
-Cohesion: 0.09
-Nodes (44): set_state(), addon_version(), bridge_enabled(), _config_value(), energy_statistics_enabled(), import_energy_statistics(), _mqtt_publish(), publish_entities() (+36 more)
+Cohesion: 0.05
+Nodes (73): _load_env_file(), Populate os.environ from a KEY=VALUE file. Real environment variables always…, set_state(), addon_version(), bridge_enabled(), _config_value(), energy_statistics_enabled(), import_energy_statistics() (+65 more)
 
 ### Community 1 - "chart.umd.min.js"
 Cohesion: 0.04
-Nodes (27): beforeDatasetDraw(), beforeDatasetsDraw(), beforeLayout(), ea(), ga(), getMaxOverflow(), Go(), ia() (+19 more)
+Nodes (30): at(), b(), beforeUpdate(), cn(), dn(), Ee(), fe(), getMaxOverflow() (+22 more)
 
 ### Community 2 - "ho"
 Cohesion: 0.07
-Nodes (14): buildLookupTable(), _generate(), getDecimalForValue(), _getTimestampsForTable(), getValueForPixel(), ho(), initOffsets(), io() (+6 more)
+Nodes (13): buildLookupTable(), _generate(), getDecimalForValue(), _getTimestampsForTable(), getValueForPixel(), ho(), init(), initOffsets() (+5 more)
 
-### Community 3 - "ha_entities.py"
+### Community 3 - "jobs.py"
 Cohesion: 0.15
-Nodes (27): alert_flags(), _binary_cmp(), build_discovery(), build_state(), _directions(), _ha_unit(), _latest_scraper_error(), _meter_ids() (+19 more)
+Nodes (27): _advance_backfill(), _always(), _backfill(), _in_january(), Job, local_today(), loop(), _month_bounds() (+19 more)
 
 ### Community 4 - "api.py"
-Cohesion: 0.11
-Nodes (47): Conn, _AllowedClientIPMiddleware, _directions_for(), _first_stored(), health(), index(), job_status(), _latest_register() (+39 more)
+Cohesion: 0.21
+Nodes (31): Conn, Connection, _directions_for(), _first_stored(), health(), index(), _latest_register(), _meter_ids() (+23 more)
 
 ### Community 5 - "tn"
 Cohesion: 0.06
-Nodes (7): d(), Di(), es(), generateLabels(), Pn(), reset(), tn
+Nodes (3): tn, Us(), Ys()
 
 ### Community 6 - "app.js"
 Cohesion: 0.11
 Nodes (36): applyLocale(), chartData, chartWrap, coverage, crumbLabel(), els, exportCsv(), granularityLabel() (+28 more)
 
 ### Community 7 - "a"
-Cohesion: 0.15
-Nodes (17): a(), determineDataLimits(), draw(), fa(), fo(), gi(), l(), inRange() (+9 more)
+Cohesion: 0.10
+Nodes (18): a(), ai(), beforeDraw(), determineDataLimits(), draw(), fo(), getRange(), hi() (+10 more)
 
 ### Community 8 - "xt"
-Cohesion: 0.09
-Nodes (7): an(), as(), ln(), on, rs(), ts(), xt
+Cohesion: 0.10
+Nodes (6): an(), as(), on, rs(), ts(), xt
 
 ### Community 9 - "db.py"
-Cohesion: 0.05
-Nodes (99): get_conn(), connect(), daily_totals(), due(), _fetch_readings_for_meter(), _first_reading_on_or_after(), get_state(), init_schema() (+91 more)
+Cohesion: 0.15
+Nodes (36): alert_flags(), daily_totals(), due(), _fetch_readings_for_meter(), _first_reading_on_or_after(), _interval_dict(), intervals(), _last_reading_before() (+28 more)
 
 ### Community 10 - "secrets.py"
 Cohesion: 0.10
 Nodes (25): Array, _credentials(), Encrypted store first on Windows; elsewhere env vars only (HA add-on path)., _Blob, clear(), _crypt32(), _dpapi(), _input_blob() (+17 more)
 
 ### Community 11 - "test_source_session.py"
-Cohesion: 0.14
-Nodes (21): The adapter is not implemented or not configured. Not a transient failure., SourceNotReady, _login(), Scaffold Complete, Fetching Unimplemented, Fetching Not Implemented Status, _FakePortal, _FakeResponse, _FakeSession (+13 more)
+Cohesion: 0.15
+Nodes (19): _login(), Scaffold Complete, Fetching Unimplemented, Fetching Not Implemented Status, _FakePortal, _FakeResponse, _FakeSession, _raises(), Self-check for the mycitygrid adapter HTTP half: login, token refresh, reading-… (+11 more)
 
 ### Community 12 - "ya"
-Cohesion: 0.27
+Cohesion: 0.21
 Nodes (3): afterUpdate(), va(), ya
 
 ### Community 13 - "spread_to_hours"
@@ -167,28 +173,28 @@ Cohesion: 0.17
 Nodes (19): _build_buckets(), _parse_utc(), Any, date, datetime, Proportional hour-bucket spreading for cumulative meter registers. Pure math…, Distribute each consecutive register delta across the local hours it covers., spread_to_hours() (+11 more)
 
 ### Community 14 - ".update"
-Cohesion: 0.15
-Nodes (10): afterEvent(), Ba(), f(), os(), Ta(), to(), u(), update() (+2 more)
+Cohesion: 0.20
+Nodes (6): afterDraw(), afterEvent(), Ba(), Ta(), wa, za()
 
-### Community 15 - "excerpt"
-Cohesion: 0.18
-Nodes (17): _bool_value(), _optional_float(), _optional_int(), parse_reading_row(), datetime, Pure parsers for the mycitygrid meter reading log (GET meterdata). Maps portal…, Map one portal reading-log row to a MeterReading., _reading_time_utc() (+9 more)
+### Community 15 - "SourceError"
+Cohesion: 0.17
+Nodes (22): _bool_value(), _optional_float(), _optional_int(), parse_reading_row(), datetime, Pure parsers for the mycitygrid meter reading log (GET meterdata). Maps portal…, Map one portal reading-log row to a MeterReading., _reading_time_utc() (+14 more)
 
 ### Community 16 - "controls.js"
 Cohesion: 0.17
 Nodes (25): onRangeChange(), addDays(), applyPreset(), clampHourSpan(), coverageYears(), daysInclusive(), daysInMonth(), defaultRangeFor() (+17 more)
 
-### Community 17 - "updateElements"
-Cohesion: 0.14
-Nodes (15): Bn(), _calculateBarIndexPixels(), _calculateBarValuePixels(), _getAxis(), _getAxisCount(), getFirstScaleIdForIndexAxis(), getLabelAndValue(), getLabelForValue() (+7 more)
+### Community 17 - "s"
+Cohesion: 0.08
+Nodes (25): Bn(), _calculateBarIndexPixels(), _calculateBarValuePixels(), _getAxis(), _getAxisCount(), getFirstScaleIdForIndexAxis(), getLabelAndValue(), getLabelForValue() (+17 more)
 
 ### Community 18 - "jt"
 Cohesion: 0.09
-Nodes (11): color(), Ee(), It(), jt(), kt(), Le(), mt(), qt() (+3 more)
+Nodes (14): Bt(), color(), Ft(), Gt(), It(), jt(), kt(), mt() (+6 more)
 
 ### Community 19 - "i"
-Cohesion: 0.10
-Nodes (21): at(), bs(), ct(), dn(), e(), fe(), Fs(), ge() (+13 more)
+Cohesion: 0.14
+Nodes (13): bs(), ct(), Fs(), ge(), is(), ks(), ms(), ps() (+5 more)
 
 ### Community 20 - "config.py"
 Cohesion: 0.09
@@ -199,92 +205,96 @@ Cohesion: 0.09
 Nodes (23): 1. Hourly endpoint JSON, 2. The pure function, 3. CSS custom properties, 4. Locale keys and JS module exports, 5. Contract addendum (redesign wave), 6. Contract addendum (data-completeness wave), 7. Contract addendum (comparison fold wave), Breadcrumb (+15 more)
 
 ### Community 22 - "n"
-Cohesion: 0.16
-Nodes (4): fn(), gn(), n(), pi()
+Cohesion: 0.07
+Nodes (11): Be(), fn(), g(), gn(), n(), ne(), numeric(), Oe() (+3 more)
 
-### Community 23 - ".getProps"
-Cohesion: 0.16
-Nodes (15): ai(), average(), beforeDraw(), dataset(), getCenterPoint(), hi(), index(), nearest() (+7 more)
+### Community 23 - "inRange"
+Cohesion: 0.20
+Nodes (14): average(), dataset(), getCenterPoint(), index(), inRange(), nearest(), qi(), Re() (+6 more)
 
 ### Community 24 - "ro"
-Cohesion: 0.13
-Nodes (10): ao(), co(), da(), Do(), getBasePixel(), inXRange(), inYRange(), Oe() (+2 more)
+Cohesion: 0.19
+Nodes (7): ao(), co(), Do(), inXRange(), inYRange(), ro(), Y()
 
-### Community 25 - "s"
-Cohesion: 0.10
-Nodes (14): bo, et(), getRange(), H(), _i(), j(), ji(), label() (+6 more)
+### Community 25 - "So"
+Cohesion: 0.07
+Nodes (10): bo, ce(), de, dt(), en, H(), he(), j() (+2 more)
 
 ### Community 26 - "Home Assistant add-on"
 Cohesion: 0.33
 Nodes (5): Home Assistant add-on, Home Assistant integration, Packaging, Runtime, Windows handoff
 
 ### Community 27 - "source.py"
-Cohesion: 0.17
-Nodes (15): _decode(), _fetch_meter_readings(), _fetch_readings(), _Portal, _probe_page(), date, datetime, Adapter for www.mycitygrid.com - the only module that talks to the portal.… (+7 more)
+Cohesion: 0.18
+Nodes (14): RuntimeError, The adapter is not implemented or not configured. Not a transient failure., SourceNotReady, _decode(), _fetch_meter_readings(), _fetch_readings(), _Portal, _probe_page() (+6 more)
 
-### Community 28 - "Bt"
-Cohesion: 0.47
-Nodes (5): Bt(), Ft(), Gt(), vt(), zt()
+### Community 28 - ".update"
+Cohesion: 0.13
+Nodes (3): d(), Di(), Pn()
 
 ### Community 29 - "bindEvents"
 Cohesion: 0.16
 Nodes (20): applyHash(), bindEvents(), buttonMatchesUtility(), drillDown(), handleBarClick(), init(), initTheme(), parseHash() (+12 more)
 
-### Community 30 - ".apply"
-Cohesion: 0.13
-Nodes (8): ca, dt(), ha(), K(), la(), li(), tt(), xa()
+### Community 30 - "da"
+Cohesion: 0.14
+Nodes (16): beforeDatasetDraw(), beforeDatasetsDraw(), ca, da(), ea(), fa(), ga(), getBasePixel() (+8 more)
 
 ### Community 32 - "api.js"
 Cohesion: 0.22
 Nodes (16): addDaysIso(), API_ROOT, ApiError, daysBetween(), fetchHealth(), fetchHourlyRange(), fetchLocale(), fetchSeries() (+8 more)
 
-### Community 33 - ".configure"
-Cohesion: 0.11
-Nodes (12): addBox(), b(), beforeUpdate(), cn(), configure(), hn(), init(), initialize() (+4 more)
+### Community 33 - "u"
+Cohesion: 0.21
+Nodes (5): addBox(), configure(), reset(), start(), u()
 
 ### Community 34 - "parse"
 Cohesion: 0.14
 Nodes (8): buildTicks(), ii(), mo(), parse(), parseArrayData(), parsePrimitiveData(), po(), Vn()
 
-### Community 36 - "SourceError"
-Cohesion: 0.12
-Nodes (27): _buckets(), _exists_locally(), _hour_of_day(), _hour_of_timestamp(), _label(), _number(), parse_hourly(), parse_meters() (+19 more)
+### Community 35 - "test_jobs.py"
+Cohesion: 0.21
+Nodes (19): get_state(), Exception, _conn(), _fake_source(), date, datetime, Offline self-checks for the refresh schedule and job bookkeeping. Uses a…, Stand in for the portal: one reading per utility when start falls in those… (+11 more)
+
+### Community 36 - "readings.py"
+Cohesion: 0.21
+Nodes (15): _buckets(), _exists_locally(), _hour_of_day(), _hour_of_timestamp(), _label(), parse_hourly(), date, datetime (+7 more)
 
 ### Community 37 - "records.py"
 Cohesion: 0.25
 Nodes (15): alert_flags(), coverage(), daily_totals(), fetch_readings(), IntervalReading, intervals(), latest_reading(), meter_readings() (+7 more)
 
 ### Community 38 - "test_api_contract.py"
-Cohesion: 0.14
-Nodes (21): _load_env_file(), Populate os.environ from a KEY=VALUE file. Real environment variables always…, Path, Offline contract checks for the HTTP API against the records.py storage…, test_alerts_per_meter(), test_allowed_client_ip_allows_listed_peer(), test_allowed_client_ip_rejects_unknown_peer(), test_allowed_client_ip_unset_allows_testclient() (+13 more)
+Cohesion: 0.12
+Nodes (22): _NormalizePathMiddleware, Collapse duplicate slashes in the path (HA Ingress can request //ui)., Offline contract checks for the HTTP API against the records.py storage…, test_alerts_per_meter(), test_allowed_client_ip_allows_listed_peer(), test_allowed_client_ip_rejects_unknown_peer(), test_allowed_client_ip_unset_allows_testclient(), test_bad_utility_returns_422() (+14 more)
 
 ### Community 39 - "web/chart.js"
 Cohesion: 0.23
 Nodes (12): paintChart(), toggleTheme(), barAlpha(), createChart(), cssVar(), hexToRgba(), numberFmt, onBarClick() (+4 more)
 
 ### Community 40 - ".getDatasetMeta"
-Cohesion: 0.20
-Nodes (4): aa(), afterDatasetsUpdate(), ko(), onClick()
+Cohesion: 0.22
+Nodes (3): aa(), afterDatasetsUpdate(), onClick()
 
-### Community 41 - "o"
-Cohesion: 0.16
-Nodes (12): Ie(), ki(), lo(), o(), Oi(), ra(), Si(), wi() (+4 more)
+### Community 41 - "Si"
+Cohesion: 0.21
+Nodes (5): lo(), Oi(), Si(), wi(), x()
 
 ### Community 42 - "series.js"
 Cohesion: 0.25
 Nodes (13): buildChartData(), buildHourCategories(), buildRunningChart(), capSeries(), foldForComparison(), formatDayLabel(), formatMonthCategory(), formatMonthSeriesLabel() (+5 more)
 
 ### Community 43 - ".getContext"
-Cohesion: 0.16
-Nodes (6): Ae(), Bi(), Ci(), Fi(), getPixelForValue(), pt()
+Cohesion: 0.27
+Nodes (4): Bi(), Ci(), cs, Fi()
 
 ### Community 45 - "connection_report.py"
 Cohesion: 0.24
 Nodes (12): parse_reading_page(), Return the `items` list from one paginated reading-log response., Blank the value of every credential-looking JSON key in `text`., redact(), _dump(), main(), _mask(), _meters_section() (+4 more)
 
-### Community 46 - "de"
-Cohesion: 0.31
-Nodes (3): ce(), de, he()
+### Community 46 - "upsert_meter_readings"
+Cohesion: 0.38
+Nodes (14): upsert_meter_readings(), _conn(), _elec(), date, datetime, Offline self-checks for raw meter reading storage and exact register deltas., A day with no reading past its closing midnight still reports what has accrued., Portal sometimes emits a new meter_data_id for an unchanged reading_time_utc. (+6 more)
 
 ### Community 47 - "ConsumptionMonitor"
 Cohesion: 0.17
@@ -298,43 +308,63 @@ Nodes (11): ADDON_VERSION, ALLOWED_CLIENT_IPS, ALLOWED_HOSTS, DB_PATH, HA_BRIDGE
 Cohesion: 0.32
 Nodes (10): Exit-WithError(), Format-ExitCode(), Get-ConsumptionApiProcessIds(), Get-ProjectRootPath(), Stop-PreviousConsumptionSessions(), Test-IsConsumptionApiProcess(), Test-TcpPort(), Wait-ApiReady() (+2 more)
 
-### Community 55 - ".add"
-Cohesion: 0.20
-Nodes (5): ei(), en, je(), qe(), ti()
+### Community 50 - ".buildOrUpdateControllers"
+Cohesion: 0.19
+Nodes (4): addElements(), kn(), ln(), qn()
 
-### Community 57 - "m"
-Cohesion: 0.24
-Nodes (8): eo(), g(), g(), m(), p(), parseObjectData(), updateRangeFromParsed(), v()
+### Community 51 - "refresh"
+Cohesion: 0.18
+Nodes (12): job_status(), Job names and ranges come from jobs.JOBS (recent, recent_week, previous_year,…, Force one job to run now, for testing a freshly implemented source adapter., refresh(), _reject_cross_site_refresh(), security_headers(), job_states(), middleware (+4 more)
+
+### Community 53 - "connect"
+Cohesion: 0.22
+Nodes (10): get_conn(), lifespan(), connect(), init_schema(), Path, Create tables if this file has not been initialized in this process., FastAPI, log() (+2 more)
+
+### Community 54 - "test_source_parsing.py"
+Cohesion: 0.31
+Nodes (6): parse_meters(), Map utility -> meter ids from a `user/info` body. An empty list for a utility…, _raises(), Self-check for user/info meter discovery and redaction helpers (offline only).…, test_error_messages_carry_a_short_redacted_excerpt(), test_meter_discovery()
+
+### Community 55 - "o"
+Cohesion: 0.29
+Nodes (11): e(), ei(), gi(), je(), mi(), o(), qe(), ti() (+3 more)
+
+### Community 57 - "update"
+Cohesion: 0.15
+Nodes (18): beforeLayout(), eo(), et(), f(), Go(), g(), ko(), m() (+10 more)
 
 ### Community 58 - "mycitygrid.com portal recon (no credentials)"
 Cohesion: 0.29
 Nodes (6): Best guess at the consumption endpoints, Best guess at the login flow, Dead ends, mycitygrid.com portal recon (no credentials), Unknowns that only credentials can answer, What we know
 
-### Community 63 - "yn"
-Cohesion: 0.17
-Nodes (4): Be(), ne(), numeric(), yn()
+### Community 59 - ".getSortedVisibleDatasetMetas"
+Cohesion: 0.22
+Nodes (4): es(), generateLabels(), Ie(), Ni()
 
-### Community 65 - "1.0.0"
-Cohesion: 0.50
-Nodes (3): 1.0.0, Changelog, Release process
+### Community 60 - "ki"
+Cohesion: 0.40
+Nodes (3): ki(), Qs(), zs()
+
+### Community 65 - "Changelog"
+Cohesion: 0.40
+Nodes (4): 1.0.0, 1.0.1, Changelog, Release process
 
 ### Community 66 - "env.ps1"
 Cohesion: 1.00
 Nodes (3): Initialize-Venv(), Show-Phase(), Wait-WithProgress()
 
 ## Knowledge Gaps
-- **82 isolated node(s):** `Packaging`, `Runtime`, `Home Assistant integration`, `Windows handoff`, `IntervalReading` (+77 more)
+- **83 isolated node(s):** `Packaging`, `Runtime`, `Home Assistant integration`, `Windows handoff`, `1.0.1` (+78 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **12 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `tn` connect `tn` to `chart.umd.min.js`, `ho`, `a`, `.update`, `updateElements`, `i`, `.getProps`, `ro`, `s`, `sn`, `.configure`, `parse`, `.getDatasetMeta`, `o`, `.getContext`, `.isHorizontal`, `.notifyPlugins`, `.add`, `yn`?**
-  _High betweenness centrality (0.024) - this node is a cross-community bridge._
-- **Why does `n()` connect `n` to `chart.umd.min.js`, `parse`, `ho`, `._resolveElementOptions`, `tn`, `a`, `.getDatasetMeta`, `o`, `xt`, `.isHorizontal`, `.update`, `i`, `rn`, `ro`, `m`, `sn`, `.apply`, `yn`?**
-  _High betweenness centrality (0.015) - this node is a cross-community bridge._
-- **Why does `xt` connect `xt` to `chart.umd.min.js`, `jt`, `Bt`, `.notifyPlugins`?**
+- **Why does `tn` connect `tn` to `chart.umd.min.js`, `ho`, `a`, `s`, `i`, `n`, `inRange`, `So`, `.update`, `sn`, `u`, `parse`, `.getDatasetMeta`, `Si`, `.getContext`, `.isHorizontal`, `.buildOrUpdateControllers`, `.notifyPlugins`, `.getSortedVisibleDatasetMetas`, `ki`?**
+  _High betweenness centrality (0.047) - this node is a cross-community bridge._
+- **Why does `n()` connect `n` to `chart.umd.min.js`, `parse`, `ho`, `u`, `tn`, `a`, `.getDatasetMeta`, `xt`, `Si`, `ki`, `.update`, `.buildOrUpdateControllers`, `i`, `o`, `ro`, `.update`, `da`?**
+  _High betweenness centrality (0.019) - this node is a cross-community bridge._
+- **Why does `bo` connect `So` to `chart.umd.min.js`, `a`?**
   _High betweenness centrality (0.013) - this node is a cross-community bridge._
 - **Are the 13 inferred relationships involving `s()` (e.g. with `beforeUpdate()` and `bs()`) actually correct?**
   _`s()` has 13 INFERRED edges - model-reasoned connections that need verification._
@@ -343,4 +373,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 5 inferred relationships involving `SourceError` (e.g. with `_Portal` and `test_malformed_row_raises_with_excerpt()`) actually correct?**
   _`SourceError` has 5 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Packaging`, `Runtime`, `Home Assistant integration` to the rest of the system?**
-  _82 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _83 weakly-connected nodes found - possible documentation gaps or missing edges._
