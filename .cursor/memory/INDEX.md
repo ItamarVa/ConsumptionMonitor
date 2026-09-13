@@ -101,8 +101,9 @@ Electricity: import=consumption, export=production (solar return).
   (playwright/patchright have no musllinux builds). Use `base-debian:trixie` + `python3`.
 - Ingress serves under `/api/hassio_ingress/<token>/`; `web/index.html` and `web/api.js`
   must use relative URLs (`import.meta.url` for API root), not root-absolute paths.
-- `ingress_entry: /ui` makes HA request `//ui` (404). Use `ingress_entry: /` and serve
-  `index.html` at `/` when `HA_BRIDGE=1`; keep a path middleware for duplicate slashes.
+- `ingress_entry: /ui` makes HA request `//ui` (404). Use `ingress_entry: /`, redirect
+  to relative `ui/` (assets mount at `/ui`), and drop `X-Frame-Options` / `frame-ancestors`
+  when `HA_BRIDGE=1` so Ingress can iframe the dashboard.
 - One MQTT device `consumptionmonitor` (retained discovery + JSON state topic); Energy
   history via `recorder/import_statistics` over the Supervisor WebSocket (`websockets`).
 - Off Windows, `config._credentials()` must fall through to env vars when DPAPI is absent;

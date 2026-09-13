@@ -340,11 +340,19 @@ def test_normalize_path_middleware_collapses_slashes() -> None:
     assert seen["path"] == "/ui"
 
 
-def test_ha_bridge_root_serves_dashboard() -> None:
+def test_ha_bridge_root_redirects_to_ui() -> None:
     with _test_client() as client, patch.object(config, "HA_BRIDGE", True):
-        r = client.get("/")
+        r = client.get("/", follow_redirects=False)
+    assert r.status_code == 307, r.text
+    assert r.headers.get("location") == "ui/"
+
+
+def test_ha_bridge_allows_iframe_embedding() -> None:
+    with _test_client() as client, patch.object(config, "HA_BRIDGE", True):
+        r = client.get("/ui/")
     assert r.status_code == 200, r.text
-    assert "text/html" in r.headers.get("content-type", "")
+    assert "x-frame-options" not in {k.lower() for k in r.headers}
+    assert "frame-ancestors" not in r.headers.get("content-security-policy", "")
 
 
 def main() -> int:

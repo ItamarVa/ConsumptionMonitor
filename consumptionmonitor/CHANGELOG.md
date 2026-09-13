@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2
+
+- Ingress dashboard: redirect `/` to relative `ui/` so CSS/JS load from the `/ui` mount.
+- Allow iframe embedding when `HA_BRIDGE=1` (drop `X-Frame-Options: DENY` and
+  `frame-ancestors 'none'`, which blocked the HA sidebar panel).
+
 ## 1.0.1
 
 - Fix Ingress 404: `ingress_entry` is `/` (not `/ui`, which produced `//ui`); dashboard

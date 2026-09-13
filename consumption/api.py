@@ -17,7 +17,7 @@ from typing import Annotated, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from starlette.middleware.trustedhost import TrustedHostMiddleware
-from starlette.responses import FileResponse, JSONResponse
+from starlette.responses import JSONResponse, RedirectResponse
 from starlette.staticfiles import StaticFiles
 
 from . import config, db, jobs, source
@@ -72,7 +72,20 @@ _SECURITY_HEADERS = {
 @app.middleware("http")
 async def security_headers(request: Request, call_next):
     response = await call_next(request)
-    for key, value in _SECURITY_HEADERS.items():
+    headers = _SECURITY_HEADERS
+    if config.HA_BRIDGE:
+        # Ingress embeds this app in an iframe; DENY / frame-ancestors 'none' block it.
+        headers = {
+            k: v
+            for k, v in _SECURITY_HEADERS.items()
+            if k not in ("X-Frame-Options", "Content-Security-Policy")
+        }
+        headers["Content-Security-Policy"] = (
+            "default-src 'self'; script-src 'self'; style-src 'self'; "
+            "img-src 'self' data:; connect-src 'self'; base-uri 'none'; "
+            "form-action 'none'"
+        )
+    for key, value in headers.items():
         response.headers[key] = value
     return response
 
@@ -445,10 +458,10 @@ def refresh(conn: Conn, job: str, request: Request) -> dict:
 
 @app.get("/")
 def index():
-    # ponytail: HA Ingress uses ingress_entry / and must not redirect (would escape the
-    # ingress prefix). Local Windows keeps the JSON discovery response.
+    # ponytail: relative redirect only — absolute /ui would escape the ingress prefix.
+    # Static assets live under the /ui mount, not at /.
     if config.HA_BRIDGE:
-        return FileResponse(_ui_dir / "index.html")
+        return RedirectResponse(url="ui/", status_code=307)
     return {
         "docs": "/docs",
         "ui": "/ui",
