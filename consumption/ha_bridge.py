@@ -1,8 +1,9 @@
-"""Orchestrates Home Assistant entity publish and statistics import after refresh.
+"""Orchestrates Home Assistant entity publish and water statistics import after refresh.
 
 MQTT discovery and state go through the Supervisor mqtt.publish proxy (httpx).
-Statistics use recorder/import_statistics on the Supervisor WebSocket proxy.
-Active only when HA_BRIDGE is enabled; statistics honor ENERGY_STATISTICS.
+Electricity Energy-dashboard history comes from MQTT register sensors; only water
+uses recorder/import_statistics on the Supervisor WebSocket proxy. Active only when
+HA_BRIDGE is enabled; water statistics honor ENERGY_STATISTICS.
 Depends on ha_entities.py, ha_statistics.py, config.py, db.py.
 """
 
@@ -93,7 +94,7 @@ def publish_entities(conn: sqlite3.Connection, token: str) -> None:
     _mqtt_publish(token, STATE_TOPIC, build_state(conn), retain=True)
 
 
-async def import_energy_statistics(conn: sqlite3.Connection, token: str) -> None:
+async def import_water_statistics(conn: sqlite3.Connection, token: str) -> None:
     since = refresh_since(conn)
     full_sync = since is None
     for statistic_id in SERIES:
@@ -114,7 +115,7 @@ async def sync_async(conn: sqlite3.Connection, *, data_changed: bool = False) ->
         publish_entities(conn, token)
         should_import = data_changed or db.get_state(conn, FULL_SYNC_KEY) != "1"
         if energy_statistics_enabled() and should_import:
-            await import_energy_statistics(conn, token)
+            await import_water_statistics(conn, token)
     except Exception:  # noqa: BLE001 - bridge must never break the scheduler
         traceback.print_exc()
 

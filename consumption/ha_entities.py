@@ -1,9 +1,10 @@
 """Home Assistant MQTT device discovery and state payloads for ConsumptionMonitor.
 
 Builds one retained device-discovery document and a single JSON state object that
-feeds every entity via value_template. Register sensors deliberately omit
-state_class so the recorder does not compile them; the Energy dashboard uses
-external statistics from ha_statistics instead. Depends on db.py and jobs.py.
+feeds every entity via value_template. Electricity register sensors use
+state_class total_increasing so the recorder compiles Energy-dashboard statistics
+(including manual/static cost). Water history still uses external statistics from
+ha_statistics. Depends on db.py, jobs.py, and config.py.
 """
 
 from __future__ import annotations
@@ -54,10 +55,37 @@ def _register_value(latest: dict | None, utility: str, direction: str) -> float 
     if not latest:
         return None
     if utility == "water":
-        return latest.get("total_water_data")
-    if direction == "export":
-        return latest.get("total_export_kwh")
-    return latest.get("total_import_kwh")
+        raw = latest.get("total_water_data")
+    elif direction == "export":
+        raw = latest.get("total_export_kwh")
+    else:
+        raw = latest.get("total_import_kwh")
+    if raw is None:
+        return None
+    return float(raw)
+
+
+def _recent_job_failed(states: dict[str, dict]) -> bool:
+    """True when the latest ``recent`` scrape attempt did not succeed."""
+    recent = states.get("recent") or {}
+    last_run = recent.get("last_run_utc")
+    last_ok = recent.get("last_ok_utc")
+    if not last_run:
+        return False
+    if not last_ok:
+        return bool(recent.get("last_error"))
+    return last_run > last_ok
+
+
+def _electricity_registers_available(conn: sqlite3.Connection) -> bool:
+    """Registers are unavailable when the upstream scrape failed or no reading exists."""
+    states = db.job_states(conn)
+    if _recent_job_failed(states):
+        return False
+    meters = _meter_ids(conn, "electricity")
+    if not meters:
+        return False
+    return db.latest_reading(conn, meters[0]) is not None
 
 
 def _period_total(
@@ -81,6 +109,8 @@ def _sensor_cmp(
     *,
     unit: str | None = None,
     device_class: str | None = None,
+    state_class: str | None = None,
+    suggested_display_precision: int | None = None,
 ) -> dict:
     cmp: dict = {
         "p": "sensor",
@@ -92,6 +122,10 @@ def _sensor_cmp(
         cmp["unit_of_measurement"] = unit
     if device_class:
         cmp["device_class"] = device_class
+    if state_class:
+        cmp["state_class"] = state_class
+    if suggested_display_precision is not None:
+        cmp["suggested_display_precision"] = suggested_display_precision
     return cmp
 
 
@@ -123,12 +157,16 @@ def build_discovery(conn: sqlite3.Connection, addon_version: str = "") -> dict:
             "Electricity import register",
             unit="kWh",
             device_class="energy",
+            state_class="total_increasing",
+            suggested_display_precision=3,
         ),
         "elec_export_register": _sensor_cmp(
             "elec_export_register",
             "Electricity export register",
             unit="kWh",
             device_class="energy",
+            state_class="total_increasing",
+            suggested_display_precision=3,
         ),
         "water_register": _sensor_cmp(
             "water_register",
@@ -197,6 +235,7 @@ def build_state(conn: sqlite3.Connection) -> dict:
     cov = db.coverage(conn)
     state: dict = {}
 
+    elec_ok = _electricity_registers_available(conn)
     for utility in UTILITIES:
         meters = _meter_ids(conn, utility)
         latest = db.latest_reading(conn, meters[0]) if meters else None
@@ -206,9 +245,9 @@ def build_state(conn: sqlite3.Connection) -> dict:
             if prefix == "water":
                 state["water_register"] = reg
             elif direction == "import":
-                state["elec_import_register"] = reg
+                state["elec_import_register"] = reg if elec_ok else None
             else:
-                state["elec_export_register"] = reg
+                state["elec_export_register"] = reg if elec_ok else None
             for period_key, start in (
                 ("today", today),
                 ("this_month", month_start),

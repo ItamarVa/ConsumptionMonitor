@@ -61,24 +61,23 @@ pasting automations below.
 
 ## Energy dashboard
 
-The live register entities are **not** used for Energy — that would mis-place consumption
-into the hour values arrive (~2 h late). Instead, the add-on imports **external statistics**
-with correct hourly attribution (proportional spread inside each reading gap; day/month/year
-totals stay exact).
+Electricity uses the live MQTT register sensors (`state_class: total_increasing`) so the
+recorder builds Energy statistics and manual/static cost tracking works. Water history still
+comes from **external statistics** with proportional hourly spread inside each reading gap.
 
-1. Wait for the first statistics import to finish (check the add-on log; full history is
-   ~24k hours per series and may take several minutes).
+1. Wait for the add-on to publish MQTT discovery (restart once after upgrading).
 2. **Settings → Dashboards → Energy → Configure**.
 3. Add consumption sources:
-   - **Grid consumption** → statistic `consumptionmonitor:electricity_import` (kWh)
-   - **Return to grid** → statistic `consumptionmonitor:electricity_export` (kWh)
-   - **Water** → statistic `consumptionmonitor:water` (m³)
-4. Save. Charts should reach back to 2024 if you adopted the existing SQLite file.
+   - **Grid consumption** → entity `sensor.consumptionmonitor_elec_import_register`
+   - **Return to grid** → entity `sensor.consumptionmonitor_elec_export_register`
+   - **Water** → statistic `consumptionmonitor:water` (m³) after the first statistics import
+4. Save. Electricity charts grow from when the entity is added; water can reach back to 2024
+   if you adopted the existing SQLite file.
 
-To verify: **Developer tools → Statistics**, search `consumptionmonitor:`.
+To verify water statistics: **Developer tools → Statistics**, search `consumptionmonitor:water`.
 
-Disable **Import Energy dashboard statistics** in add-on configuration if import fails; the
-Ingress dashboard and MQTT device continue to work.
+Disable **Import Energy dashboard statistics** in add-on configuration if water import fails;
+electricity entities and the Ingress dashboard continue to work.
 
 ## Automations
 

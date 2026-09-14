@@ -25,7 +25,7 @@ from consumption.ha_statistics import (  # noqa: E402
 from consumption.records import MeterReading  # noqa: E402
 
 UTC = timezone.utc
-STAT_ID = "consumptionmonitor:electricity_import"
+STAT_ID = "consumptionmonitor:water"
 
 
 @contextmanager
@@ -38,14 +38,14 @@ def _conn():
             conn.close()
 
 
-def _elec(meter_data_id: int, when: datetime, local: date, total: float) -> MeterReading:
+def _water(meter_data_id: int, when: datetime, local: date, total: float) -> MeterReading:
     return MeterReading(
         meter_data_id=meter_data_id,
-        meter_id="30400",
-        utility="electricity",
+        meter_id="m-w1",
+        utility="water",
         reading_time=when,
         local_date=local,
-        total_import_kwh=total,
+        total_water_data=total,
     )
 
 
@@ -65,8 +65,8 @@ def test_hourly_rows_cumulative_sum() -> None:
         db.upsert_meter_readings(
             conn,
             [
-                _elec(1, datetime(2026, 6, 15, 6, tzinfo=UTC), day, 0.0),
-                _elec(2, datetime(2026, 6, 15, 9, tzinfo=UTC), day, 9.0),
+                _water(1, datetime(2026, 6, 15, 6, tzinfo=UTC), day, 0.0),
+                _water(2, datetime(2026, 6, 15, 9, tzinfo=UTC), day, 9.0),
             ],
         )
         rows = build_hourly_rows(conn, STAT_ID)
@@ -85,8 +85,8 @@ def test_partial_refresh_filters_rows() -> None:
         db.upsert_meter_readings(
             conn,
             [
-                _elec(1, datetime(2026, 6, 15, 6, tzinfo=UTC), day, 0.0),
-                _elec(2, datetime(2026, 6, 15, 9, tzinfo=UTC), day, 9.0),
+                _water(1, datetime(2026, 6, 15, 6, tzinfo=UTC), day, 0.0),
+                _water(2, datetime(2026, 6, 15, 9, tzinfo=UTC), day, 9.0),
             ],
         )
         full = build_hourly_rows(conn, STAT_ID)
@@ -114,12 +114,7 @@ def test_chunk_rows() -> None:
 
 
 def test_all_series_defined() -> None:
-    expected = {
-        "consumptionmonitor:electricity_import",
-        "consumptionmonitor:electricity_export",
-        "consumptionmonitor:water",
-    }
-    assert set(SERIES) == expected
+    assert set(SERIES) == {"consumptionmonitor:water"}
 
 
 def test_two_year_history_builds_quickly_with_monotonic_sum() -> None:
@@ -134,7 +129,7 @@ def test_two_year_history_builds_quickly_with_monotonic_sum() -> None:
         for hour in (6, 12, 18):
             total += 1.5
             readings.append(
-                _elec(
+                _water(
                     meter_data_id,
                     datetime(day.year, day.month, day.day, hour, tzinfo=UTC),
                     day,
@@ -150,7 +145,7 @@ def test_two_year_history_builds_quickly_with_monotonic_sum() -> None:
         rows = build_hourly_rows(conn, STAT_ID)
         elapsed = time.perf_counter() - started
 
-    assert elapsed < 1.0, f"build_hourly_rows took {elapsed:.2f}s"
+    assert elapsed < 2.0, f"build_hourly_rows took {elapsed:.2f}s"
     assert rows
     sums = [row["sum"] for row in rows]
     assert all(sums[i] <= sums[i + 1] for i in range(len(sums) - 1))

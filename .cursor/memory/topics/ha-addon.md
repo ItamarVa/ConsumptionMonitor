@@ -27,8 +27,9 @@ relative URLs under any Ingress prefix. Security headers: `X-Frame-Options: SAME
   `binary_sensor` alert flags per meter (ON/OFF templates), diagnostics. Published via
   Supervisor `mqtt.publish` (no direct broker credentials). Discovery re-publishes when
   add-on version changes (`ha_mqtt_discovery_sent` stores version string).
-- **Energy dashboard:** external statistics `consumptionmonitor:electricity_import`,
-  `:electricity_export`, `:water` via `recorder/import_statistics` over the Supervisor
+- **Energy dashboard:** electricity register MQTT sensors (`state_class: total_increasing`,
+  recorder statistics for cost tracking). Water only: external statistic
+  `consumptionmonitor:water` via `recorder/import_statistics` over the Supervisor
   WebSocket. Hourly rows use proportional spread from `hourly.py` with monotonic cursor;
   import runs only on new data or pending first full sync. Bridge sync is a daemon thread
   with its own DB connection. `mean_type` retries with `has_mean: false` on older cores.

@@ -59,9 +59,9 @@ Electricity: import=consumption, export=production (solar return).
 ## State
 
 `v1.0.4` on `master`: Windows API + HA add-on with Ingress dashboard, one MQTT device
-(all meter sensors and alert binary sensors), and external statistics
-(`consumptionmonitor:electricity_import|export|water`) for the Energy dashboard back to
-2024 when the SQLite file is copied. Add-on `icon.png` / `logo.png` match the `/ui` favicon
+(all meter sensors and alert binary sensors). Electricity Energy dashboard uses MQTT
+register sensors (`total_increasing`); water history uses external statistics
+(`consumptionmonitor:water`) back to 2024 when the SQLite file is copied. Add-on `icon.png` / `logo.png` match the `/ui` favicon
 (three bars: blue, blue, amber). Remote: `https://github.com/ItamarVa/ConsumptionMonitor.git`.
 
 ## Lessons

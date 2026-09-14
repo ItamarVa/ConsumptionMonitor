@@ -66,7 +66,9 @@ def test_discovery_contract() -> None:
     assert DISCOVERY_TOPIC == "homeassistant/device/consumptionmonitor/config"
     cmps = payload["cmps"]
     assert cmps["elec_import_register"]["device_class"] == "energy"
-    assert cmps["elec_import_register"].get("state_class") is None
+    assert cmps["elec_import_register"]["state_class"] == "total_increasing"
+    assert cmps["elec_import_register"]["suggested_display_precision"] == 3
+    assert cmps["elec_export_register"]["state_class"] == "total_increasing"
     assert cmps["water_register"]["unit_of_measurement"] == "m³"
     assert cmps["water_register"]["device_class"] == "water"
     assert "elec_import_today" in cmps
@@ -137,6 +139,27 @@ def test_state_registers_and_period_totals() -> None:
     assert state["water_today"] == 1.5
     assert state["last_reading_electricity"] is not None
     assert state["last_reading_water"] is not None
+
+
+def test_state_registers_unavailable_when_recent_job_failed() -> None:
+    today = jobs.local_today()
+    with _conn() as conn:
+        db.upsert_meter_readings(
+            conn,
+            [
+                _reading(
+                    1,
+                    datetime(today.year, today.month, today.day, 6, tzinfo=UTC),
+                    today,
+                    import_kwh=100.0,
+                    export_kwh=5.0,
+                )
+            ],
+        )
+        db.record_job(conn, "recent", error="portal down")
+        state = build_state(conn)
+    assert state["elec_import_register"] is None
+    assert state["elec_export_register"] is None
 
 
 def test_state_reflects_alert_flags() -> None:

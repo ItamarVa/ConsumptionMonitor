@@ -1,9 +1,10 @@
-"""Hourly external statistics for the Home Assistant Energy dashboard.
+"""Hourly external statistics for Home Assistant water history.
 
-Spreads register deltas across local hours via hourly.spread_to_hours, then
-builds recorder/import_statistics rows with cumulative sum and end-of-hour
-register state. First sync uploads full history in chunks; later syncs only
-re-send the last 48 hours (same start overwrites). Depends on db.py, hourly.py.
+Electricity import/export use MQTT register sensors (state_class total_increasing)
+so the recorder builds Energy statistics without duplicating data here. Water still
+uses proportional hourly spread via hourly.spread_to_hours and
+recorder/import_statistics. First sync uploads full history in chunks; later syncs
+only re-send the last 48 hours (same start overwrites). Depends on db.py, hourly.py.
 """
 
 from __future__ import annotations
@@ -24,22 +25,6 @@ CHUNK_SIZE = 2000
 WS_URL = "ws://supervisor/core/websocket"
 
 SERIES: dict[str, dict[str, str]] = {
-    "consumptionmonitor:electricity_import": {
-        "utility": "electricity",
-        "direction": "import",
-        "field": "total_import_kwh",
-        "unit": "kWh",
-        "unit_class": "energy",
-        "name": "Electricity import",
-    },
-    "consumptionmonitor:electricity_export": {
-        "utility": "electricity",
-        "direction": "export",
-        "field": "total_export_kwh",
-        "unit": "kWh",
-        "unit_class": "energy",
-        "name": "Electricity export",
-    },
     "consumptionmonitor:water": {
         "utility": "water",
         "direction": "water",
