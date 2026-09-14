@@ -20,7 +20,7 @@ Double-click `run.bat` (creates `.venv`, installs, self-checks, serves on
 once per machine. `test-connection.bat` signs in and writes `data/connection-report.txt`.
 History backfill: `python scripts/backfill-loop.py` or wait for the `backfill` job (every 6h).
 
-**Home Assistant add-on (v1.0.4):** add repo URL in HA add-on store, configure mycitygrid
+**Home Assistant add-on (v1.0.5):** add repo URL in HA add-on store, configure mycitygrid
 credentials, start add-on, sidebar opens Ingress at `/ui`. One-time DB copy:
 `copy-db-to-ha.bat` → `/share/consumptionmonitor/consumption.sqlite`. See README
 "Run on Home Assistant".
@@ -58,7 +58,7 @@ Electricity: import=consumption, export=production (solar return).
 
 ## State
 
-`v1.0.4` on `master`: Windows API + HA add-on with Ingress dashboard, one MQTT device
+`v1.0.5` on `master`: Windows API + HA add-on with Ingress dashboard, one MQTT device
 (all meter sensors and alert binary sensors). Electricity Energy dashboard uses MQTT
 register sensors (`total_increasing`); water history uses external statistics
 (`consumptionmonitor:water`) back to 2024 when the SQLite file is copied. Add-on `icon.png` / `logo.png` match the `/ui` favicon
@@ -109,7 +109,12 @@ register sensors (`total_increasing`); water history uses external statistics
   a daemon thread with its own DB connection.
 - Ingress mobile: collapse secondary controls behind one button; two-tap drill on touch;
   day view defaults to 7d on narrow screens; comparison legend scrolls horizontally.
-- One MQTT device `consumptionmonitor` (retained discovery + JSON state topic); Energy
-  history via `recorder/import_statistics` over the Supervisor WebSocket (`websockets`).
+- One MQTT device `consumptionmonitor` (retained discovery + JSON state topic). Electricity
+  Energy uses register sensors (`state_class: total_increasing`); water history via
+  `recorder/import_statistics` over the Supervisor WebSocket (`websockets`).
+- Electricity register MQTT sensors must publish `null` when the `recent` scrape fails —
+  never `0` or a stale value (`TOTAL_INCREASING` treats zero as a meter reset).
+- HA add-on updates require bumping `version` in `consumptionmonitor/config.yaml` and
+  `APP_REF` in the Dockerfile to a matching git tag; code-only pushes do not surface.
 - Off Windows, `config._credentials()` must fall through to env vars when DPAPI is absent;
   Ingress add-on sets `ALLOWED_CLIENT_IPS=172.30.32.2`.

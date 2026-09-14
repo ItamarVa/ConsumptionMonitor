@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.5
+
+- Electricity Energy dashboard: MQTT register sensors use `state_class: total_increasing`
+  so manual/static cost tracking works via the recorder.
+- Registers publish unavailable (`null`) when the `recent` scrape fails — never `0` or
+  a stale value.
+- Drop duplicate electricity external statistics; water history still imports via
+  `consumptionmonitor:water`.
+
 ## 1.0.4
 
 - Mobile dashboard: collapse date/preset/mode controls behind a "סינון וטווח"

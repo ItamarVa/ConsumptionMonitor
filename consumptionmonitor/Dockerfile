@@ -2,10 +2,10 @@
 # The add-on build context is this folder only, so the app is fetched from a pinned
 # GitHub release tarball (APP_REF). Debian/glibc is required: scrapling fetchers have
 # no musllinux wheels on Alpine.
-ARG APP_REF=v1.0.4
+ARG APP_REF=v1.0.5
 FROM ghcr.io/home-assistant/amd64-base-debian:trixie
 
-ARG APP_REF=v1.0.4
+ARG APP_REF=v1.0.5
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
